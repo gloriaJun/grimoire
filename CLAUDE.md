@@ -14,12 +14,22 @@ There is no build system, no package manager, and no test runner. The repo conta
 claude/          # Custom instruction files (CLAUDE.md, instructions/)
                  # Symlinked to ~/.claude/
 hooks/           # Hook scripts, symlinked to ~/.claude/hooks/
+agents/          # Custom agent definitions, symlinked to ~/.claude/agents/
+  ideator.md     # Idea exploration via strategic questioning
+  analyst.md     # Requirements analysis -> PRD
+  architect.md   # Architecture design -> TRD
+  executor.md    # Feature implementation (Claude/Codex selection)
+  reviewer.md    # Cross-agent code review (Claude<->Codex)
+  frontend-reviewer.md  # Frontend-specific review (a11y, responsive)
 codex/           # Codex CLI settings
   rules/         # Shell command approval rules, symlinked to ~/.codex/rules/
 skills/          # Claude Code skills, symlinked to ~/.claude/skills/
   my-claude-audit/
-  task-process/  # Structured task workflow (PRD/TRD/features)
+  task-process/  # Orchestrator: ideation -> design -> implementation
   sync-config/   # Link shared config to project .claude/
+  cleanup/       # Diagnose and clean up sessions, logs, caches
+  debug-process/ # Structured debugging workflow
+  pre-commit-check/  # Auto self-review before commit
 templates/       # Settings templates (no secrets, reference only)
 plugins.json     # Plugin marketplace manifest (reference only)
 setup.sh         # Symlink setup script
@@ -43,13 +53,28 @@ description: >
 ---
 ```
 
-### Subagent Pattern
+### Subagent Pattern (for my-claude-audit)
 
 1. **Prompt files** in `analyzer-prompts/` define each subagent's task
 2. Prompts are loaded via the **Read tool** (never `@`-import)
 3. Subagents are dispatched via the **Agent tool** with `subagent_type: Explore`
 4. Subagents return **JSON only** — no prose, no markdown
 5. Results are combined and injected into an HTML template via `{{PLACEHOLDER}}` replacement
+
+## Agent Anatomy
+
+Each agent lives in `agents/<name>.md` with YAML frontmatter:
+
+```yaml
+---
+name: agent-name
+description: >
+  When to use this agent. Claude matches tasks to agents by description.
+model: sonnet
+---
+```
+
+Agents run in isolated context windows. They do NOT inherit the parent's context, so all necessary information must be included in each agent's `.md` file or passed via the Agent tool prompt.
 
 ## Key Conventions
 

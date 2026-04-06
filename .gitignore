@@ -4,6 +4,9 @@
 # OS
 .DS_Store
 
+# Generated checksum files
+hooks/*.sha256
+
 # Secret-containing files (if accidentally copied)
 claude/settings.json
 codex/config.toml

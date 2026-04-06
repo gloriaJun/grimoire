@@ -1,5 +1,5 @@
 {
-  "_comment": "GitHubWork project-level settings. Symlinked via sync-config skill.",
+  "_comment": "GitHubWork project-level settings. Symlinked via g-sync-config skill.",
   "enabledPlugins": {
     "openchat@fe-marketplace": true,
     "pr-management@fe-marketplace": true,

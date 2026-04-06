@@ -1,12 +1,12 @@
 ---
-name: sync-config
+name: g-sync-config
 description: >
-  /sync-config command only. Link shared config files from _claude/config/
+  /g-sync-config command only. Link shared config files from _claude/config/
   to the current project's .claude/ directory. Manual invocation only.
-  Use when user explicitly calls /sync-config.
+  Use when user explicitly calls /g-sync-config.
 ---
 
-# sync-config Skill
+# g-sync-config Skill
 
 Link shared configuration files from the workspace `_claude/config/` to the current project's `.claude/` directory.
 

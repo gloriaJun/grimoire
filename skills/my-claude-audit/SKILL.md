@@ -1,14 +1,14 @@
 ---
-name: my-claude-audit
+name: g-my-claude-audit
 description: >
-  /my-claude-audit command only.
+  /g-my-claude-audit command only.
   Comprehensive audit of Claude Code configuration with multi-model delegation:
   token budget, config health, skills ecosystem, session log anomaly detection,
   and AI usage pattern analysis. Supports Gemini/OpenAI/Codex CLI delegation.
   Generates interactive HTML dashboard.
 ---
 
-# /my-claude-audit
+# /g-my-claude-audit
 
 Comprehensive audit of your Claude Code configuration with an interactive HTML dashboard. Analyzes token efficiency, config health, skills ecosystem, feature utilization, and automation opportunities across all layers.
 
@@ -18,7 +18,7 @@ Comprehensive audit of your Claude Code configuration with an interactive HTML d
 digraph workflow {
     rankdir=TB;
 
-    "User: /my-claude-audit" [shape=doublecircle];
+    "User: /g-my-claude-audit" [shape=doublecircle];
     "Ask scope" [shape=box];
     "Ask model" [shape=box];
     "Discovery: read settings.json" [shape=box];
@@ -36,7 +36,7 @@ digraph workflow {
     "Open in browser" [shape=box];
     "Print terminal summary" [shape=doublecircle];
 
-    "User: /my-claude-audit" -> "Ask scope";
+    "User: /g-my-claude-audit" -> "Ask scope";
     "Ask scope" -> "Ask model";
     "Ask model" -> "Discovery: read settings.json";
     "Discovery: read settings.json" -> "Session log discovery";

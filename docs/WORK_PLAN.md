@@ -192,11 +192,28 @@
   - `templates/claude-settings.json.template` 업데이트
   - `templates/work-settings.local.json.template` 추가
 
-- [ ] **2-9. 대안 플러그인/agent 탐색**
-  - 사용 패턴과 업무에 적합한 플러그인/skill 마켓플레이스 탐색
-  - Superpowers에서 제공하던 agent 정리 (code-reviewer, technical-writer 등)
-  - 필요한 agent/skill을 자체 구현 또는 대안 플러그인으로 대체
-  - 필요 시 harness/skills/ 또는 harness/agents/에 추가
+- [x] **2-9. 대안 플러그인/agent 탐색 및 구현**
+  - 생태계 조사: 공식 마켓, superpowers, claudemarketplaces.com, SkillsMP 등
+  - Superpowers 22K 토큰 오버헤드 문제 확인 → 외부 플러그인 최소화 방침
+  - 외부 플러그인 2개 채택:
+    - **Plannotator** (backnotprop/plannotator): 계획/문서 시각적 리뷰, 토큰 비용 0
+    - **codex-plugin-cc** (openai/codex-plugin-cc): Claude↔Codex 교차 리뷰/위임
+  - 자체 agent 6개 구현 (`harness/agents/`):
+    - `ideator` — 아이디어 탐색 (brainstorm.md 산출)
+    - `analyst` — 요구사항 분석 → PRD 작성
+    - `architect` — 설계 → TRD 작성
+    - `executor` — Feature 단위 구현 (Claude/Codex 선택)
+    - `reviewer` — Cross-agent 코드 리뷰 (Claude↔Codex)
+    - `frontend-reviewer` — 프론트엔드 특화 리뷰 (a11y, 반응형)
+  - 자체 skill 2개 추가:
+    - `pre-commit-check` — 커밋 전 자동 셀프 리뷰 (PROACTIVE + hook)
+    - `debug-process` — 체계적 디버깅 워크플로우 (수동)
+  - `task-process` SKILL.md 확장:
+    - 5개 진입점 (아이디어 / 요구사항 / 외부 PRD / 설계 완료 / 바로 구현)
+    - Cross-agent review 프로토콜 (Plannotator + Codex)
+    - Feature별 구현 에이전트 선택 (Claude / Codex)
+  - `setup.sh`에 agents/ 심링크 섹션 추가
+  - `plugins.json` 업데이트 (Plannotator + codex-plugin-cc)
 
 ---
 
@@ -225,7 +242,7 @@
 
 ---
 
-## 파일 구조 (Phase 1 완료 후 목표)
+## 파일 구조 (Phase 2 완료 후)
 
 ```
 harness/
@@ -235,19 +252,29 @@ harness/
       tech-stack.md               ← 공통 기술 선호도
       git-workflow.md             ← 커밋/PR 규칙
   hooks/
-    rtk-rewrite.sh                ← 기존 유지
+    rtk-rewrite.sh                ← RTK 바이너리 체크 hook
+  agents/                         ← Phase 2-9: 커스텀 agent 정의
+    ideator.md                    ← 아이디어 탐색
+    analyst.md                    ← 요구사항 분석 → PRD
+    architect.md                  ← 설계 → TRD
+    executor.md                   ← Feature 구현 (Claude/Codex 선택)
+    reviewer.md                   ← Cross-agent 코드 리뷰
+    frontend-reviewer.md          ← 프론트엔드 특화 리뷰
   skills/
-    my-claude-audit/              ← 기존 유지
-    task-process/                 ← Phase 1: 작업 워크플로우 skill
-      SKILL.md
-    sync-config/                  ← Phase 2: 프로젝트 설정 심링크 skill
-      SKILL.md
+    my-claude-audit/              ← 감사 대시보드
+    task-process/                 ← 오케스트레이터 (5개 진입점)
+    sync-config/                  ← 프로젝트 설정 심링크
+    cleanup/                      ← 세션/로그 정리
+    debug-process/                ← 체계적 디버깅
+    pre-commit-check/             ← 커밋 전 자동 셀프 리뷰
   templates/
-    settings.json.example         ← 설정 참조용 (Phase 2에서 업데이트)
+    claude-settings.json.template
+    work-settings.local.json.template
   docs/
     WORK_PLAN.md                  ← 이 문서
+  plugins.json                    ← 플러그인 매니페스트 (참조용)
   setup.sh                        ← 심링크 생성 스크립트
-  CLAUDE.md                       ← 레포 자체의 프로젝트 지침 (변경 없음)
+  CLAUDE.md                       ← 레포 자체의 프로젝트 지침
 ```
 
 `~/.claude/` (심링크 결과):
@@ -257,10 +284,20 @@ harness/
   instructions/        → harness/claude/instructions/
   hooks/
     rtk-rewrite.sh     → harness/hooks/rtk-rewrite.sh
+  agents/
+    ideator.md         → harness/agents/ideator.md
+    analyst.md         → harness/agents/analyst.md
+    architect.md       → harness/agents/architect.md
+    executor.md        → harness/agents/executor.md
+    reviewer.md        → harness/agents/reviewer.md
+    frontend-reviewer.md → harness/agents/frontend-reviewer.md
   skills/
     my-claude-audit/   → harness/skills/my-claude-audit/
     task-process/      → harness/skills/task-process/
     sync-config/       → harness/skills/sync-config/
+    cleanup/           → harness/skills/cleanup/
+    debug-process/     → harness/skills/debug-process/
+    pre-commit-check/  → harness/skills/pre-commit-check/
 ```
 
 ## 작업 및 설정 구조 (_claude/)

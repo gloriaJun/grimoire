@@ -18,7 +18,7 @@ Comprehensive audit of your Claude Code configuration with an interactive HTML d
 ## Usage
 
 ```
-/my-claude-audit
+/g-my-claude-audit
 ```
 
 The skill will:
@@ -30,7 +30,7 @@ The skill will:
 ## How It Works
 
 ```
-/my-claude-audit
+/g-my-claude-audit
   → Scope Selection (Both / Global / Project)
   → Discovery (read settings.json, glob config files)
   → Parallel Analysis
@@ -77,13 +77,13 @@ All findings sorted by severity (critical → warning → info) with filter chip
 ### Personal skill (simplest)
 
 ```bash
-cp -r skills/my-claude-audit ~/.claude/skills/my-claude-audit
+cp -r skills/g-my-claude-audit ~/.claude/skills/g-my-claude-audit
 ```
 
 ### Via symlink
 
 ```bash
-ln -s /path/to/harness/skills/my-claude-audit ~/.claude/skills/my-claude-audit
+ln -s /path/to/harness/skills/g-my-claude-audit ~/.claude/skills/g-my-claude-audit
 ```
 
 ### As part of a plugin marketplace

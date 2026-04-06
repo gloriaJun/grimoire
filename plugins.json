@@ -2,13 +2,19 @@
   "claude": {
     "marketplaces": [
       {
-        "name": "superpowers-marketplace",
-        "source": "github:obra/superpowers-marketplace",
-        "description": "SuperClaude framework - commands, agents, skills, brainstorming"
+        "name": "plannotator",
+        "source": "github:backnotprop/plannotator",
+        "description": "Visual plan and document review - annotate, share, and approve plans in browser"
+      },
+      {
+        "name": "openai-codex",
+        "source": "github:openai/codex-plugin-cc",
+        "description": "Cross-agent review and task delegation via Codex CLI"
       }
     ],
     "plugins": [
-      "superpowers@superpowers-marketplace"
+      "plannotator@plannotator",
+      "codex@openai-codex"
     ]
   },
   "codex": {

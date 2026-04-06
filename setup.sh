@@ -230,7 +230,18 @@ for d in "$HARNESS_DIR"/skills/*/; do
     safe_link "$d" "$CLAUDE_HOME/skills/$dname"
 done
 
-# --- 4. Codex CLI: rules ---
+# --- 4. Claude Code: agents ---
+echo ""
+echo "--- Claude Code: agents ---"
+mkdir -p "$CLAUDE_HOME/agents" 2>/dev/null || true
+for f in "$HARNESS_DIR"/agents/*.md; do
+    [ -e "$f" ] || continue
+    fname="$(basename "$f")"
+    safe_link "$f" "$CLAUDE_HOME/agents/$fname"
+done
+
+# --- 5. Codex CLI: rules ---
+# (was section 4)
 echo ""
 echo "--- Codex CLI: rules ---"
 if [ -d "$CODEX_HOME" ]; then
@@ -240,7 +251,7 @@ else
     skip "Codex home not found ($CODEX_HOME)"
 fi
 
-# --- 5. Codex CLI: generate AGENTS.md ---
+# --- 6. Codex CLI: generate AGENTS.md ---
 echo ""
 echo "--- Codex CLI: AGENTS.md ---"
 if [ -d "$CODEX_HOME" ]; then
@@ -249,10 +260,10 @@ else
     skip "Codex home not found ($CODEX_HOME)"
 fi
 
-# --- 6. Plugin info ---
+# --- 7. Plugin info ---
 show_plugin_info
 
-# --- 7. Claude Code: settings.json hook registration ---
+# --- 8. Claude Code: settings.json hook registration ---
 echo ""
 echo "--- Claude Code: settings.json hook registration ---"
 register_rtk_hook() {
