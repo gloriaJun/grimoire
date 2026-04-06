@@ -117,19 +117,19 @@
 
 #### 인프라 작업
 
-- [ ] **1-5. `setup.sh` 업데이트**
+- [x] **1-5. `setup.sh` 업데이트**
   - `claude/CLAUDE.md` → `~/.claude/CLAUDE.md` 심링크
   - `claude/instructions/` → `~/.claude/instructions/` 폴더 심링크
   - `skills/task-process/` → `~/.claude/skills/task-process` 심링크
   - 기존 hooks, skills 심링크 유지
 
-- [ ] **1-6. SuperClaude 설치 파일 정리**
+- [x] **1-6. SuperClaude 설치 파일 정리**
   - `~/.claude/`에서 SuperClaude가 설치한 `.md` 파일 14개 백업 후 제거
   - 제거 대상: `MODE_*.md`, `MCP_*.md`, `BUSINESS_*.md`, `RTK.md`
   - `.superclaude-metadata.json` 백업 후 제거
   - 기존 `CLAUDE.md` (SuperClaude entry point) 백업 후 harness 심링크로 교체
 
-- [ ] **1-7. 동작 검증**
+- [x] **1-7. 동작 검증**
   - 새 세션에서 CLAUDE.md 로드 확인
   - `@instructions/*.md` 참조 정상 동작 확인
   - hooks, skills 심링크 정상 동작 확인

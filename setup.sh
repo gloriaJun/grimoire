@@ -36,6 +36,7 @@ log()  { echo -e "${GREEN}[OK]${NC} $1"; }
 skip() { echo -e "${DIM}[SKIP]${NC} $1"; }
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 dry()  { echo -e "${YELLOW}[DRY]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 
 # --- safe_link: backup existing file, then create symlink ---
 # Idempotent — updates existing symlinks, backs up regular files
@@ -176,13 +177,38 @@ if $DRY_RUN; then
 fi
 echo ""
 
-# --- 1. Claude Code: custom instruction files (non-SuperClaude) ---
+# --- 0. RTK binary check ---
+echo "--- RTK binary check ---"
+if ! command -v rtk &>/dev/null; then
+    warn "rtk not found. Install: cargo install rtk"
+else
+    RTK_VER="$(rtk --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+    if [ -n "$RTK_VER" ]; then
+        RTK_MAJOR="$(echo "$RTK_VER" | cut -d. -f1)"
+        RTK_MINOR="$(echo "$RTK_VER" | cut -d. -f2)"
+        if [ "$RTK_MAJOR" -eq 0 ] && [ "$RTK_MINOR" -lt 23 ]; then
+            warn "rtk $RTK_VER is too old (need >= 0.23.0). Upgrade: cargo install rtk"
+        else
+            info "rtk $RTK_VER OK"
+        fi
+    else
+        warn "Could not determine rtk version"
+    fi
+fi
+echo ""
+
+# --- 1. Claude Code: custom instruction files ---
 echo "--- Claude Code: custom instruction files ---"
 for f in "$HARNESS_DIR"/claude/*.md; do
     [ -e "$f" ] || continue
     fname="$(basename "$f")"
     safe_link "$f" "$CLAUDE_HOME/$fname"
 done
+
+# --- 1b. Claude Code: instructions directory ---
+if [ -d "$HARNESS_DIR/claude/instructions" ]; then
+    safe_link "$HARNESS_DIR/claude/instructions" "$CLAUDE_HOME/instructions"
+fi
 
 # --- 2. Claude Code: hooks ---
 echo ""
@@ -225,6 +251,78 @@ fi
 
 # --- 6. Plugin info ---
 show_plugin_info
+
+# --- 7. Claude Code: settings.json hook registration ---
+echo ""
+echo "--- Claude Code: settings.json hook registration ---"
+register_rtk_hook() {
+    local settings="$CLAUDE_HOME/settings.json"
+    local hook_path="$CLAUDE_HOME/hooks/rtk-rewrite.sh"
+
+    if ! command -v jq &>/dev/null; then
+        skip "jq not installed — skipping hook registration"
+        return
+    fi
+
+    if [ ! -f "$settings" ]; then
+        skip "settings.json not found ($settings)"
+        return
+    fi
+
+    # Check if hook entry already exists
+    local already
+    already="$(jq -r '
+        .hooks.PreToolUse[]?.hooks[]?
+        | select(.type == "command" and .command == "'"$hook_path"'")
+        | .command
+    ' "$settings" 2>/dev/null)"
+
+    if [ -n "$already" ]; then
+        skip "rtk hook already registered in settings.json"
+        return
+    fi
+
+    if $DRY_RUN; then
+        dry "Register rtk hook in $settings (matcher: Bash, command: $hook_path)"
+        return
+    fi
+
+    # Backup before modifying
+    cp "$settings" "${settings}.backup.${TIMESTAMP}"
+
+    # Check if .hooks.PreToolUse with Bash matcher exists
+    local has_bash_matcher
+    has_bash_matcher="$(jq '[.hooks.PreToolUse[]? | select(.matcher == "Bash")] | length > 0' "$settings" 2>/dev/null)"
+
+    if [ "$has_bash_matcher" = "true" ]; then
+        # Append to existing Bash matcher's hooks array
+        jq --arg cmd "$hook_path" '
+            .hooks.PreToolUse = [
+                .hooks.PreToolUse[] |
+                if .matcher == "Bash" then
+                    .hooks += [{"type": "command", "command": $cmd}]
+                else . end
+            ]
+        ' "$settings" > "${settings}.tmp" && mv "${settings}.tmp" "$settings"
+    elif [ "$(jq 'has("hooks") and (.hooks | has("PreToolUse"))' "$settings" 2>/dev/null)" = "true" ]; then
+        # PreToolUse exists but no Bash matcher — add one
+        jq --arg cmd "$hook_path" '
+            .hooks.PreToolUse += [
+                {"matcher": "Bash", "hooks": [{"type": "command", "command": $cmd}]}
+            ]
+        ' "$settings" > "${settings}.tmp" && mv "${settings}.tmp" "$settings"
+    else
+        # Create hooks.PreToolUse from scratch
+        jq --arg cmd "$hook_path" '
+            .hooks.PreToolUse = [
+                {"matcher": "Bash", "hooks": [{"type": "command", "command": $cmd}]}
+            ]
+        ' "$settings" > "${settings}.tmp" && mv "${settings}.tmp" "$settings"
+    fi
+
+    log "Registered rtk hook in settings.json"
+}
+register_rtk_hook
 
 echo ""
 echo "=== Setup complete ==="
