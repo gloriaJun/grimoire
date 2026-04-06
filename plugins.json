@@ -15,6 +15,18 @@
     "plugins": [
       "plannotator@plannotator",
       "codex@openai-codex"
+    ],
+    "skills": [
+      {
+        "name": "skill-creator",
+        "source": "github:anthropics/skills/skills/skill-creator",
+        "description": "Create, evaluate, and iteratively improve Claude Code skills"
+      },
+      {
+        "name": "visualize",
+        "source": "github:careerhackeralex/visualize/skills/visualize",
+        "description": "Create self-contained HTML visualizations - slides, dashboards, infographics, diagrams"
+      }
     ]
   },
   "codex": {
