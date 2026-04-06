@@ -181,18 +181,22 @@
 - [x] **2-6. task-process skill 경로 업데이트**
   - `_claude-work` → `_claude/work-plan` 경로 참조 변경 완료
 
-- [ ] **2-7. 회사 플러그인 프로젝트 레벨 이동**
+- [x] **2-7. 회사 플러그인 프로젝트 레벨 이동**
   - 글로벌 settings.json에서 회사 플러그인/마켓플레이스 제거
-  - `_claude/config/settings.local.json`에 회사 플러그인 정의
-  - sync-config skill로 각 프로젝트에 배포
+  - `GitHubLine/_claude/config/settings.local.json`에 회사 플러그인 + MCP 설정 정의
+  - `one` 프로젝트에 심링크 적용 완료, 나머지는 `/sync-config`으로 필요시 적용
 
-- [ ] **2-8. settings.json 정리**
-  - 불필요한 permissions 정리 (일회성 허용들 제거)
-  - 템플릿화 (`templates/settings.json.example` 업데이트)
+- [x] **2-8. settings.json 정리**
+  - 글로벌 permissions 96 → 14개로 정리 (일회성 허용 제거)
+  - additionalDirectories 비움
+  - `templates/claude-settings.json.template` 업데이트
+  - `templates/work-settings.local.json.template` 추가
 
-- [ ] **2-9. 대안 플러그인 탐색**
+- [ ] **2-9. 대안 플러그인/agent 탐색**
   - 사용 패턴과 업무에 적합한 플러그인/skill 마켓플레이스 탐색
-  - 필요 시 자체 skill로 대체 (harness/skills/에 추가)
+  - Superpowers에서 제공하던 agent 정리 (code-reviewer, technical-writer 등)
+  - 필요한 agent/skill을 자체 구현 또는 대안 플러그인으로 대체
+  - 필요 시 harness/skills/ 또는 harness/agents/에 추가
 
 ---
 
