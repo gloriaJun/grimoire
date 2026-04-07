@@ -83,3 +83,9 @@ Agents run in isolated context windows. They do NOT inherit the parent's context
 - **Token estimation:** `chars / 4`. Context window assumed at 200,000 tokens.
 - **HTML reports** are written to `/tmp/` and opened in the browser. Do not delete them.
 - **No secrets in repo.** `settings.json` and `config.toml` stay local. Templates in `templates/` for reference.
+
+## Post-Task Workflow
+
+When a task is completed in this repository, always ask the user whether to:
+1. Commit and push the changes
+2. Verify `$HOME` symlinks reflect the latest state (run `setup.sh` if needed)
