@@ -251,19 +251,15 @@ for f in "$HARNESS_DIR"/agents/*.md; do
     safe_link "$f" "$CLAUDE_HOME/agents/$fname"
 done
 
-# --- 5. Codex CLI: skills (compatible subset) ---
-# Only symlink skills that don't depend on Claude-specific tools (Agent, hooks, etc.)
-CODEX_COMPATIBLE_SKILLS="cleanup debug-process sync-config"
+# --- 5. Codex CLI: skills ---
 echo ""
 echo "--- Codex CLI: skills ---"
 if [ -d "$CODEX_HOME" ]; then
     mkdir -p "$CODEX_HOME/skills" 2>/dev/null || true
-    for skill in $CODEX_COMPATIBLE_SKILLS; do
-        if [ -d "$HARNESS_DIR/skills/$skill" ]; then
-            safe_link "$HARNESS_DIR/skills/$skill" "$CODEX_HOME/skills/$skill"
-        else
-            skip "Skill not found: $skill"
-        fi
+    for d in "$HARNESS_DIR"/skills/*/; do
+        [ -d "$d" ] || continue
+        dname="$(basename "$d")"
+        safe_link "$d" "$CODEX_HOME/skills/$dname"
     done
 else
     skip "Codex home not found ($CODEX_HOME)"
