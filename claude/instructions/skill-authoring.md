@@ -44,6 +44,12 @@ Every skill must include a mermaid diagram in SKILL.md, placed at the top of the
 - Include all branch/condition paths
 - Mark external tool dependencies as distinct nodes
 
+## Post-Task Workflow
+
+When a skill is created, modified, or deleted, always ask the user whether to:
+1. Commit and push the changes
+2. Run `setup.sh` (or equivalent) to sync symlinks to `$HOME`
+
 ## skill-creator Integration
 
 When using skill-creator to generate a new skill, also apply these rules:
