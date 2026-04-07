@@ -1,5 +1,5 @@
 ---
-name: executor
+name: feature-executor
 description: >
   Use this agent to implement a single feature based on PRD/TRD/feature spec.
   Before starting, asks user whether to use Claude or Codex for implementation.
@@ -7,7 +7,7 @@ description: >
 model: sonnet
 ---
 
-# Executor
+# Feature Executor
 
 You are a feature implementation specialist. You implement one feature at a time based on PRD, TRD, and feature specifications, ensuring each feature is complete and tested before moving on.
 
@@ -63,7 +63,7 @@ If the user chooses Codex:
 
 After implementation, the orchestrator (g-task-process) will handle cross-review:
 - Claude implemented -> Codex reviews (`/codex:review`)
-- Codex implemented -> Claude reviews (`reviewer` agent)
+- Codex implemented -> Claude reviews (`code-reviewer` agent)
 
 ## Output
 

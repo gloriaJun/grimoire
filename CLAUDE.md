@@ -15,12 +15,12 @@ claude/          # Custom instruction files (CLAUDE.md, instructions/)
                  # Symlinked to ~/.claude/
 hooks/           # Hook scripts, symlinked to ~/.claude/hooks/
 agents/          # Custom agent definitions, symlinked to ~/.claude/agents/
-  ideator.md     # Idea exploration via strategic questioning
-  analyst.md     # Requirements analysis -> PRD
-  architect.md   # Architecture design -> TRD
-  executor.md    # Feature implementation (Claude/Codex selection)
-  reviewer.md    # Cross-agent code review (Claude<->Codex)
-  frontend-reviewer.md  # Frontend-specific review (a11y, responsive)
+  idea-explorer.md          # Idea exploration via strategic questioning
+  requirements-analyst.md   # Requirements analysis -> PRD
+  system-architect.md       # Architecture design -> TRD
+  feature-executor.md       # Feature implementation (Claude/Codex selection)
+  code-reviewer.md          # Cross-agent code review (Claude<->Codex)
+  frontend-reviewer.md      # Frontend-specific review (a11y, responsive)
 codex/           # Codex CLI settings
   rules/         # Shell command approval rules, symlinked to ~/.codex/rules/
 skills/          # Claude Code skills, symlinked to ~/.claude/skills/

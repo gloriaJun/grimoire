@@ -4,8 +4,9 @@ description: >
   /g-task-process command only. Structured task workflow from ideation
   to completion. Supports multiple entry points: idea, requirements,
   external PRD, existing design, or direct implementation.
-  Orchestrates agents (ideator, analyst, architect, executor, reviewer)
-  with cross-agent review via Codex. Manual invocation only.
+  Orchestrates agents (idea-explorer, requirements-analyst, system-architect,
+  feature-executor, code-reviewer) with cross-agent review via Codex.
+  Manual invocation only.
 ---
 
 # g-task-process Skill
@@ -35,11 +36,11 @@ Ask the user to select their starting point:
 
 | Choice | What you have | Starts at |
 |--------|--------------|-----------|
-| "I have an idea" | Vague concept | Step 1 (ideator) |
-| "I want to define requirements" | Rough requirements | Step 2 (analyst) |
-| "I have a PRD / planning doc" | External PRD | Step 3 (architect) |
+| "I have an idea" | Vague concept | Step 1 (idea-explorer) |
+| "I want to define requirements" | Rough requirements | Step 2 (requirements-analyst) |
+| "I have a PRD / planning doc" | External PRD | Step 3 (system-architect) |
 | "Design is done" | PRD + TRD | Step 4 (feature breakdown) |
-| "Just implement" | Clear scope | Step 5 (executor) |
+| "Just implement" | Clear scope | Step 5 (feature-executor) |
 
 If the user has an external document (planning doc, PRD, etc.):
 - Ask for the file path
@@ -50,11 +51,11 @@ If the user has an external document (planning doc, PRD, etc.):
 
 ---
 
-## Step 1: Ideation (ideator agent)
+## Step 1: Ideation (idea-explorer agent)
 
 Goal: Expand a vague idea into concrete directions.
 
-1. Invoke the `ideator` agent with the user's idea description.
+1. Invoke the `idea-explorer` agent with the user's idea description.
 2. The agent produces `brainstorm.md` in the task subdirectory.
 3. Present `brainstorm.md` to the user.
 
@@ -62,7 +63,7 @@ Goal: Expand a vague idea into concrete directions.
 
 ---
 
-## Step 2: Requirements -> PRD (analyst agent)
+## Step 2: Requirements -> PRD (requirements-analyst agent)
 
 Goal: Structure requirements into a formal PRD.
 
@@ -72,7 +73,7 @@ Goal: Structure requirements into a formal PRD.
 - External planning document
 
 ### Process
-1. Invoke the `analyst` agent with available inputs.
+1. Invoke the `requirements-analyst` agent with available inputs.
 2. The agent produces `PRD-<task-name>.md`.
    - Location: project `docs/` if it exists, otherwise task subdirectory.
 
@@ -90,7 +91,7 @@ Goal: Structure requirements into a formal PRD.
 
 ---
 
-## Step 3: Design -> TRD (architect agent)
+## Step 3: Design -> TRD (system-architect agent)
 
 ### Skip Condition
 Skip if **both** are true:
@@ -104,7 +105,7 @@ If skipping, inform the user and proceed to Step 4.
 - Existing codebase context
 
 ### Process
-1. Invoke the `architect` agent with the PRD and codebase context.
+1. Invoke the `system-architect` agent with the PRD and codebase context.
 2. The agent produces `TRD-<task-name>.md` (+ `architecture.md` if needed).
    - Location: same as PRD.
 
@@ -141,7 +142,7 @@ A feature is scoped so it can be fully implemented, tested, and committed within
 
 ---
 
-## Step 5: Feature Execution (executor agent, per feature)
+## Step 5: Feature Execution (feature-executor agent, per feature)
 
 Execute features one at a time, in order.
 
@@ -149,16 +150,16 @@ Execute features one at a time, in order.
 
 #### 5a. Implementation
 1. State which feature is being worked on.
-2. Invoke the `executor` agent with:
+2. Invoke the `feature-executor` agent with:
    - The feature spec (`feature-XX-<name>.md`)
    - PRD and TRD paths for context
-3. The executor asks the user: **Claude or Codex** for implementation.
+3. The feature-executor asks the user: **Claude or Codex** for implementation.
 4. Implementation proceeds based on user choice.
 
 #### 5b. Cross-Review
 After implementation:
-- **Claude implemented** -> invoke `reviewer` agent, which delegates to `/codex:review`
-- **Codex implemented** -> invoke `reviewer` agent, which reviews with Claude
+- **Claude implemented** -> invoke `code-reviewer` agent, which delegates to `/codex:review`
+- **Codex implemented** -> invoke `code-reviewer` agent, which reviews with Claude
 
 If the feature involves frontend changes:
 - Additionally invoke `frontend-reviewer` agent.
@@ -194,7 +195,7 @@ When all features are done:
 | TRD / architecture | Plannotator + User | Codex |
 | Feature breakdown | Plannotator + User | - |
 | Code (Claude impl.) | Codex (`/codex:review`) | frontend-reviewer (if applicable) |
-| Code (Codex impl.) | Claude (`reviewer` agent) | frontend-reviewer (if applicable) |
+| Code (Codex impl.) | Claude (`code-reviewer` agent) | frontend-reviewer (if applicable) |
 
 ---
 

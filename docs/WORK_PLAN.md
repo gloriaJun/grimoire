@@ -199,11 +199,11 @@
     - **Plannotator** (backnotprop/plannotator): 계획/문서 시각적 리뷰, 토큰 비용 0
     - **codex-plugin-cc** (openai/codex-plugin-cc): Claude↔Codex 교차 리뷰/위임
   - 자체 agent 6개 구현 (`harness/agents/`):
-    - `ideator` — 아이디어 탐색 (brainstorm.md 산출)
-    - `analyst` — 요구사항 분석 → PRD 작성
-    - `architect` — 설계 → TRD 작성
-    - `executor` — Feature 단위 구현 (Claude/Codex 선택)
-    - `reviewer` — Cross-agent 코드 리뷰 (Claude↔Codex)
+    - `idea-explorer` — 아이디어 탐색 (brainstorm.md 산출)
+    - `requirements-analyst` — 요구사항 분석 → PRD 작성
+    - `system-architect` — 설계 → TRD 작성
+    - `feature-executor` — Feature 단위 구현 (Claude/Codex 선택)
+    - `code-reviewer` — Cross-agent 코드 리뷰 (Claude↔Codex)
     - `frontend-reviewer` — 프론트엔드 특화 리뷰 (a11y, 반응형)
   - 자체 skill 2개 추가:
     - `pre-commit-check` — 커밋 전 자동 셀프 리뷰 (PROACTIVE + hook)
