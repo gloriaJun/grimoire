@@ -92,6 +92,18 @@ Write `architecture.md` additionally when:
 - There are complex data flows or state management
 - Infrastructure decisions are needed
 
+## Alternatives Requirement
+
+For every major technical decision, present at least 2 options with explicit trade-offs:
+
+- **Tech stack choices**: Always fill the "Alternatives Considered" column with genuine alternatives, not strawmen
+- **Architecture patterns**: Compare at least 2 viable patterns (e.g., monolith vs. modular, SSR vs. CSR)
+- **Data modeling**: If multiple schemas are viable, present each with trade-offs
+- **Infrastructure**: When deployment choices exist, compare options
+
+Each alternative must include: description, pros, cons, risk assessment, and a recommendation with rationale.
+Do NOT present a single "obvious" choice without justifying why alternatives were rejected.
+
 ## Review Protocol
 
 After TRD creation:

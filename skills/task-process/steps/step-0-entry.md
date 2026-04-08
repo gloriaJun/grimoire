@@ -1,6 +1,6 @@
 # Step 0: Entry Point Selection
 
-Ask the user to select their starting point:
+Ask the user to select their starting point (follow `references/user-prompt-patterns.md` Single Choice pattern):
 
 | Choice | What you have | Starts at |
 |--------|--------------|-----------|

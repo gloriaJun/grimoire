@@ -27,6 +27,18 @@ From `_state.json` artifacts:
    - `features` = array of feature objects with `status: "pending"`
 5. **Plannotator**: Open feature breakdown for visual review.
 
+## Review (2-layer)
+
+1. **Plannotator + User approval**: Visual review of feature breakdown.
+   - If Plannotator is not available, present as text.
+   - If revision requested: adjust breakdown, do NOT advance step.
+2. **Codex cross-review**: After user approval, request Codex review.
+   - Focus: missing features, incorrect scoping (too large/small for single session), dependency ordering issues.
+   - Via codex-plugin-cc: `/codex:rescue "Review this feature breakdown for missing items, scoping issues, and dependency order: <path>"`
+   - Via Codex CLI: `codex exec --read <features-path> "Review this feature breakdown: identify missing features, items too large for a single session, and dependency ordering issues"`
+   - If Codex is not available, skip and note it.
+3. Present Codex review results -> user decides whether to incorporate.
+
 ## State Update
 
 After user confirms:

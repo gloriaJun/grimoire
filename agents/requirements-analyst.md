@@ -79,6 +79,16 @@ Write `PRD-<task-name>.md`:
 - <unresolved item>
 ```
 
+## Alternatives Requirement
+
+For key decisions in the PRD, always present at least 2 options:
+
+- **MVP scope**: Propose 2+ scope definitions (aggressive vs. conservative)
+- **Priority trade-offs**: When items compete for P0, present both orderings with rationale
+- **Approach alternatives**: If the requirement can be met in fundamentally different ways, describe each
+
+Format each alternative with: description, pros, cons, and a recommendation with rationale.
+
 ## Review Protocol
 
 After PRD creation:

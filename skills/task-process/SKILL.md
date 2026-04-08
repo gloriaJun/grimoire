@@ -62,7 +62,17 @@ stateDiagram-v2
     Review_TRD --> Breakdown: user confirm
     Review_TRD --> Design: revision requested
 
-    Breakdown --> Execution: features.md + user confirm
+    Breakdown --> Review_Features: feature list ready
+
+    state "Feature Review (2-layer)" as Review_Features {
+        [*] --> Plannotator_Features
+        Plannotator_Features --> User_Approve_Features
+        User_Approve_Features --> Codex_Review_Features
+        Codex_Review_Features --> [*]
+    }
+
+    Review_Features --> Execution: user confirm
+    Review_Features --> Breakdown: revision requested
 
     state "Feature Execution" as Execution {
         [*] --> Pick_Feature
@@ -141,7 +151,7 @@ Key rules:
 | brainstorm.md | User confirmation | - |
 | PRD | Plannotator + User | Codex |
 | TRD / architecture | Plannotator + User | Codex |
-| Feature breakdown | Plannotator + User | - |
+| Feature breakdown | Plannotator + User | Codex |
 | Code (Claude impl.) | Codex (`/codex:review`) | frontend-reviewer (if applicable) |
 | Code (Codex impl.) | Claude (`code-reviewer` agent) | frontend-reviewer (if applicable) |
 
