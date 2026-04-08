@@ -86,25 +86,10 @@ Reference implementation: `skills/my-claude-audit/analyzer-prompts/` (predates t
 
 Existing skills using non-standard folder names (e.g. `analyzer-prompts/`) are not required to rename immediately. New skills must use `agents/`.
 
-## Agent Model Selection
+## Agent Rules
 
-Default model for all agents (global and skill-local) is **sonnet** for cost efficiency.
-
-### Escalation to Opus
-
-Use opus only when the task requires deep reasoning that sonnet cannot reliably handle:
-- Complex architecture design (multi-component trade-off analysis)
-- Cross-cutting concern analysis across large codebases
-- Nuanced judgment calls requiring broader context
-
-**Process**: Propose opus to the user with rationale. Proceed only after user confirmation.
-
-### Specifying Model
-
-| Agent type | How to set |
-|-----------|-----------|
-| Global (`.claude/agents/`) | `model: sonnet` or `model: opus` in YAML frontmatter |
-| Skill-local | `model` parameter in the Agent tool call |
+For model selection and parallel execution limits, see `@instructions/agent-guidelines.md`.
+These rules apply to both skill-local and global agents.
 
 ## Post-Task Workflow
 
