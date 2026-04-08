@@ -150,6 +150,20 @@ Existing skills using non-standard folder names (e.g. `analyzer-prompts/`) are n
 For model selection and parallel execution limits, see `@instructions/agent-guidelines.md`.
 These rules apply to both skill-local and global agents.
 
+## Runtime Behavior Checklist
+
+When designing a skill, review these items to ensure the skill leverages the full
+agent and tool ecosystem. Static structure (files, steps, mermaid) is not enough —
+consider how the skill behaves at runtime.
+
+| Check | Question | Action if yes |
+|-------|----------|---------------|
+| Parallel work | Are there steps where independent work can run simultaneously? | Dispatch Agent (Explore or custom) for parallel tasks |
+| Cross-review | Does the skill produce code changes or fix implementations? | Offer code-reviewer / Codex cross-review (mandatory or user-optional) |
+| Global agent reuse | Can an existing global agent (`agents/*.md`) handle a sub-task? | Reuse it instead of writing inline logic |
+| External tools | Does a step benefit from MCP tools, CLI commands, or web lookups? | Document as external dependency with fallback |
+| Skill escalation | Could a step's scope grow beyond the skill's expertise? | Define escalation path to a specialized skill (e.g., `/g-test-writer`) |
+
 ## Post-Task Workflow
 
 When a skill is created, modified, or deleted, always ask the user whether to:

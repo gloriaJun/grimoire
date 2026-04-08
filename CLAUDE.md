@@ -28,7 +28,7 @@ skills/          # Claude Code skills, symlinked to ~/.claude/skills/
   task-process/  # Orchestrator: ideation -> design -> implementation
   sync-config/   # Link shared config to project .claude/
   cleanup/       # Diagnose and clean up sessions, logs, caches
-  debug-process/ # Structured debugging workflow
+  troubleshoot/  # Unified troubleshooting: error analysis, debug, performance
   pre-commit-check/  # Auto self-review before commit
 templates/       # Settings templates (no secrets, reference only)
 plugins.json     # Plugin marketplace manifest (reference only)
