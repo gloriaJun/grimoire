@@ -31,13 +31,13 @@ Read the following before starting:
 
 ### 1. Implementation Agent Selection
 
-Ask the user which agent should implement this feature:
+Ask the user which agent should implement this feature (follow numbered choice format):
 
-> This feature: **<feature-name>**
-> - Claude: I'll implement it directly (worktree isolation)
-> - Codex: Delegate to Codex CLI (`codex exec`)
+> **<feature-name>** 구현 에이전트를 선택해주세요:
+> 1. Codex — Codex CLI에 위임 (`codex exec`)
+> 2. Claude — 직접 구현 (worktree isolation)
 >
-> Which agent should implement this?
+> > 번호 입력 또는 자유 응답 (default: 1)
 
 ### 2a. Claude Implementation
 

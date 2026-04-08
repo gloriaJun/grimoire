@@ -11,7 +11,7 @@ Execute features one at a time, in order.
 3. Invoke the `feature-executor` agent with:
    - The feature spec content
    - PRD and TRD paths for context
-4. The feature-executor asks the user: **Claude or Codex** for implementation.
+4. The feature-executor asks the user to choose implementation agent (default: Codex). See agent prompt for numbered choice format.
 5. Update `features[i].status` to `"in-progress"` and set `executor`.
 6. Implementation proceeds based on user choice.
 
