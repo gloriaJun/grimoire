@@ -129,7 +129,8 @@ skills/<skill-name>/agents/
 | Scope | Location | Registration |
 |-------|----------|-------------|
 | **Global** — used by multiple skills or invoked independently | `.claude/agents/` | Auto-registered as `subagent_type` |
-| **Skill-local** — used only within one skill | `skills/<skill>/agents/` | Read via Read tool, dispatched via Agent tool |
+| **Global (standalone value)** — currently used by one skill, but provides independent value when invoked directly (e.g. idea exploration, requirements analysis) | `.claude/agents/` | Auto-registered as `subagent_type` |
+| **Skill-local** — tightly coupled to one skill with no standalone value | `skills/<skill>/agents/` | Read via Read tool, dispatched via Agent tool |
 
 ### Invocation Pattern
 
