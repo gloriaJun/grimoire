@@ -6,9 +6,25 @@ Covers reuse check, post-completion review, and skill-creator integration.
 ## 1. Pre-Creation: Reuse Check
 
 Before creating a new skill:
+
+### 1a. Overlap Detection
+
 1. Glob existing skills (`skills/**/SKILL.md`) and agents (`agents/*.md`)
 2. Compare the new skill's purpose against existing description fields
-3. If overlap found: present user with extend existing vs create new
+3. If overlap found: present user with **extend existing** vs **create new**
+
+### 1b. Skill Reuse
+
+If an existing skill already handles part of the new requirements:
+
+1. Identify which existing skill(s) cover the overlapping functionality
+2. Present the user with a reuse proposal:
+   - Which skill to reuse and what it covers
+   - What remains to be built new
+   - How the new skill would invoke the existing one (e.g. inline reference from a step file)
+3. Proceed only after user confirmation
+
+Reference: `g-task-process` step-6 invoking `g-insight` is the canonical reuse pattern.
 
 ## 2. Post-Completion: Review
 

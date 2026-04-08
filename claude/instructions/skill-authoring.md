@@ -53,6 +53,59 @@ Every skill must include a mermaid diagram in SKILL.md, placed at the top of the
 - Include all branch/condition paths
 - Mark external tool dependencies as distinct nodes
 
+## Skill-Local Agent Definitions
+
+Skills that dispatch subagents can define agent prompts within their own directory
+instead of registering them globally in `.claude/agents/`.
+
+### Directory Convention
+
+```
+skills/<skill-name>/agents/
+  <agent-name>.md    # agent prompt file
+```
+
+### When to Use
+
+| Scope | Location | Registration |
+|-------|----------|-------------|
+| **Global** — used by multiple skills or invoked independently | `.claude/agents/` | Auto-registered as `subagent_type` |
+| **Skill-local** — used only within one skill | `skills/<skill>/agents/` | Read via Read tool, dispatched via Agent tool |
+
+### Invocation Pattern
+
+Skill-local agents are NOT auto-registered. Invoke them as follows:
+
+1. Read the prompt file: `Read("agents/<agent-name>.md")`
+2. Prepend context data (inputs, discovery results)
+3. Dispatch: `Agent(subagent_type: "Explore", prompt: <combined prompt>)`
+
+Reference implementation: `skills/my-claude-audit/analyzer-prompts/` (predates this convention; new skills should use `agents/`).
+
+### Migration
+
+Existing skills using non-standard folder names (e.g. `analyzer-prompts/`) are not required to rename immediately. New skills must use `agents/`.
+
+## Agent Model Selection
+
+Default model for all agents (global and skill-local) is **sonnet** for cost efficiency.
+
+### Escalation to Opus
+
+Use opus only when the task requires deep reasoning that sonnet cannot reliably handle:
+- Complex architecture design (multi-component trade-off analysis)
+- Cross-cutting concern analysis across large codebases
+- Nuanced judgment calls requiring broader context
+
+**Process**: Propose opus to the user with rationale. Proceed only after user confirmation.
+
+### Specifying Model
+
+| Agent type | How to set |
+|-----------|-----------|
+| Global (`.claude/agents/`) | `model: sonnet` or `model: opus` in YAML frontmatter |
+| Skill-local | `model` parameter in the Agent tool call |
+
 ## Post-Task Workflow
 
 When a skill is created, modified, or deleted, always ask the user whether to:
