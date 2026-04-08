@@ -34,6 +34,65 @@ Extract to `scripts/` when any of:
 - Shell commands composing external CLIs exceed 5 lines
 - Deterministic processing (file parsing, aggregation, transformation)
 
+## Persona Definition
+
+### Skill-Level Persona
+
+When the skill operates in a specialized domain, define a persona at the top of the
+SKILL.md body (after the mermaid diagram, before the first step). A well-chosen persona
+steers the LLM's reasoning toward domain-appropriate decisions.
+
+**Format:**
+```
+You are a [role] specializing in [domain]. You [key trait that shapes behavior].
+```
+
+**Examples:**
+- Test writer skill: `You are a senior QA engineer. You design tests that catch real bugs, not just confirm happy paths.`
+- Architecture skill: `You are a system architect. You translate requirements into designs with clear trade-off analysis.`
+
+| Condition | Persona needed? |
+|-----------|----------------|
+| Domain expertise shapes output quality (security, testing, architecture, a11y) | Yes |
+| Skill is a mechanical workflow (file transform, config sync, cleanup) | No |
+| Skill dispatches agents that each need different expertise | Define per-agent, not skill-level |
+
+**Guidelines:**
+- One sentence is enough — keep it under 30 words
+- Focus on the trait that most affects decision-making, not a job description
+- Do not stack multiple personas ("You are a QA engineer and a security expert and...")
+- If the persona adds no reasoning value, omit it entirely
+
+### Agent-Level Persona
+
+Subagents run in isolated context windows with no inherited state from the parent.
+A clear persona in each agent prompt is more impactful here than at the skill level,
+because the agent has no surrounding context to infer its role from.
+
+**Required structure for agent prompt files:**
+
+```markdown
+# Agent Name
+
+[One-line persona statement]
+
+## Role
+
+[2-3 sentences expanding what this agent does and how it thinks]
+```
+
+**When skill and agent personas should differ:**
+
+| Scenario | Example |
+|----------|---------|
+| Agent performs a different discipline than the skill | Skill: test-writer (QA), Agent: code-analyzer (static analysis) |
+| Agent acts as a counterpart for cross-review | Skill: feature-executor (builder), Agent: code-reviewer (critic) |
+| Agent handles a sub-task requiring distinct expertise | Skill: task-process (orchestrator), Agent: requirements-analyst (BA) |
+
+**When to share the same persona:**
+- Agent is a parallelized instance of the same skill task (e.g., running the same analysis on different inputs)
+- Agent is a grader/evaluator of the skill's own output with no domain shift
+
 ## Mermaid Diagram Required
 
 Every skill must include a mermaid diagram in SKILL.md, placed at the top of the body (before the first step/phase section).
