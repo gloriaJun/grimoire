@@ -39,6 +39,11 @@ isolated sub-tasks), dispatch agents proactively without waiting for user instru
 - Follow the same parallel execution limits (max 3 per wave)
 - Inform the user what agents are being dispatched and why
 
+## Codex Delegation
+
+When delegating work to Codex CLI, follow `@instructions/codex-delegation.md`
+for work sizing, sub-task splitting, and incomplete result handling.
+
 ## Parallel Execution Limit
 
 Each parallel agent runs in a separate context window and is billed independently.

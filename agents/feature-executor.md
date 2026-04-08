@@ -50,14 +50,15 @@ If the user chooses Claude:
 
 ### 2b. Codex Delegation
 
-If the user chooses Codex:
-1. Prepare a clear prompt summarizing:
-   - Feature description and acceptance criteria
-   - Technical approach from TRD
-   - Files to modify
-   - Testing requirements
-2. Execute via: `codex exec "<prompt>" --read <feature-spec-path>`
-3. Review Codex's output for completeness
+Follow `@instructions/codex-delegation.md` for sizing, splitting, and error handling.
+
+1. **Assess work size** — estimate files and lines affected from the feature spec.
+2. **Single call or split** — if within guidelines (~5 files, ~200 lines, single concern),
+   delegate as one `codex exec` call. Otherwise, split into sub-tasks and execute sequentially.
+3. Prepare a prompt with: feature description, acceptance criteria, technical approach from TRD,
+   explicit file paths, and constraints.
+4. Execute via: `codex exec "<prompt>" --read <feature-spec-path>`
+5. Verify result before proceeding. If incomplete, follow the incomplete result handling protocol.
 
 ### 3. Cross-Review
 
