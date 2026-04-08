@@ -59,9 +59,8 @@ When a skill is created, modified, or deleted, always ask the user whether to:
 1. Commit and push the changes
 2. Run `setup.sh` (or equivalent) to sync symlinks to `$HOME`
 
-## skill-creator Integration
+## Skill Review & skill-creator Integration
 
-When using skill-creator to generate a new skill, also apply these rules:
-1. Review whether logic separation fits the orchestrator principle
-2. Add a mermaid diagram if the draft lacks one
-3. Propose `scripts/` extraction for reusable logic
+When creating or modifying a skill, load and follow `@instructions/skill-review.md`
+for reuse check, duplication detection, and Codex review protocol.
+This also includes skill-creator integration rules.
