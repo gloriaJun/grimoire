@@ -27,6 +27,17 @@ to the user with a yes/no choice. Always include the rationale for why opus is r
 |-----------|-----------|
 | Global (`.claude/agents/`) | `model: sonnet` or `model: opus` in YAML frontmatter |
 | Skill-local | `model` parameter in the Agent tool call |
+| Ad-hoc (no agent definition) | Always pass `model: sonnet` in the Agent tool call |
+
+## Autonomous Agent Dispatch
+
+When a task would benefit from agent delegation (parallel research, codebase exploration,
+isolated sub-tasks), dispatch agents proactively without waiting for user instruction.
+
+**Rules:**
+- Always use `model: sonnet` unless opus is justified and approved via the escalation process
+- Follow the same parallel execution limits (max 3 per wave)
+- Inform the user what agents are being dispatched and why
 
 ## Parallel Execution Limit
 
