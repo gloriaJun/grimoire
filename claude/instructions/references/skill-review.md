@@ -63,6 +63,7 @@ Invocation:
 - [ ] All files in English
 - [ ] No duplication with existing skills or agents
 - [ ] No unnecessary token overhead
+- [ ] File sizes within token budget (`@instructions/references/token-budget.md`)
 
 ## 3. skill-creator Integration
 

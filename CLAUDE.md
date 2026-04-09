@@ -12,6 +12,7 @@ There is no build system, no package manager, and no test runner. The repo conta
 
 ```
 claude/          # Custom instruction files (CLAUDE.md, instructions/)
+                 # instructions/references/ for on-demand guidelines
                  # Symlinked to ~/.claude/
 hooks/           # Hook scripts, symlinked to ~/.claude/hooks/
 agents/          # Custom agent definitions, symlinked to ~/.claude/agents/
@@ -56,7 +57,7 @@ description: >
 ### Authoring Convention
 
 For skill authoring rules (orchestrator pattern, mermaid diagrams, script extraction),
-see `claude/instructions/skill-authoring.md`.
+see `claude/instructions/references/skill-authoring.md`.
 
 ### Subagent Pattern (for my-claude-audit)
 

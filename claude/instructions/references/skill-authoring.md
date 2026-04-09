@@ -173,6 +173,6 @@ When a skill is created, modified, or deleted, always ask the user whether to:
 
 ## Skill Review & skill-creator Integration
 
-When creating or modifying a skill, load and follow `@instructions/skill-review.md`
+When creating or modifying a skill, load and follow `@instructions/references/skill-review.md`
 for reuse check, duplication detection, and Codex review protocol.
 This also includes skill-creator integration rules.
