@@ -105,3 +105,43 @@ When more than 3 agents are needed, use wave-based sequential dispatch:
 3. Aggregate: combine results from all waves
 
 Document each wave boundary in mermaid diagrams as a distinct sync node.
+
+## Action Markers
+
+Agent 위임이 포함된 응답에서 사용자가 진행 상황을 쉽게 인지할 수 있도록
+액션 유형별 이모지 마커를 사용한다.
+
+이 이모지는 장식이 아닌 **액션 유형 식별 마커**로서 사용한다.
+일반 대화에서의 이모지 사용 규칙과는 별개이다.
+
+### 적용 조건
+
+Agent tool 호출이 포함된 응답에만 적용한다.
+Agent 위임 없이 직접 응답하는 경우에는 일반 텍스트로 응답한다.
+
+### Agent 블록
+
+Agent 위임 시 markdown heading으로 구분한다:
+
+`## 🤖 Agent: {task name} ({model})`
+
+### 액션 유형 매핑
+
+| Emoji | Label | 용도 |
+|-------|-------|------|
+| 🤖 | Agent | 고수준 태스크/서브태스크 |
+| 🔍 | Search | 파일, 코드, 데이터 검색 |
+| 🧠 | Analysis | 추론, 비교, 해석 |
+| ⚙️ | Tool | 명령 실행 (bash, API 등) |
+| 📄 | Read | 파일/콘텐츠 읽기 |
+| ✍️ | Write | 파일 생성/수정 |
+| ✅ | Result | 최종 출력/결론 |
+| ⚠️ | Warning | 잠재적 이슈/불확실성 |
+| ❌ | Error | 에러/실패 |
+| 💬 | Question | 사용자에게 질문 |
+
+### 포맷 규칙
+
+- Agent 블록: `## 🤖 Agent: {task name} ({model})`
+- 일반 액션: `{emoji} {Label}: {대상/설명}` (Label과 설명이 중복되지 않도록 간결하게)
+- 관련 액션은 가장 가까운 Agent 블록 아래에 그룹핑
