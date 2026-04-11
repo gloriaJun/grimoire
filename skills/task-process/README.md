@@ -7,6 +7,7 @@ Structured task workflow from ideation to completion. Orchestrates specialized a
 - **5 Entry Points** — Start from idea, requirements, external PRD, existing design, or direct implementation
 - **Agent Orchestration** — Dispatches idea-explorer, requirements-analyst, system-architect, feature-executor, and code-reviewer agents across workflow stages
 - **3-Layer Cross Review** — Each document (PRD, TRD, Feature Breakdown) goes through Plannotator visual review, user review, and Codex cross-validation
+- **Deterministic Review Mode** — Step 2/3/4 always asks review mode (Plannotator / text / skip) and auto-falls back to text when `plannotator` command is unavailable
 - **Code Cross Review** — Claude implementations reviewed by Codex; Codex implementations reviewed by Claude's code-reviewer agent
 - **Session Restore** — Persists progress in `_state.json` for resuming interrupted workflows
 - **Lazy Step Loading** — Each step loaded on demand from `steps/` to minimize token usage
@@ -60,8 +61,13 @@ Each document produced (PRD, TRD, Feature Breakdown) goes through a 3-layer revi
 ## Requirements
 
 - Claude Code CLI
-- Plannotator plugin (optional — falls back to inline text review)
+- Plannotator plugin + `plannotator` CLI for visual review mode
 - codex-plugin-cc (optional — falls back to Claude-only workflow)
+
+Check installation:
+```bash
+command -v plannotator
+```
 
 ## License
 

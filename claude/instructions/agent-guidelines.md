@@ -54,10 +54,12 @@ to reduce Claude seat token consumption. Codex uses OpenAI API (separate billing
 - Codebase exploration and pattern search
 - Test code generation
 - Mechanical refactoring (rename, move, boilerplate)
-- Documentation generation
+- Documentation generation (README, changelog — requires codebase access)
+- Design doc cross-review (PRD/TRD Codex validation)
 
 **Claude-only tasks** (keep on Claude agents):
 - Architecture design requiring deep reasoning
+- Initial PRD/TRD authoring (deep reasoning required)
 - Multi-step debugging with nuanced judgment
 - Skill/agent authoring (Claude ecosystem context required)
 - Tasks requiring Claude-specific tool access (MCP, hooks)
@@ -68,11 +70,55 @@ When dispatching 2-3 parallel agents, apply this priority:
 
 | Parallel count | Strategy |
 |---------------|----------|
-| 2 agents | 1 Codex + 1 Claude if one task is Codex-eligible |
-| 3 agents | Maximize Codex-eligible tasks first, remainder on Claude |
+| 2 agents | Codex-eligible 1개 → Codex, 나머지 → Claude/Haiku |
+| 3 agents | Codex-eligible 최대화, Haiku-eligible 차선, 나머지 Claude |
 
 This is a soft guideline — if all tasks require Claude-specific capabilities,
 use Claude agents for all.
+
+## Task-to-Model Mapping
+
+작업 유형별 최적 모델과 fallback 체인을 정의한다.
+
+### Mapping Table
+
+| Task Type | Primary | Fallback | Rationale |
+|-----------|---------|----------|-----------|
+| **Deep reasoning** | | | |
+| PRD/TRD 최초 작성 | Sonnet | - | 요구사항 분석, 아키텍처 트레이드오프 |
+| 복잡한 아키텍처 설계 | Opus | - | 다중 컴포넌트 분석 |
+| 다단계 디버깅 | Sonnet | - | 맥락 유지 필요 |
+| **Code tasks** | | | |
+| Code cross-review | Codex | Sonnet | 독립 컨텍스트 검증 |
+| 코드베이스 탐색/패턴 검색 | Codex | Sonnet (Explore) | 넓은 범위 검색 |
+| 테스트 코드 생성 | Codex | Sonnet | 기계적 생성 |
+| 기계적 리팩토링 | Codex | Sonnet | rename, move, boilerplate |
+| **Document tasks** | | | |
+| 문서 경미한 편집 (오타, 포맷, 절 추가) | Haiku | Sonnet | 빠르고 저렴 |
+| 템플릿 기반 문서 생성 | Haiku | Sonnet | 구조가 정해진 채우기 작업 |
+| 포맷 변환 (마크다운 구조 변경, TOC 생성) | Haiku | Sonnet | 순수 텍스트 변환 |
+| 일반 문서 생성 (README, changelog) | Codex | Haiku | 코드베이스 접근 필요 시 Codex |
+| 설계 문서 cross-review | Codex | Sonnet | 독립 검증, 심층 분석 필요 |
+| **Utility tasks** | | | |
+| 웹 검색/정보 수집 | Haiku | Sonnet (Explore) | 단순 조회, 요약 |
+| 요약/정리 | Haiku | Sonnet | 기존 내용 압축 |
+
+### Fallback Trigger Conditions
+
+| Condition | Action |
+|-----------|--------|
+| Codex unavailable (Bash restricted) | Use fallback column model |
+| Haiku output quality insufficient | Escalate to Sonnet |
+| Sonnet capacity exceeded | Propose Opus (escalation process) |
+
+### Haiku Usage Rules
+
+Haiku는 Agent tool의 `model: haiku`로 호출한다.
+Bash 권한이 불필요하므로 Codex를 사용할 수 없는 환경에서 fallback으로 활용한다.
+
+**적합한 작업**: 구조가 명확하고 심층 추론이 불필요한 작업
+**부적합한 작업**: cross-review, 아키텍처 설계, 복잡한 코드 분석
+**호출 방식**: `Agent tool: model: haiku, subagent_type: general-purpose`
 
 ## Parallel Execution Limit
 

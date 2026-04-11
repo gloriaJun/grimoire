@@ -68,6 +68,25 @@ PRD가 완성되었습니다. 다음 단계(설계)로 진행할까요? (Y/n)
 
 ---
 
+## Fallback Warning (Plannotator unavailable)
+
+Use this when review mode is Plannotator but CLI is unavailable or launch fails.
+
+```
+[WARN] Plannotator CLI가 설치되어 있지 않거나 실행할 수 없어 텍스트 리뷰 모드로 전환이 필요합니다.
+- 현재 모드: Plannotator
+- 전환 모드: Inline text review
+
+텍스트 리뷰로 계속 진행할까요? (Y/n)
+```
+
+**Rules:**
+- Always show the `[WARN]` prefix as a visual indicator
+- Ask confirmation before fallback (default yes)
+- If user says no, stay in the current step and offer retry/skip
+
+---
+
 ## Revision Loop
 
 When the user requests changes after a review.

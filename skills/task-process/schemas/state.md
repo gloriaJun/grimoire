@@ -17,13 +17,31 @@ Task state file that tracks orchestration progress. Stored in the task subdirect
     "features": "string | null — path to features.md",
     "featureSpecs": ["feature-01-auth.md", "feature-02-api.md"]
   },
+  "reviews": {
+    "prd": {
+      "mode": "plannotator | text | skipped | null",
+      "fallbackReason": "plannotator_cli_unavailable | plannotator_launch_failed | null",
+      "approvedAt": "ISO 8601 | null"
+    },
+    "trd": {
+      "mode": "plannotator | text | skipped | null",
+      "fallbackReason": "plannotator_cli_unavailable | plannotator_launch_failed | null",
+      "approvedAt": "ISO 8601 | null"
+    },
+    "features": {
+      "mode": "plannotator | text | skipped | null",
+      "fallbackReason": "plannotator_cli_unavailable | plannotator_launch_failed | null",
+      "approvedAt": "ISO 8601 | null"
+    }
+  },
   "features": [
     {
       "id": "01",
       "name": "string",
       "status": "pending | in-progress | review | done",
       "executor": "claude | codex | null",
-      "reviewer": "claude | codex | null"
+      "reviewer": "claude | codex | null",
+      "frontendReviewer": "claude | null"
     }
   ],
   "history": [
@@ -42,11 +60,13 @@ Task state file that tracks orchestration progress. Stored in the task subdirect
 - Created at Step 0 (Entry Point Selection) with initial values.
 - `currentStep` is set to the entry point step number.
 - `artifacts` fields default to `null`.
+- `reviews.{prd,trd,features}` fields default to `null`.
 
 ### Updates
 - Update `currentStep` BEFORE loading the next step file.
 - Append to `completedSteps` AFTER user confirms step completion.
 - Register artifact paths in `artifacts` as soon as the file is created.
+- Save review mode decisions in `reviews` after each review step.
 - Append to `history` at every state transition.
 
 ### Session Restoration
@@ -68,3 +88,4 @@ Task state file that tracks orchestration progress. Stored in the task subdirect
 - Each feature's `status` is updated during Step 5 (Execution).
 - A feature transitions: `pending` -> `in-progress` -> `review` -> `done`.
 - `executor` and `reviewer` are set when the user chooses at Step 5a.
+- `frontendReviewer` is set when frontend-reviewer runs in parallel with code-reviewer at Step 5b.

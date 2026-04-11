@@ -77,7 +77,15 @@ stateDiagram-v2
     state "Feature Execution" as Execution {
         [*] --> Pick_Feature
         Pick_Feature --> Implement: feature-executor
-        Implement --> Cross_Review: code-reviewer
+        Implement --> Cross_Review
+
+        state "Cross Review" as Cross_Review {
+            [*] --> code_review: code-reviewer
+            [*] --> frontend_review: frontend-reviewer (if applicable)
+            code_review --> [*]
+            frontend_review --> [*]
+        }
+
         Cross_Review --> Resolve
         Resolve --> Pick_Feature: next feature
         Resolve --> [*]: all features done
@@ -113,6 +121,25 @@ Create a task subdirectory: `<work-dir>/YYYY-MM-DD-<repo>-<task-name>/`
 
 ---
 
+## Output Format
+
+에이전트를 위임하는 모든 step에서 `agent-guidelines.md`의 **Action Markers** 규칙을 반드시 따른다.
+Agent tool 호출 시 `## 🤖 Agent:` 헤딩과 액션 유형별 이모지 마커를 적용한다.
+병렬 실행 시에는 각 에이전트 블록에 `— parallel N/M` 접미사를 추가한다.
+
+## Parallel Execution
+
+step 내에서 독립적인 에이전트 작업이 2개 이상일 때 병렬 실행한다.
+`agent-guidelines.md`의 병렬 실행 규칙을 따른다.
+
+### Parallelizable Points
+
+| Step | Condition | Parallel Agents |
+|------|-----------|-----------------|
+| 5b | Frontend 변경 포함 | code-reviewer ∥ frontend-reviewer |
+
+---
+
 ## Step Router
 
 Read ONLY the step file for the current step. Never preload other steps.
@@ -140,6 +167,7 @@ See `schemas/state.md` for the full schema and update rules.
 Key rules:
 - Update `currentStep` BEFORE loading the next step file.
 - Register artifact paths as soon as files are created.
+- Record review mode/fallback/approval timestamps under `reviews`.
 - Append to `history` at every state transition.
 
 ---
@@ -161,8 +189,24 @@ Key rules:
 
 | Tool | Purpose | Fallback when unavailable |
 |------|---------|--------------------------|
-| Plannotator plugin | Visual review of documents/plans | Present as text, user reviews inline |
+| Plannotator plugin + CLI (`plannotator`) | Visual review of documents/plans | Auto-fallback to text review, then continue |
 | codex-plugin-cc | Cross-review, implementation delegation | Claude-only review/implementation |
 | Codex CLI (`codex exec`) | Non-interactive task delegation | Claude agent handles directly |
 
 Never stop the workflow because a tool is missing. Fall back gracefully.
+
+---
+
+## Review Mode Policy (Step 2/3/4)
+
+For PRD/TRD/Feature breakdown reviews, always require mode selection:
+1. Plannotator visual review (default)
+2. Inline text review
+3. Skip review
+
+When mode 1 is selected:
+- Check `plannotator` command availability first.
+- If unavailable or launch fails, show a visible warning message and ask:
+  `Continue with inline text review? (Y/n)`
+- Only switch to mode 2 when the user confirms (default yes).
+- Persist the final review mode and fallback reason in `_state.json.reviews`.

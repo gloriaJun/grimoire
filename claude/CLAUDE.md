@@ -15,3 +15,5 @@
 - Session start: check `../_claude/work-plan/` for active plan matching current repo. If found, load `@instructions/references/work-plan.md` and resume.
 - When creating or modifying definition files, load `@instructions/references/token-budget.md`
 - When creating or modifying skills, load `@instructions/references/skill-authoring.md`
+
+@RTK.md

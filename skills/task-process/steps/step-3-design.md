@@ -28,12 +28,26 @@ If skipping:
 
 ## Review (3-layer)
 
-1. **Plannotator**: Open TRD in Plannotator for visual review.
-2. **User approval**: Wait for approval or changes.
+1. **Review mode selection (required)**: Ask the user to choose one mode.
+   - 1) Plannotator visual review (default)
+   - 2) Inline text review
+   - 3) Skip review
+2. **Plannotator attempt (when mode=1)**:
+   - Check `plannotator` command availability first.
+   - If available, run Plannotator review on the TRD.
+   - If unavailable or launch fails, show a visible warning and ask confirmation:
+     - `[WARN] Plannotator CLI is unavailable. Switching to inline text review.`
+     - `Continue with inline text review? (Y/n)`
+   - If user says no: stay in this step and let the user choose retry/skip.
+   - If user says yes (or default): fall back to inline text review.
+3. **User approval**: Wait for approval or changes.
    - If revision requested: re-invoke agent, do NOT advance step.
-3. **Codex cross-review**: Request Codex review of TRD.
+4. **Codex cross-review**: Request Codex review of TRD.
    - Focus: technical feasibility, missing edge cases, security concerns.
-4. Present Codex review results -> user decides whether to incorporate.
+   - If Codex is not available (Bash restricted or CLI missing):
+     - Invoke `code-reviewer` agent (model: sonnet) for cross-review instead.
+     - Note the fallback in `_state.json` history.
+5. Present review results -> user decides whether to incorporate.
 
 ## State Update
 
@@ -41,6 +55,10 @@ After user confirms:
 1. Set `currentStep` to `4`
 2. Append `3` to `completedSteps`
 3. Verify `artifacts.trd` is set (or `"skipped"`)
-4. Log to `history`
+4. Record review metadata in `_state.json.reviews.trd`:
+   - `mode`: `plannotator | text | skipped`
+   - `fallbackReason`: `plannotator_cli_unavailable | plannotator_launch_failed | null`
+   - `approvedAt`: ISO 8601
+5. Log to `history`
 
 **Confirm with user before proceeding to Step 4.**

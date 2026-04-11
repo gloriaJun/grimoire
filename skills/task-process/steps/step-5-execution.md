@@ -8,7 +8,7 @@ Execute features one at a time, in order.
 
 1. State which feature is being worked on.
 2. Read the feature spec from `artifacts.featureSpecs[index]`.
-3. Invoke the `feature-executor` agent with:
+3. Invoke the `feature-executor` agent (model: sonnet) with:
    - The feature spec content
    - PRD and TRD paths for context
 4. The feature-executor asks the user to choose implementation agent (default: Codex). See agent prompt for numbered choice format.
@@ -26,8 +26,17 @@ After implementation, update `features[i].status` to `"review"`:
 
 Set `features[i].reviewer` accordingly.
 
-If the feature involves frontend changes:
-- Additionally invoke `frontend-reviewer` agent.
+### Parallel Review (when frontend changes exist)
+
+If the feature involves frontend changes, invoke both reviewers **in parallel**:
+
+1. Dispatch `code-reviewer` and `frontend-reviewer` simultaneously (single message, 2 Agent tool calls).
+2. Apply action markers per `agent-guidelines.md` (parallel dispatch format).
+3. Wait for both to complete, then aggregate findings.
+
+### Sequential Review (no frontend changes)
+
+If no frontend changes, invoke only `code-reviewer`.
 
 ### 5c. Review Resolution
 
