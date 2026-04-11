@@ -2,24 +2,45 @@
 
 Common rules for all agent dispatches — applies to skills and general conversations alike.
 
-## Model Selection
+## Model Hierarchy
 
-Default model for all agents (global and skill-local) is **sonnet** for cost efficiency.
+4-tier 모델 계층으로 역할을 분리한다.
 
-### Escalation to Opus
+| Tier | Model | Role | 원칙 |
+|------|-------|------|------|
+| 1 | Opus | Strategic Advisor | 판단/방향만 제시, 실행 금지 |
+| 2 | Sonnet | Main Orchestrator + Executor | 조율, 라우팅, 실제 작업 수행 |
+| 3 | Haiku | Lightweight Worker | 문서 편집, 요약, 포맷 변환 |
+| 3 | Codex | Code-centric Worker | 리뷰, 탐색, 테스트, 리팩토링 |
 
-When a task requires deep reasoning that sonnet cannot reliably handle, propose opus
-to the user with a yes/no choice. Always include the rationale for why opus is recommended.
+Fallback 체인: Codex → Sonnet, Haiku → Sonnet, Opus declined → Sonnet
 
-**Criteria for opus recommendation:**
-- Complex architecture design (multi-component trade-off analysis)
-- Cross-cutting concern analysis across large codebases
-- Nuanced judgment calls requiring broader context
+### Sonnet as Default
 
-**Process:**
-1. Explain why opus is recommended for this specific task (concrete rationale, not generic)
-2. Ask the user with a clear yes/no choice
-3. If declined, proceed with sonnet
+모든 에이전트의 기본 모델은 **sonnet**이다.
+CLI 메인 세션도 Sonnet을 권장한다.
+
+### Opus Advisor Pattern
+
+Opus는 **direction만 제공하는 advisor**이다. 문서 작성, 코드 작성, 리뷰 등 실행은 절대 하지 않는다.
+
+**호출 조건** (모두 충족 시에만):
+- 3+ 컴포넌트가 얽힌 아키텍처 결정
+- Sonnet이 최소 2개 선택지를 이미 분석 완료
+- 선택지 간 trade-off가 명확히 상충
+- 결정이 장기적 아키텍처 영향을 미침
+
+**프로세스:**
+1. Sonnet이 먼저 선택지를 분석하고, 판단이 어려운 구체적 이유를 설명
+2. 사용자에게 Opus advisor 호출 승인 요청 (Y/n)
+   - "Opus가 방향만 제시, Sonnet이 실행합니다"
+3. 승인 시: Opus에게 Direction Brief만 요청 (상세 형식은 `references/opus-advisor-pattern.md`)
+4. 거절 시: Sonnet이 자체 판단으로 진행
+
+**Opus가 절대 하지 않는 것:**
+- TRD/PRD 문서 작성
+- 코드 작성 또는 리뷰
+- 긴 분석 보고서 생성
 
 ### Specifying Model
 
@@ -35,7 +56,7 @@ When a task would benefit from agent delegation (parallel research, codebase exp
 isolated sub-tasks), dispatch agents proactively without waiting for user instruction.
 
 **Rules:**
-- Always use `model: sonnet` unless opus is justified and approved via the escalation process
+- Always use `model: sonnet` unless opus advisor is justified and approved
 - Follow the same parallel execution limits (max 3 per wave)
 - Inform the user what agents are being dispatched and why
 
@@ -85,20 +106,20 @@ use Claude agents for all.
 | Task Type | Primary | Fallback | Rationale |
 |-----------|---------|----------|-----------|
 | **Deep reasoning** | | | |
-| PRD/TRD 최초 작성 | Sonnet | - | 요구사항 분석, 아키텍처 트레이드오프 |
-| 복잡한 아키텍처 설계 | Opus | - | 다중 컴포넌트 분석 |
+| 아키텍처 방향 판단 | Opus (advisor) | Sonnet | 방향만 제시, 실행은 Sonnet |
+| PRD/TRD 작성 | Sonnet | - | Opus direction 반영하여 Sonnet이 작성 |
 | 다단계 디버깅 | Sonnet | - | 맥락 유지 필요 |
 | **Code tasks** | | | |
-| Code cross-review | Codex | Sonnet | 독립 컨텍스트 검증 |
-| 코드베이스 탐색/패턴 검색 | Codex | Sonnet (Explore) | 넓은 범위 검색 |
-| 테스트 코드 생성 | Codex | Sonnet | 기계적 생성 |
-| 기계적 리팩토링 | Codex | Sonnet | rename, move, boilerplate |
+| Code cross-review | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
+| 코드베이스 탐색/패턴 검색 | Codex | Sonnet (Explore) | Codex 불가 시 Sonnet fallback |
+| 테스트 코드 생성 | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
+| 기계적 리팩토링 | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
 | **Document tasks** | | | |
 | 문서 경미한 편집 (오타, 포맷, 절 추가) | Haiku | Sonnet | 빠르고 저렴 |
 | 템플릿 기반 문서 생성 | Haiku | Sonnet | 구조가 정해진 채우기 작업 |
 | 포맷 변환 (마크다운 구조 변경, TOC 생성) | Haiku | Sonnet | 순수 텍스트 변환 |
-| 일반 문서 생성 (README, changelog) | Codex | Haiku | 코드베이스 접근 필요 시 Codex |
-| 설계 문서 cross-review | Codex | Sonnet | 독립 검증, 심층 분석 필요 |
+| 일반 문서 생성 (README, changelog) | Codex | Haiku → Sonnet | 2단 fallback |
+| 설계 문서 cross-review | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
 | **Utility tasks** | | | |
 | 웹 검색/정보 수집 | Haiku | Sonnet (Explore) | 단순 조회, 요약 |
 | 요약/정리 | Haiku | Sonnet | 기존 내용 압축 |
@@ -107,9 +128,10 @@ use Claude agents for all.
 
 | Condition | Action |
 |-----------|--------|
-| Codex unavailable (Bash restricted) | Use fallback column model |
-| Haiku output quality insufficient | Escalate to Sonnet |
-| Sonnet capacity exceeded | Propose Opus (escalation process) |
+| Codex unavailable (CLI 미설치, Bash 제한, 토큰 소진) | Sonnet으로 fallback |
+| Haiku output quality insufficient | Sonnet으로 escalate |
+| Opus advisor declined by user | Sonnet이 자체 판단으로 진행 |
+| Codex 응답 품질 불충분 | 1회 재시도 후 Sonnet으로 전환 |
 
 ### Haiku Usage Rules
 
