@@ -29,3 +29,7 @@ Format: `<type>: <subject>`
 - Co-Authored-By line is optional — include only when user requests
 - Always create new commits, never amend unless explicitly asked
 - Stage specific files, avoid `git add -A`
+
+## GitHub CLI
+
+GitHub 관련 작업에는 `gh` CLI를 사용한다.

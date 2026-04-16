@@ -10,3 +10,6 @@ hooks/*.sha256
 # Secret-containing files (if accidentally copied)
 claude/settings.json
 codex/config.toml
+
+# Codex auto-saved session rules (may contain internal URLs)
+codex/rules/default.rules

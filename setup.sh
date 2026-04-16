@@ -266,14 +266,9 @@ else
 fi
 
 # --- 6. Codex CLI: rules ---
-echo ""
-echo "--- Codex CLI: rules ---"
-if [ -d "$CODEX_HOME" ]; then
-    mkdir -p "$CODEX_HOME/rules" 2>/dev/null || true
-    safe_link "$HARNESS_DIR/codex/rules/default.rules" "$CODEX_HOME/rules/default.rules"
-else
-    skip "Codex home not found ($CODEX_HOME)"
-fi
+# default.rules is NOT managed by harness — Codex writes session-approved
+# commands there automatically. Managing it via symlink would commit internal
+# URLs to the repo. Each machine maintains its own ~/.codex/rules/default.rules.
 
 # --- 7. Codex CLI: generate AGENTS.md ---
 echo ""
