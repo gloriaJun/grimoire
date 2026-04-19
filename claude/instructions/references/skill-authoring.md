@@ -210,6 +210,15 @@ Existing skills using non-standard folder names (e.g. `analyzer-prompts/`) are n
 For model selection and parallel execution limits, see `@instructions/agent-guidelines.md`.
 These rules apply to both skill-local and global agents.
 
+## Pre-Authoring Checks
+
+Before creating or modifying any skill or instruction file:
+
+| Check | Question | Action if yes |
+|-------|----------|---------------|
+| CLAUDE.md On-Demand fit | Is this instruction only needed in specific situations (not always)? | Use On-Demand References pattern — add a trigger line, put content in `references/` |
+| Placeholder intent | Is the target a placeholder or stub? | Confirm the intended behavior with the user before designing |
+
 ## Runtime Behavior Checklist
 
 When designing a skill, review these items to ensure the skill leverages the full

@@ -6,6 +6,7 @@
 - Provide rationale and explanation for every proposed change
 - Review first, then proceed — no autonomous code modifications
 - When requirements are ambiguous or confirmation is needed, ask the user — never assume
+- Before rolling back or removing a decision, verify and state the reason explicitly — if uncertain, ask first
 
 ## Recommended Model
 - Default CLI model: **Sonnet** (cost-efficient orchestrator)
