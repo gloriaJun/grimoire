@@ -15,8 +15,8 @@ description: >
 
 ```
 vault:           ~/Documents/obsidian-vault/
-company plans:   ~/Documents/obsidian-vault/10_Active/_work-plans/company/
-personal plans:  ~/Documents/obsidian-vault/10_Active/_work-plans/personal/
+company plans:   ~/Documents/obsidian-vault/03_Plans/company/
+personal plans:  ~/Documents/obsidian-vault/03_Plans/personal/
 archive:         ~/Documents/obsidian-vault/30_Archive/
 ```
 
@@ -178,14 +178,14 @@ work-plan 폴더 자체도 비워진 후 삭제한다.
 
 Check whether the g-retro skill is installed:
 
-1. Glob `~/.claude/skills/retro/SKILL.md`
+1. Glob `~/.claude/skills/vault-retro/SKILL.md`
 2. **Not found** → skip silently, close is complete
 3. **Found** → ask the user:
    ```
    Write a session retro? (y/n)
    ```
    - `n` → skip
-   - `y` → invoke the `g-retro` skill, passing the selected work-plan folder path as context
+   - `y` → invoke the `vault-retro` skill, passing the selected work-plan folder path as context
 
 ---
 
