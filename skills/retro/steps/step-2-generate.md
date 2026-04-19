@@ -9,9 +9,11 @@ Draft the retrospective note using the context collected in Step 1.
 status: inbox
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+title: Session Retro — YYYY-MM-DD
 tags:
   - retro
   - <project>
+summary: <one-line summary of the session>
 ---
 
 # Session Retro — YYYY-MM-DD
@@ -32,10 +34,11 @@ tags:
 - [ ] <task 1>
 - [ ] <task 2>
 
-## Context
-- **Project**: <repo name or topic>
-- **Work plan**: [[<work-plan-slug>]] *(omit if standalone)*
+## References
+- Work plan: [[<work-plan-slug>]]
 ```
+
+> Note: Include `## References` only when a work-plan folder exists. Omit entirely for standalone sessions.
 
 ## Writing Rules
 
