@@ -77,7 +77,8 @@ stateDiagram-v2
     state "Feature Execution" as Execution {
         [*] --> Pick_Feature
         Pick_Feature --> Implement: feature-executor
-        Implement --> Cross_Review
+        Implement --> Simplify: simplify skill
+        Simplify --> Cross_Review
 
         state "Cross Review" as Cross_Review {
             [*] --> code_review: code-reviewer

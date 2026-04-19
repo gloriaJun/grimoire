@@ -26,5 +26,6 @@
 - When creating or modifying definition files, load `@instructions/references/token-budget.md`
 - When creating or modifying skills, load `@instructions/references/skill-authoring.md`
 - When invoking Opus as advisor, load `@instructions/references/opus-advisor-pattern.md`
+- When user requests a review of their own written code → load `@instructions/references/code-review.md`
 
 @RTK.md

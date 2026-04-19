@@ -15,6 +15,14 @@ Execute features one at a time, in order.
 5. Update `features[i].status` to `"in-progress"` and set `executor`.
 6. Implementation proceeds based on user choice.
 
+### 5a-2. Simplify (Pre-Review)
+
+Before cross-review, clean up the implementation:
+
+1. Invoke the `simplify` skill on the changed files.
+2. Wait for simplify to complete — code may be modified.
+3. Proceed to 5b with the simplified code.
+
 ### 5b. Cross-Review
 
 After implementation, update `features[i].status` to `"review"`:
