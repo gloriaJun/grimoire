@@ -24,10 +24,20 @@
       "WebSearch",
       "WebFetch(*)",
       "Read(/Users/al03155147/.claude/skills/**)",
+      "Read(/Users/al03155147/.claude/instructions/**)",
+      "Read(/Users/al03155147/.claude/plugins/**)",
+      "Read(/Users/al03155147/Documents/GitHubPrivate/harness/**)",
+      "Read(/Users/al03155147/Documents/GitHubWork/my-claude-skills/**)",
+      "Read(/Users/al03155147/Documents/obsidian-vault/.claude/**)",
       "Read(/Users/al03155147/Documents/obsidian-vault/02_Inbox/**)",
       "Read(/Users/al03155147/Documents/obsidian-vault/10_knowledge/**)",
       "Read(/Users/al03155147/Documents/obsidian-vault/20_archive/**)",
-      "Read(/Users/al03155147/Documents/obsidian-vault/90_system/**)"
+      "Read(/Users/al03155147/Documents/obsidian-vault/90_system/**)",
+      "Bash(curl -s http://localhost:*)",
+      "Bash(/usr/bin/git status *)",
+      "Bash(/usr/bin/git ls-files *)",
+      "Bash(/usr/bin/git show *)",
+      "mcp__mcp-jira__jira_get_issue"
     ],
     "deny": [
       "Bash(rm -rf *)",
@@ -69,6 +79,27 @@
           {
             "type": "command",
             "command": "echo 'STOP: Before committing, you MUST run the pre-commit-check skill to review all staged changes. If you have already completed the pre-commit-check review for these changes, you may proceed.'"
+          }
+        ]
+      },
+      {
+        "matcher": "EnterPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "plannotator improve-context"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "plannotator",
+            "timeout": 345600
           }
         ]
       }
