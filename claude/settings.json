@@ -84,25 +84,6 @@
             "command": "echo 'STOP: Before committing, you MUST run the pre-commit-check skill to review all staged changes. If you have already completed the pre-commit-check review for these changes, you may proceed.'"
           }
         ]
-      },
-      {
-        "matcher": "EnterPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "plannotator improve-context"
-          }
-        ]
-      },
-      {
-        "matcher": "ExitPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "plannotator",
-            "timeout": 300
-          }
-        ]
       }
     ]
   },
