@@ -90,9 +90,7 @@
             "command": "plannotator improve-context"
           }
         ]
-      }
-    ],
-    "PermissionRequest": [
+      },
       {
         "matcher": "ExitPlanMode",
         "hooks": [
