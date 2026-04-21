@@ -17,7 +17,10 @@
       "Bash(pnpm exec:*)",
       "Bash(brew install:*)",
       "Bash(brew upgrade:*)",
-      "Bash(rtk *)",
+      "Bash(rtk gain)",
+      "Bash(rtk gain --history)",
+      "Bash(rtk discover)",
+      "Bash(rtk proxy *)",
       "Bash(* --version)",
       "Bash(* --help *)",
       "mcp__chrome-devtools",
@@ -57,7 +60,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "codex login --with-api-key <<< \"$OPENAI_CODEX_API_KEY\" 2>/dev/null || true",
+            "command": "[[ -n \"$OPENAI_CODEX_API_KEY\" ]] && codex login --with-api-key <<< \"$OPENAI_CODEX_API_KEY\" 2>/dev/null || true",
             "async": true
           }
         ]
@@ -97,7 +100,7 @@
           {
             "type": "command",
             "command": "plannotator",
-            "timeout": 345600
+            "timeout": 300
           }
         ]
       }
@@ -110,8 +113,7 @@
   "enabledPlugins": {
     "plannotator@plannotator": true,
     "codex@openai-codex": true,
-    "visualize@careerhackeralex": true,
-    "pr-workflow@my-work-skills": false
+    "visualize@careerhackeralex": true
   },
   "extraKnownMarketplaces": {
     "plannotator": {

@@ -60,6 +60,36 @@ isolated sub-tasks), dispatch agents proactively without waiting for user instru
 - Follow the same parallel execution limits (max 3 per wave)
 - Inform the user what agents are being dispatched and why
 
+### Parallel Dispatch Checklist
+
+독립적인 서브태스크가 2개 이상이면 병렬 dispatch를 **기본**으로 고려한다.
+아래 3가지 모두 Yes이면 단일 메시지에 Agent tool call을 묶어서 dispatch한다:
+
+- [ ] 두 에이전트가 서로의 출력에 의존하지 않는가?
+- [ ] 각 에이전트가 독립된 컨텍스트로 실행 가능한가?
+- [ ] 동시 실행이 3개를 초과하지 않는가?
+
+### Common Parallel Patterns
+
+**탐색 + 탐색 (상호 독립)**
+```
+# 같은 메시지에 두 Agent tool call
+Agent(explore frontend) + Agent(explore backend) → 결과 합산
+```
+적용처: 코드베이스 구조 파악, PR 리뷰 전 컨텍스트 수집, 기능 탐색
+
+**분석 + 분석 (다른 파일/컴포넌트)**
+```
+Agent(analyze component A) + Agent(analyze component B) → 비교
+```
+적용처: 레이어 간 영향 분석, 두 모듈의 패턴 비교
+
+**Codex + Claude (독립 작업)**
+```
+Agent(codex: review/explore) + Agent(claude: design/write)
+```
+적용처: 구현과 리뷰를 분리할 수 있는 모든 작업
+
 ## Codex Delegation
 
 When delegating work to Codex CLI, follow `@instructions/codex-delegation.md`
@@ -99,48 +129,8 @@ use Claude agents for all.
 
 ## Task-to-Model Mapping
 
-작업 유형별 최적 모델과 fallback 체인을 정의한다.
-
-### Mapping Table
-
-| Task Type | Primary | Fallback | Rationale |
-|-----------|---------|----------|-----------|
-| **Deep reasoning** | | | |
-| 아키텍처 방향 판단 | Opus (advisor) | Sonnet | 방향만 제시, 실행은 Sonnet |
-| PRD/TRD 작성 | Sonnet | - | Opus direction 반영하여 Sonnet이 작성 |
-| 다단계 디버깅 | Sonnet | - | 맥락 유지 필요 |
-| **Code tasks** | | | |
-| Code cross-review | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
-| 코드베이스 탐색/패턴 검색 | Codex | Sonnet (Explore) | Codex 불가 시 Sonnet fallback |
-| 테스트 코드 생성 | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
-| 기계적 리팩토링 | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
-| **Document tasks** | | | |
-| 문서 경미한 편집 (오타, 포맷, 절 추가) | Haiku | Sonnet | 빠르고 저렴 |
-| 템플릿 기반 문서 생성 | Haiku | Sonnet | 구조가 정해진 채우기 작업 |
-| 포맷 변환 (마크다운 구조 변경, TOC 생성) | Haiku | Sonnet | 순수 텍스트 변환 |
-| 일반 문서 생성 (README, changelog) | Codex | Haiku → Sonnet | 2단 fallback |
-| 설계 문서 cross-review | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
-| **Utility tasks** | | | |
-| 웹 검색/정보 수집 | Haiku | Sonnet (Explore) | 단순 조회, 요약 |
-| 요약/정리 | Haiku | Sonnet | 기존 내용 압축 |
-
-### Fallback Trigger Conditions
-
-| Condition | Action |
-|-----------|--------|
-| Codex unavailable (CLI 미설치, Bash 제한, 토큰 소진) | Sonnet으로 fallback |
-| Haiku output quality insufficient | Sonnet으로 escalate |
-| Opus advisor declined by user | Sonnet이 자체 판단으로 진행 |
-| Codex 응답 품질 불충분 | 1회 재시도 후 Sonnet으로 전환 |
-
-### Haiku Usage Rules
-
-Haiku는 Agent tool의 `model: haiku`로 호출한다.
-Bash 권한이 불필요하므로 Codex를 사용할 수 없는 환경에서 fallback으로 활용한다.
-
-**적합한 작업**: 구조가 명확하고 심층 추론이 불필요한 작업
-**부적합한 작업**: cross-review, 아키텍처 설계, 복잡한 코드 분석
-**호출 방식**: `Agent tool: model: haiku, subagent_type: general-purpose`
+작업 유형별 모델 선택 기준은 on-demand 참조.
+상세 매핑 테이블, fallback 체인, Haiku 사용 규칙 → `references/agent-task-mapping.md`
 
 ## Parallel Execution Limit
 
