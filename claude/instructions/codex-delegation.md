@@ -1,6 +1,6 @@
 # Codex Delegation Guidelines
 
-Common rules for delegating work to Codex CLI (`codex task`).
+Common rules for delegating work to Codex CLI (`codex exec`).
 Applies to all contexts: task-process features, ad-hoc tasks, skill-internal delegation.
 
 ## Reasoning Effort Policy
@@ -13,7 +13,7 @@ Agent 위임 시 기본값은 `--effort low`.
 
 ## Work Sizing
 
-A single `codex task --effort low` call should be scoped to a **focused, completable unit**.
+A single `codex exec -c model_reasoning_effort="low"` call should be scoped to a **focused, completable unit**.
 
 | Metric | Guideline | Rationale |
 |--------|-----------|-----------|
@@ -26,7 +26,7 @@ is simpler than a 100-line algorithm change.
 
 ## Pre-Delegation Assessment
 
-Before calling `codex task --effort low`, estimate the work size:
+Before calling `codex exec -c model_reasoning_effort="low"`, estimate the work size:
 
 1. **List affected files** from the spec or feature description.
 2. **Estimate change volume** — rough line count per file.
@@ -34,7 +34,7 @@ Before calling `codex task --effort low`, estimate the work size:
 
 | Assessment result | Action |
 |-------------------|--------|
-| Within guidelines | Delegate as a single `codex task --effort low` call |
+| Within guidelines | Delegate as a single `codex exec -c model_reasoning_effort="low"` call |
 | Exceeds guidelines but mechanical | Acceptable as single call — note the exception |
 | Exceeds guidelines and complex | Split into sub-tasks before delegating |
 
@@ -51,8 +51,8 @@ When a unit of work exceeds Codex's effective scope, split it before delegating.
 ### Execution Pattern
 
 ```
-Sub-task 1: codex task --effort low "<prompt-1>" → verify result
-Sub-task 2: codex task --effort low "<prompt-2>" → verify result
+Sub-task 1: codex exec -c model_reasoning_effort="low" "<prompt-1>" → verify result
+Sub-task 2: codex exec -c model_reasoning_effort="low" "<prompt-2>" → verify result
 ...
 ```
 

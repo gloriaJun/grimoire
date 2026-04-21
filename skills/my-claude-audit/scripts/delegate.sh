@@ -39,7 +39,7 @@ invoke_tool() {
             fi
             ;;
         codex)
-            timeout "$t" codex task --effort low "$(cat "$file")" 2>/dev/null
+            timeout "$t" codex exec -c 'model_reasoning_effort="low"' "$(cat "$file")" 2>/dev/null
             ;;
         *)
             local result
