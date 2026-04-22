@@ -23,7 +23,7 @@
       "Bash(rtk *)",
       "Bash(plannotator:*)",
       "plannotator:*",
-      "codex:*",
+      "Codex:*",
       "Bash(grep -E:*)",
       "Bash(curl -s http://localhost:*)",
       "Bash(* --version)",
