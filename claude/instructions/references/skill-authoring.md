@@ -21,6 +21,48 @@ SKILL.md is a thin orchestrator — it routes to sub-files, not implements logic
 - Delegate detailed logic to `steps/`, `scripts/`, `references/`
 - Reference model: `skills/task-process/SKILL.md`
 
+## Sub-Command Skills
+
+When a skill routes to multiple sub-skills via a first argument (sub-command pattern),
+always include a built-in `help` sub-command.
+
+### Rules
+
+1. **`description` field** — include `help` in the sub-command list
+
+   ```yaml
+   description: >
+     /skill-name <sub-command> — description.
+     Sub-commands: foo, bar, help.
+   ```
+
+2. **Routing flowchart** — add an explicit `help` branch alongside `none/unknown`
+
+   ```
+   B -- help --> G["Print help table"]
+   B -- none/unknown --> G
+   ```
+
+3. **Sub-Commands table** — add a `help` row
+
+   | Sub-command | Args | File | Description |
+   |-------------|------|------|-------------|
+   | `help` | — | (built-in) | Print this sub-command table |
+
+4. **Execution rule** — explicitly name `help` in the fallback condition
+
+   > If sub-command is `help`, no sub-command, or unrecognized: print the Sub-Commands table and stop
+
+### Why
+
+- Users can discover available sub-commands without reading source files
+- `help` appears in the system prompt `description`, making it visible before invocation
+- Routing is explicit — `help` is intentional, not a side effect of the unknown branch
+
+Reference implementation: `skills/obsidian/SKILL.md`
+
+---
+
 ## README.md = Human Documentation
 
 Every skill must include a `README.md` alongside `SKILL.md`. While SKILL.md is LLM-facing
