@@ -11,12 +11,14 @@ When all features are done.
 3. If documents were saved in the task subdirectory (temporary):
    - Ask (follow Single Choice pattern):
      ```
-     임시 저장된 파일을 어떻게 처리할까요?
-     1. 삭제
-     2. 유지
-     3. 다른 위치로 이동
+     Temporary files found in the task subdirectory.
 
-     > 번호 입력 또는 자유 응답
+     What to do with them?
+     1. Delete
+     2. Keep
+     3. Move to another location
+
+     > Enter number or free text
      ```
    - Delete only after explicit confirmation.
 4. Present summary:

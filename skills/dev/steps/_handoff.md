@@ -17,7 +17,7 @@ Update `_state.json` in the task directory:
 
 - Read `<devlogs-root>/_index.md`
 - Find the row matching the current task directory name
-- Update "현재 단계" column to `Step N (<next-step-name>)`
+- Update the "current step" column to `Step N (<next-step-name>)`
 - Update frontmatter `updated:` to today's date
 - If the row is not found (task created before this change): append a new row as fallback
 

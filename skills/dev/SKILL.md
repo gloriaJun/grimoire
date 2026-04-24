@@ -85,12 +85,12 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `review` | `Read("tools/review/SKILL.md")` |
 | `retro` | `Read("tools/retro/SKILL.md")` |
 | `wiki` | `Read("tools/wiki/SKILL.md")` |
-| `status` | `steps/status.md` | devlogs 루트 스캔 → 태스크 상태 요약 출력 |
-| `help` | inline | 사용 가능한 서브커맨드 목록과 용도 출력 |
+| `status` | `steps/status.md` | scan devlogs root → print task status summary |
+| `help` | inline | print available sub-commands |
 
-### help 출력 형식
+### help Output Format
 
-`/dev help` 호출 시 다음을 직접 출력한다 (별도 파일 로드 없음):
+When `/dev help` is invoked, print the following directly (no file load):
 
 ```
 /dev — Development workflow commands
