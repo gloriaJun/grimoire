@@ -15,8 +15,8 @@ description: >
 
 ```
 vault:           ~/Documents/obsidian-vault/
-company plans:   ~/Documents/obsidian-vault/03_Plans/company/
-personal plans:  ~/Documents/obsidian-vault/03_Plans/personal/
+work plans:      ~/Documents/obsidian-vault/03_Logs/work/
+life plans:      ~/Documents/obsidian-vault/03_Logs/life/
 archive:         ~/Documents/obsidian-vault/30_Archive/
 ```
 
