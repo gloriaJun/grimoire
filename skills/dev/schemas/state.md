@@ -8,7 +8,7 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
 ```json
 {
   "taskName": "string — kebab-case task identifier",
-  "currentStep": "number — 0-6, the step to resume from",
+  "currentStep": "number — 0-8, the step to resume from (6=complete, 7=retro, 8=wiki)",
   "entryPoint": "idea | plan | design | build | direct",
   "completedSteps": [0, 1],
   "artifacts": {
@@ -89,6 +89,13 @@ Task directory: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
 - Paths are **relative to the task subdirectory** unless prefixed with `/`
 - Exception: PRD/TRD stored in project `docs/` use absolute paths
 - The orchestrator resolves paths from this registry — never from hardcoded filenames
+
+### History Step Field
+
+- `step` must be the **router step number** (0–8) at the time the action occurred
+- Step mapping: 0=entry, 1=idea, 2=plan, 3=design, 4=breakdown, 5=build, 6=complete, 7=retro, 8=wiki
+- Do NOT use session sequence numbers or arbitrary values
+- Example: all features built during step 5 (build) should record `"step": 5`
 
 ### Feature Tracking
 - `features` array populated at breakdown step

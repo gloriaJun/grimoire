@@ -10,7 +10,8 @@ Before showing the entry menu, check for an existing task:
    - Neither → ask the user which workspace to use
 
 2. Scan for directories containing `_state.json` under the devlogs path.
-   - Filter for entries where `currentStep < 6` (incomplete tasks)
+   - Filter for entries where `currentStep` is NOT in `completedSteps` (step pending = active)
+   - Step mapping: 6=complete, 7=retro, 8=wiki — tasks at any of these steps are still active
    - Prioritize entries whose `taskName` matches the current repo name
 
 3. If incomplete tasks found:
