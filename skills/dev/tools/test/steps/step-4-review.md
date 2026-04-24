@@ -58,20 +58,20 @@ Before declaring completion, verify:
 ### 4e. Completion Summary
 
 ```
-테스트 작성이 완료되었습니다:
+Tests complete:
 
-파일: <test file path>
-프레임워크: <framework>
-접근 방식: <TDD / Storybook TDD / Test-After>
+File: <test file path>
+Framework: <framework>
+Approach: <TDD / Storybook TDD / Test-After>
 
-결과:
-- 정상 케이스: X개 ✅
-- 엣지 케이스: X개 ✅
-- 에러 처리: X개 ✅
-- 경계값: X개 ✅
-- 합계: N개 테스트 (통과: X, 실패: X, 스킵: X)
+Results:
+- Normal cases: X ✅
+- Edge cases: X ✅
+- Error handling: X ✅
+- Boundary values: X ✅
+- Total: N tests (passed: X, failed: X, skipped: X)
 
-<TDD인 경우>
-다음 단계: 테스트를 통과시키는 최소 구현을 작성하세요.
-Red-Green-Refactor 사이클을 따라 진행합니다.
+<If TDD>
+Next: write the minimum implementation to make tests pass.
+Follow the Red-Green-Refactor cycle.
 ```

@@ -118,11 +118,11 @@ it.skip('should return empty array when filter matches nothing', () => {
 Present the generated test code to the user before writing to disk:
 
 ```
-테스트 코드가 준비되었습니다:
-- 파일: <test file path>
-- 테스트 수: N개 (정상: X, 엣지: X, 에러: X, 경계값: X)
-- 접근 방식: <TDD / Storybook TDD / Test-After>
+Test code ready:
+- File: <test file path>
+- Tests: N (normal: X, edge: X, error: X, boundary: X)
+- Approach: <TDD / Storybook TDD / Test-After>
 
-코드를 확인하시고, 수정할 부분이 있으면 알려주세요.
-파일에 작성할까요? (Y/n)
+Review the code above. Let me know if you want any changes.
+Write to file? (Y/n)
 ```

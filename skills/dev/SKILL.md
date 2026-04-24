@@ -11,7 +11,7 @@ description: >
   error analysis and debugging ("에러 고쳐줘", "에러 원인 분석해", "왜 안 돼",
   "디버깅 해줘", "왜 느리지", error logs, stack traces, Sentry alerts).
   Manages devlogs for cross-session state persistence.
-  Manual planning steps (idea/plan/design/build/complete) require explicit invocation.
+  Manual planning steps (idea/plan/design/breakdown/build/complete) require explicit invocation.
 ---
 
 # dev — Unified Development Workflow
@@ -189,7 +189,7 @@ Key rules:
 - Update `currentStep` BEFORE loading the next step file
 - Register artifact paths as soon as files are created
 - Append to `history` at every state transition
-- Each step ends with `steps/_handoff.md` pattern
+- idea/plan/design/breakdown end with `steps/_handoff.md`; build/complete handle handoff inline
 
 ---
 

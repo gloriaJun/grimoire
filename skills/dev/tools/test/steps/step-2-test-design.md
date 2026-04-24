@@ -96,15 +96,15 @@ describe('<TargetName>')
 Present the test plan to the user before proceeding to generation:
 
 ```
-테스트 계획이 준비되었습니다:
-- 정상 케이스: N개
-- 엣지 케이스: N개
-- 에러 처리: N개
-- 경계값: N개
-- 합계: N개 테스트
+Test plan ready:
+- Normal cases: N
+- Edge cases: N
+- Error handling: N
+- Boundary values: N
+- Total: N tests
 
-추가하거나 제거할 케이스가 있으면 알려주세요.
-완료되면 "확인" 또는 "done"을 입력해주세요.
+Let me know if you want to add or remove any cases.
+Type "done" or "confirm" when ready to proceed.
 ```
 
 ## Output

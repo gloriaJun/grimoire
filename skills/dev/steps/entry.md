@@ -72,7 +72,7 @@ After entry point is confirmed:
 4. Update `_index.md`:
    - Read `<devlogs-root>/_index.md`
    - Append row under `## Active Tasks` table:
-     `` | `YYYY-MM-DD-<repo>-<task-name>/` | <task-name> | Step N (<step-name>) | 진행 중 | ``
+     `` | `YYYY-MM-DD-<repo>-<task-name>/` | <task-name> | Step N (<step-name>) | in progress | ``
    - Update frontmatter `updated:` to today's date
 5. Load the step file for the selected entry point
 

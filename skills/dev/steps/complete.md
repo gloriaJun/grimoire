@@ -22,8 +22,12 @@ When all features are done.
    - What was built
    - Files changed
    - Follow-up items
-4. Run **insight**: Load and execute `~/.claude/skills/insight/SKILL.md` inline (in main context).
-   This reviews the entire task workflow and suggests grimoire improvements.
+4. Dispatch **insight** as a subagent (isolated context, avoids session-end context bloat):
+   - Load `~/.claude/skills/insight/SKILL.md` via Read tool
+   - Dispatch via `Agent(subagent_type: "Explore")` with:
+     - Insight skill instructions as the prompt base
+     - Task context: `taskName`, summary of what was built, key decisions, artifact paths
+     - Agent reads grimoire files independently
 
 ---
 

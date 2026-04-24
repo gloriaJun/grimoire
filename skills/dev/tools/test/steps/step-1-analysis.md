@@ -45,18 +45,18 @@ Based on the analysis, recommend an approach:
 ### 1d. Present Recommendation
 
 ```
-대상 코드를 분석했습니다:
-- 파일: <path>
-- 유형: <type>
-- 복잡도: <low/medium/high>
-- 기존 테스트: <있음 (coverage gap) / 없음>
-- 테스트 프레임워크: <detected or recommended>
+Target code analysis:
+- File: <path>
+- Type: <type>
+- Complexity: <low/medium/high>
+- Existing tests: <found (coverage gap) / none>
+- Test framework: <detected or recommended>
 
-권장 접근 방식:
+Recommended approach:
 1. <recommended approach> — <reason>
 2. <alternative approach> — <reason>
 
-> 번호 입력 또는 자유 응답
+> Enter number or describe your preference
 ```
 
 ## Output
