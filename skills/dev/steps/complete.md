@@ -29,7 +29,9 @@ When all features are done.
 
 ## Next
 
-After completion, run `/dev retro` to capture session retrospective and learnings.
+Optionally capture post-completion notes (both will ask for confirmation):
+- `/dev retro` — session retrospective → vault note
+- `/dev wiki` — process notes + devlog cleanup
 
 ## Session Handoff
 

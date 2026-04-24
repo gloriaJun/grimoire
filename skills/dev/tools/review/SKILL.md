@@ -1,10 +1,13 @@
-# Review: Code Review
+# Review — Code Review
 
-On-demand code review step. Does not require an active devlog.
+On-demand code review. Does not require an active devlog.
+When called from within a build step, returns findings to the build flow.
+
+---
 
 ## Scope Detection
 
-1. Check if a PR URL or file path was passed with the `/dev review` command.
+1. Check if a PR URL or file path was passed with the command.
 2. If not, check for staged changes (`git diff --staged`).
 3. If no staged changes, check for unstaged changes (`git diff`).
 4. Confirm the review scope with the user before proceeding.
@@ -15,6 +18,8 @@ Review scope:
 
 Proceed? (y / specify different scope)
 ```
+
+---
 
 ## Review Routing
 
@@ -27,6 +32,8 @@ Determine who reviews based on recent authorship:
 | Unknown / mixed | Claude | `code-reviewer` agent |
 
 If scope includes frontend changes (components, styles, a11y), also dispatch `frontend-reviewer` in parallel.
+
+---
 
 ## Execution
 
@@ -41,6 +48,8 @@ Invoke `plannotator-review` skill with the PR URL.
    - Brief context: what the change does and why
 2. If frontend changes detected, dispatch `frontend-reviewer` in parallel.
 3. Wait for all reviewers to complete.
+
+---
 
 ## Output
 
@@ -58,6 +67,8 @@ Present findings grouped by severity:
 ### ✅ Looks good
 - <summary>
 ```
+
+---
 
 ## Next Steps
 

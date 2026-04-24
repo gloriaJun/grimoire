@@ -28,7 +28,7 @@ stateDiagram-v2
     [*] --> Router: /dev [sub-command]
 
     Router --> ActiveCheck: no sub-command
-    Router --> DirectTool: refactor / troubleshoot triggers
+    Router --> DirectTool: refactor / troubleshoot / retro / wiki / review triggers
     Router --> StepFile: explicit sub-command
 
     ActiveCheck --> ResumeTask: active devlog found
@@ -43,14 +43,15 @@ stateDiagram-v2
         design --> breakdown
         breakdown --> build
         build --> complete
-        complete --> retro
-        retro --> wiki
     }
 
     state "Tool Files" as DirectTool {
         refactor_tool: tools/refactor
         troubleshoot_tool: tools/troubleshoot
         test_tool: tools/test
+        retro_tool: tools/retro
+        wiki_tool: tools/wiki
+        review_tool: tools/review
     }
 
     StepFile --> Handoff: step complete
@@ -72,9 +73,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `plan` | `steps/plan.md` | Requirements → PRD |
 | `design` | `steps/design.md` | Architecture → TRD |
 | `build` | `steps/build.md` | Feature implementation (1 feature/session) |
-| `complete` | `steps/complete.md` | Wrap-up, insight, handoff to retro |
-| `retro` | `steps/retro.md` | Retrospective → `04_Notes/<task>/retrospect.md` |
-| `wiki` | `steps/wiki.md` | Process notes → `04_Notes/<task>/devnotes.md` + devlog cleanup |
+| `complete` | `steps/complete.md` | Wrap-up, insight, summary |
 
 ### Utility Tools (inline, no devlog required)
 
@@ -83,7 +82,9 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `test` | `Read("tools/test/SKILL.md")` |
 | `refactor`, "리팩토링 해줘", "코드 정리해줘", etc. | `Read("tools/refactor/SKILL.md")` |
 | `troubleshoot`, error logs, stack traces, "에러 고쳐줘", etc. | `Read("tools/troubleshoot/SKILL.md")` |
-| `review` | `steps/review.md` |
+| `review` | `Read("tools/review/SKILL.md")` |
+| `retro` | `Read("tools/retro/SKILL.md")` |
+| `wiki` | `Read("tools/wiki/SKILL.md")` |
 | `status` | `steps/status.md` | devlogs 루트 스캔 → 태스크 상태 요약 출력 |
 | `help` | inline | 사용 가능한 서브커맨드 목록과 용도 출력 |
 
@@ -99,15 +100,15 @@ Planning lifecycle (devlog-tracked):
   plan          requirements → PRD
   design        PRD → TRD
   build         implement features (1 feature/session)
-  complete      wrap-up + handoff to retro
-  retro         retrospective → vault note
-  wiki          process notes → vault + devlog cleanup
+  complete      wrap-up + summary
 
-Utility tools (no devlog required):
+Utility tools (devlog optional):
   test          test code generation
   refactor      code cleanup / restructure
   troubleshoot  debug errors and stack traces
   review        code review workflow
+  retro         retrospective → vault note
+  wiki          process notes → vault + devlog cleanup
   status        show all devlog task statuses
 
   help          show this message
