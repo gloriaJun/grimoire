@@ -1,14 +1,9 @@
 ---
-name: g-troubleshoot
+name: troubleshoot
 description: >
-  Unified troubleshooting skill for error analysis, debugging, and performance diagnosis.
-  Triggers on: error logs, stack traces, Sentry alerts, OpenSearch logs,
-  "에러 고쳐줘", "에러 원인 분석해", "왜 안 돼", "디버깅 해줘", "왜 느리지",
-  or /g-troubleshoot command.
-  Covers Sentry alerts, OpenSearch logs, and local development errors.
-  Replaces the former g-debug-process skill.
-  Use this skill whenever the user presents an error, bug, or performance issue
-  to diagnose — even if they don't explicitly ask for "troubleshooting".
+  Tool loaded by /dev skill via Read(). Triggered by /dev troubleshoot or
+  natural language error/debug requests routed through the dev orchestrator.
+  Not a standalone skill — invoked only from dev/SKILL.md.
 ---
 
 # g-troubleshoot Orchestrator

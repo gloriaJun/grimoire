@@ -1,16 +1,9 @@
 ---
-name: g-refactor
+name: refactor
 description: >
-  Code restructuring and quality improvement skill.
-  Triggers on: "리팩토링 해줘", "코드 정리해줘", "클린 아키텍처 적용해줘",
-  "중복 코드 정리해줘", "타입 추가해줘", "구조 개선해줘", "코드 냄새 제거해줘",
-  "성능 개선해줘", "코드 리뷰해줘", "refactor this", "clean up this code",
-  or /g-refactor command.
-  Analyzes existing code, proposes changes with rationale and before/after diffs,
-  implements only after user approval.
-  Use this skill when the user wants to improve code structure, types,
-  maintainability, or performance patterns without changing behavior —
-  even if they don't explicitly say "refactor".
+  Tool loaded by /dev skill via Read(). Triggered by /dev refactor or
+  natural language refactoring requests routed through the dev orchestrator.
+  Not a standalone skill — invoked only from dev/SKILL.md.
 ---
 
 # g-refactor Orchestrator

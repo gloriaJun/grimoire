@@ -1,11 +1,9 @@
 ---
-name: g-test-writer
+name: test
 description: >
-  /g-test-writer command only. Generates comprehensive test suites
-  following TDD methodology. Analyzes target code, determines optimal
-  testing approach (TDD / Storybook TDD / Test-After), and produces
-  well-structured tests with normal, edge, error, and boundary cases.
-  Manual invocation only.
+  Tool loaded by /dev skill via Read(). Triggered by /dev test or
+  explicit invocation from the dev orchestrator.
+  Not a standalone skill — invoked only from dev/SKILL.md.
 ---
 
 # g-test-writer Orchestrator
