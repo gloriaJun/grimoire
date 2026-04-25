@@ -41,7 +41,7 @@ Ask: "Ready to move to planning? (y / edit / stop)"
 
 ## State Update
 
-`currentStep` → 2, append 1 to `completedSteps`, `artifacts.brainstorm` ← path
+`currentStep` ← `"plan"`, append `"idea"` to `completedSteps`, `artifacts.brainstorm` ← path
 
 Follow update mechanics from `schemas/state.md`.
 

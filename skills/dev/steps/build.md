@@ -71,14 +71,14 @@ Invoke only `code-reviewer`.
 ### State Update
 
 - `features[i].status` ← `"done"`, `features[i].executor/reviewer` ← from selection
-- If all features done: `currentStep` → 6, append 5 to `completedSteps`
+- If all features done: `currentStep` ← `"complete"`, append `"build"` to `completedSteps`
 - Append to `history`
 
 ### _index.md Update
 
 - Find the row matching the current task directory in `<devlogs-root>/_index.md`
-- If more features pending: update step column to `Step 5 (build — N/M done)`
-- If all done: update step column to `Step 6 (complete)`
+- If more features pending: update step column to `build (N/M done)`
+- If all done: update step column to `complete`
 - Update frontmatter `updated:` to today's date
 
 ### Completion Message

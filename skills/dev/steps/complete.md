@@ -35,14 +35,14 @@ When all features are done.
 
 ### State Update
 
-`currentStep` → 6, append 6 to `completedSteps`. Append to `history`.
+`currentStep` ← `"complete"`, append `"complete"` to `completedSteps`. Append to `history`.
 
 Follow update mechanics from `schemas/state.md`.
 
 ### _index.md Update
 
 - Find the row matching the current task directory in `<devlogs-root>/_index.md`
-- Update step column to `Step 6 (complete)`
+- Update step column to `complete`
 - Update frontmatter `updated:` to today's date
 
 ### Completion Message

@@ -40,7 +40,9 @@ stateDiagram-v2
     state "Step Files" as StepFile {
         idea --> plan
         plan --> design
-        design --> breakdown
+        design --> wireframe
+        wireframe --> breakdown : optional
+        wireframe --> breakdown : skipped
         breakdown --> build
         build --> complete
     }
@@ -72,6 +74,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `idea` | `steps/idea.md` | Ideation → brainstorm.md |
 | `plan` | `steps/plan.md` | Requirements → PRD |
 | `design` | `steps/design.md` | Architecture → TRD |
+| `wireframe` | `steps/wireframe.md` | UI design → mockup + tool prompt (optional) |
 | `breakdown` | `steps/breakdown.md` | Feature decomposition → features.md |
 | `build` | `steps/build.md` | Feature implementation (1 feature/session) |
 | `complete` | `steps/complete.md` | Wrap-up, insight, summary |
@@ -100,7 +103,8 @@ Planning lifecycle (devlog-tracked):
   idea          vague concept → brainstorm.md
   plan          requirements → PRD
   design        PRD → TRD
-  breakdown     TRD → feature breakdown
+  wireframe     TRD → UI mockup + design tool prompt (optional)
+  breakdown     TRD/wireframe → feature breakdown
   build         implement features (1 feature/session)
   complete      wrap-up + summary
 
@@ -156,9 +160,13 @@ basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
 When a sub-command is given AND `_state.json` exists in a matching task dir:
 
 1. Read `_state.json`
-2. Verify all `artifacts` paths exist on disk
-3. Announce: "Resuming **<taskName>** at step `<currentStep>`"
-4. Load the step file for `currentStep`
+2. **Migration** (legacy number → step name): if `currentStep` is a number, convert and save:
+   - `0` → `"entry"`, `1` → `"idea"`, `2` → `"plan"`, `3` → `"design"`,
+     `4` → `"breakdown"`, `5` → `"build"`, `6` → `"complete"`, `7` → `"retro"`, `8` → `"til"`
+   - Write updated `_state.json` before proceeding
+3. Verify all `artifacts` paths exist on disk
+4. Announce: "Resuming **<taskName>** at step `<currentStep>`"
+5. Load the step file for `currentStep`
 
 When `_state.json` does not exist: treat as a new task at the given entry point.
 
@@ -168,13 +176,14 @@ When `_state.json` does not exist: treat as a new task at the given entry point.
 
 | currentStep | Load file | Pre-condition |
 |-------------|-----------|---------------|
-| 0 | steps/entry.md | none |
-| 1 | steps/idea.md | none |
-| 2 | steps/plan.md | `artifacts.brainstorm` OR user input |
-| 3 | steps/design.md | `artifacts.prd` exists |
-| 4 | steps/breakdown.md | `artifacts.prd` exists (trd optional) |
-| 5 | steps/build.md | `artifacts.features` exists |
-| 6 | steps/complete.md | all `features[].status == "done"` |
+| `"entry"` | steps/entry.md | none |
+| `"idea"` | steps/idea.md | none |
+| `"plan"` | steps/plan.md | `artifacts.brainstorm` OR user input |
+| `"design"` | steps/design.md | `artifacts.prd` exists |
+| `"wireframe"` | steps/wireframe.md | `artifacts.trd` exists (may be `"skipped"`) |
+| `"breakdown"` | steps/breakdown.md | `artifacts.prd` exists (trd, wireframe optional) |
+| `"build"` | steps/build.md | `artifacts.features` exists |
+| `"complete"` | steps/complete.md | all `features[].status == "done"` |
 
 Verify pre-conditions before loading. If not met, warn and block.
 

@@ -20,13 +20,13 @@ Before showing the entry menu, check for an existing task:
    ```
    Active devlogs found:
 
-     1. 2026-04-19-one-theme-restructure  (step 3: design)
-     2. 2026-04-07-one-sentry-insight     (step 5: build — 2/4 features done)
+     1. 2026-04-19-one-theme-restructure  (design)
+     2. 2026-04-07-one-sentry-insight     (build — 2/4 features done)
 
    Resume one, or start a new task?
    > [number] to resume / [n] for new task
    ```
-   - Resume: load `_state.json`, verify artifact paths, load the step file for `currentStep`
+   - Resume: load `_state.json`, apply migration if `currentStep` is a number (see SKILL.md Session Restoration), verify artifact paths, load the step file for `currentStep`
    - New task: continue to entry menu below
 
 4. If no incomplete tasks: proceed directly to the entry menu.
@@ -41,9 +41,10 @@ Select your starting point:
   1. idea       — vague concept, start from ideation
   2. plan       — requirements ready, skip to PRD
   3. design     — PRD exists, go to TRD
-  4. breakdown  — TRD exists, go to feature decomposition
-  5. build      — planning done, go straight to implementation
-  6. resume     — continue an existing task by path
+  4. wireframe  — TRD exists, go to UI design (optional)
+  5. breakdown  — TRD exists, go to feature decomposition
+  6. build      — planning done, go straight to implementation
+  7. resume     — continue an existing task by path
 
 > Enter number or sub-command name
 ```
@@ -53,6 +54,7 @@ Select your starting point:
 | idea      | `steps/idea.md` | none |
 | plan      | `steps/plan.md` | none (creates new devlog) |
 | design    | `steps/design.md` | PRD exists |
+| wireframe | `steps/wireframe.md` | TRD exists (or `"skipped"`) |
 | breakdown | `steps/breakdown.md` | PRD exists (TRD optional) |
 | build     | `steps/build.md` | feature breakdown exists |
 | resume    | prompts for devlog path | `_state.json` exists |
@@ -65,9 +67,9 @@ After entry point is confirmed:
 2. Create task directory: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
 3. Create `_state.json` with:
    - `taskName`: confirmed name
-   - `currentStep`: entry point step number
+   - `currentStep`: entry point step name (e.g., `"idea"`, `"plan"`)
    - `entryPoint`: selected entry
-   - `completedSteps`: `[0]`
+   - `completedSteps`: `["entry"]`
    - All other fields at defaults
 4. Update `_index.md`:
    - Read `<devlogs-root>/_index.md`

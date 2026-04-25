@@ -11,13 +11,15 @@ A feature is scoped so it can be fully implemented, tested, and committed within
 From `_state.json` artifacts:
 - `artifacts.prd` (required)
 - `artifacts.trd` (optional, may be `"skipped"`)
+- `artifacts.wireframe` (optional, may be `"skipped"`)
 
 ## Process
 
 > Performed inline by the orchestrator — no agent delegation. Breakdown requires simultaneous
 > reasoning over the full PRD + TRD context; agent dispatch adds overhead without benefit at this scale.
 
-1. Based on PRD + TRD, produce a numbered feature list:
+1. Based on PRD + TRD + wireframe (if available), produce a numbered feature list:
+   - If wireframe exists: decompose at screen/component granularity using the mockup as reference
    - Feature name, brief description, files/modules affected, acceptance criteria
 2. Write `features.md` in the task subdirectory.
 3. Write individual `feature-XX-<name>.md` files with detailed specs.
@@ -34,7 +36,7 @@ Load `references/review-protocol.md` and execute the full review workflow.
 
 ## State Update
 
-`currentStep` → 5, append 4 to `completedSteps`
+`currentStep` ← `"build"`, append `"breakdown"` to `completedSteps`
 `artifacts.features` ← features.md path
 `artifacts.featureSpecs` ← array of spec filenames
 `features` ← array with `status: "pending"`

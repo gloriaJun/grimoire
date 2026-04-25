@@ -44,7 +44,7 @@ Load `references/review-protocol.md` and execute the full review workflow.
 
 ## State Update
 
-`currentStep` → 4, append 3 to `completedSteps`
+`currentStep` ← `"wireframe"`, append `"design"` to `completedSteps`
 `artifacts.trd` ← TRD path (or `"skipped"`)
 `reviews.trd` ← `{ mode, fallbackReason, approvedAt }`
 
@@ -53,4 +53,4 @@ Follow update mechanics from `schemas/state.md`.
 ## Session Handoff
 
 Read `steps/_handoff.md` and follow the handoff instructions.
-Next sub-command: `/dev breakdown`
+Next sub-command: `/dev wireframe`

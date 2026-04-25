@@ -28,7 +28,7 @@ Load `references/review-protocol.md` and execute the full review workflow.
 
 ## State Update
 
-`currentStep` → 3, append 2 to `completedSteps`
+`currentStep` ← `"design"`, append `"plan"` to `completedSteps`
 `artifacts.prd` ← PRD path
 `reviews.prd` ← `{ mode, fallbackReason, approvedAt }`
 

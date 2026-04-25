@@ -16,18 +16,21 @@ Follow `schemas/state.md` update mechanics.
 - Update frontmatter `updated:` to today's date
 - If the row is not found: append a new row as fallback
 
-Step name mapping:
+Step column format: write `currentStep` value directly (e.g., `wireframe`, `breakdown`).
 
-| currentStep (next) | step-name |
-|--------------------|-----------|
-| 1 | idea |
-| 2 | plan |
-| 3 | design |
-| 4 | breakdown |
-| 5 | build |
-| 6 | complete |
-| 7 | retro |
-| 8 | til |
+Valid `currentStep` values:
+
+| currentStep | Display in _index.md |
+|-------------|---------------------|
+| `"idea"` | idea |
+| `"plan"` | plan |
+| `"design"` | design |
+| `"wireframe"` | wireframe |
+| `"breakdown"` | breakdown |
+| `"build"` | build |
+| `"complete"` | complete |
+| `"retro"` | retro |
+| `"til"` | til |
 
 ## 3. Show Completion Message
 
