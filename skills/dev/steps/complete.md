@@ -53,6 +53,6 @@ Follow update mechanics from `schemas/state.md`.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Optional next steps:
   /dev retro  — session retrospective
-  /dev wiki   — process notes + devlog cleanup
+  /dev til    — TIL note + devlog cleanup
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```

@@ -41,7 +41,7 @@ Extract from each:
 | 5 | build |
 | 6 | complete |
 | 7 | retro |
-| 8 | wiki |
+| 8 | til |
 
 ### 5. Output
 

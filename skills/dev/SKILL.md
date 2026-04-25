@@ -4,7 +4,7 @@ description: >
   Unified development workflow skill. Triggered by /dev or sub-commands:
   /dev idea, /dev plan, /dev design, /dev breakdown, /dev build, /dev complete,
   /dev test, /dev refactor, /dev review, /dev troubleshoot,
-  /dev retro, /dev wiki, /dev help, /dev status.
+  /dev retro, /dev til, /dev help, /dev status.
   Also triggers on: code refactoring requests ("리팩토링 해줘", "코드 정리해줘",
   "클린 아키텍처 적용해줘", "중복 코드 정리해줘", "타입 추가해줘", "구드 냄새 제거해줘",
   "성능 개선해줘", "refactor this", "clean up this code"),
@@ -28,7 +28,7 @@ stateDiagram-v2
     [*] --> Router: /dev [sub-command]
 
     Router --> ActiveCheck: no sub-command
-    Router --> DirectTool: refactor / troubleshoot / retro / wiki / review triggers
+    Router --> DirectTool: refactor / troubleshoot / retro / til / review triggers
     Router --> StepFile: explicit sub-command
 
     ActiveCheck --> ResumeTask: active devlog found
@@ -50,7 +50,7 @@ stateDiagram-v2
         troubleshoot_tool: tools/troubleshoot
         test_tool: tools/test
         retro_tool: tools/retro
-        wiki_tool: tools/wiki
+        til_tool: tools/til
         review_tool: tools/review
     }
 
@@ -85,7 +85,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `troubleshoot`, error logs, stack traces, "에러 고쳐줘", etc. | `Read("tools/troubleshoot/SKILL.md")` |
 | `review` | `Read("tools/review/SKILL.md")` |
 | `retro` | `Read("tools/retro/SKILL.md")` |
-| `wiki` | `Read("tools/wiki/SKILL.md")` |
+| `til` | `Read("tools/til/SKILL.md")` |
 | `status` | `steps/status.md` | scan devlogs root → print task status summary |
 | `help` | inline | print available sub-commands |
 
@@ -110,7 +110,7 @@ Utility tools (devlog optional):
   troubleshoot  debug errors and stack traces
   review        code review workflow
   retro         retrospective → vault note
-  wiki          process notes → vault + devlog cleanup
+  til           TIL note → vault + devlog cleanup
   status        show all devlog task statuses
 
   help          show this message

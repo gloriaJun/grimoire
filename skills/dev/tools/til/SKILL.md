@@ -1,6 +1,6 @@
-# Wiki — Process Notes + Devlog Cleanup
+# TIL — Today I Learned Note + Devlog Cleanup
 
-Capture process notes to the Obsidian vault and optionally clean up the devlog directory.
+Capture a TIL note to the Obsidian vault and optionally clean up the devlog directory.
 Works with or without a devlog. Final step of the dev lifecycle.
 
 ---
@@ -49,14 +49,56 @@ If multiple candidates: list them and ask user to choose.
 
 ### Step 1: Process Notes
 
-Delegate to `vault-wiki-process` skill inline:
+Write `til.md` directly to the task folder:
 
-1. Load `~/Documents/obsidian-vault/.claude/skills/vault-wiki-process/SKILL.md` via Read tool.
-2. Execute with task context:
+1. Resolve output path:
+   - `~/Documents/obsidian-vault/04_Notes/<scope>/YYYY-MM-DD-<task-name>/til.md`
+   - Create the task folder if it doesn't exist.
+2. Gather context:
    - **task-name**: from devlog `taskName` or user input
    - **scope**: `work` (default; confirm if ambiguous)
-   - **retro-path**: `artifacts.retro` or user-provided (for cross-linking)
-3. vault-wiki-process saves to: `~/Documents/obsidian-vault/04_Notes/process/<scope>-YYYY-MM-DD-<task-name>-process.md`
+   - **retro-path**: `artifacts.retro` or user-provided (for `related` field)
+3. Write `til.md` using this template:
+
+```markdown
+---
+date: YYYY-MM-DD
+task: <task-name>
+scope: <scope>
+tags: []
+keywords: []
+summary: "<한 줄 요약>"
+related: []
+follow_up: []
+---
+
+## What I Learned
+
+## Context
+- Stack / Tool:
+- Environment:
+
+## Troubleshooting
+### [문제 제목]
+- **Symptom:**
+- **Root Cause:** (불명확하면 Unknown으로 명시)
+- **Solution:**
+
+## Commands / Snippets
+
+## Resources
+
+### Task Links
+```
+
+Field guidance:
+- `tags`: required — use 1–3 topic tags
+- `keywords`: optional — concrete search terms (error messages, package names, symptom descriptions)
+- `summary`: required — one sentence capturing what was learned/solved
+- `follow_up`: optional — technical debt or follow-up exploration items
+- `What I Learned` = technical facts/patterns ("X 상황에서는 Y 방법을 쓴다" 형태로 일반화)
+- `Resources` entries: each link must include a one-line description of why it's useful
+- `Task Links`: PR, ticket links — no description needed
 
 ### Step 2: Devlog Cleanup (lifecycle mode only)
 
@@ -88,7 +130,7 @@ After process note is saved:
 ## State Update (lifecycle mode only, if not deleting)
 
 - `currentStep` → 8, append 7 and 8 to `completedSteps`
-- `artifacts.wiki` ← wiki file path
+- `artifacts.wiki` ← `04_Notes/<scope>/YYYY-MM-DD-<task-name>/til.md`
 - Append to `history`: `{ "step": 7, "action": "wiki saved + devlog cleaned", "timestamp": "ISO 8601" }`
 
 ---

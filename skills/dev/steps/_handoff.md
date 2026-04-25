@@ -27,7 +27,7 @@ Step name mapping:
 | 5 | build |
 | 6 | complete |
 | 7 | retro |
-| 8 | wiki |
+| 8 | til |
 
 ## 3. Show Completion Message
 

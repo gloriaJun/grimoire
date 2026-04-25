@@ -7,7 +7,7 @@ Capture a session retrospective note to the Obsidian vault. Works with or withou
 - **Devlog-aware** — auto-detects post-complete tasks and pre-fills context from `_state.json`
 - **Lifecycle confirmation** — asks before running when a matching devlog is found
 - **Standalone mode** — works without a devlog; prompts for task name and description
-- **vault-retro delegation** — saves to `04_Notes/retrospect/` in the Obsidian vault
+- **inline execution** — saves to `04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md` in the Obsidian vault
 
 ## Usage
 
@@ -42,7 +42,7 @@ Prioritizes tasks whose `taskName` matches the current repo (`git rev-parse --sh
 
 ## Requirements
 
-- Obsidian vault with `vault-retro` skill at `~/.claude/skills/` (or vault `.claude/skills/`)
+- Obsidian vault at `~/Documents/obsidian-vault/`
 
 ## License
 

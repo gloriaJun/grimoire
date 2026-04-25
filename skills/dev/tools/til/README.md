@@ -1,13 +1,13 @@
-# dev wiki
+# dev til
 
-Capture process notes to the Obsidian vault and clean up the devlog directory. Works with or without a devlog.
+Capture a TIL note to the Obsidian vault and clean up the devlog directory. Works with or without a devlog.
 
 ## Features
 
 - **Devlog-aware** — auto-detects post-retro tasks and pre-fills context from `_state.json`
 - **Lifecycle confirmation** — asks before running when a matching devlog is found
 - **Standalone mode** — works without a devlog; prompts for task name and retro path
-- **vault-wiki-process delegation** — saves to `04_Notes/process/` in the Obsidian vault
+- **inline execution** — saves to `04_Notes/til/<scope>/YYYY-MM-DD-<task-name>/til.md` in the Obsidian vault
 - **Devlog cleanup** — offers delete / archive / keep after writing the process note
 
 ## Usage
@@ -44,7 +44,7 @@ Prioritizes tasks whose `taskName` matches the current repo (`git rev-parse --sh
 
 ## Requirements
 
-- Obsidian vault with `vault-wiki-process` skill at `~/.claude/skills/` (or vault `.claude/skills/`)
+- Obsidian vault at `~/Documents/obsidian-vault/`
 
 ## License
 

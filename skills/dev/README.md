@@ -5,7 +5,7 @@ Unified development workflow skill — single entry point for the full lifecycle
 ## Features
 
 - **Planning lifecycle** — idea → plan → design → breakdown → build → complete (devlog-tracked, cross-session)
-- **Utility tools** — test, refactor, troubleshoot, review, retro, wiki (devlog optional)
+- **Utility tools** — test, refactor, troubleshoot, review, retro, til (devlog optional)
 - **State persistence** — `_state.json` in devlogs enables seamless session resumption
 - **Cross-agent review** — Plannotator + Codex + frontend-reviewer across all planning artifacts
 - **Natural language routing** — refactoring and debugging requests auto-routed without `/dev` prefix
@@ -22,7 +22,7 @@ Unified development workflow skill — single entry point for the full lifecycle
 /dev build              # implement one feature
 /dev complete           # wrap-up + summary
 /dev retro              # retrospective → vault note
-/dev wiki               # process notes → vault + devlog cleanup
+/dev til                # TIL note → vault + devlog cleanup
 /dev review             # code review (PR URL or local diff)
 /dev test               # test code generation
 /dev refactor           # code restructuring
@@ -69,8 +69,6 @@ State file (`_state.json`) lives at `<workspace>/_claude/devlogs/<YYYY-MM-DD-rep
 |------|---------|
 | Plannotator | Visual review of PRD / TRD / feature breakdown |
 | codex-plugin-cc / Codex CLI | Cross-review of artifacts and code |
-| vault-retro | Retrospective note to Obsidian vault |
-| vault-wiki-process | Process notes to Obsidian vault |
 
 ## Installation
 

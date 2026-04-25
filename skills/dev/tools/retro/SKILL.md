@@ -47,14 +47,47 @@ If multiple candidates: list them and ask user to choose.
 
 ## Execute
 
-Delegate to `vault-retro` skill inline:
+Write `retrospect.md` directly to the task folder:
 
-1. Load `~/Documents/obsidian-vault/.claude/skills/vault-retro/SKILL.md` via Read tool.
-2. Execute with task context:
+1. Resolve output path:
+   - `~/Documents/obsidian-vault/04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md`
+   - Create the task folder if it doesn't exist.
+2. Gather context:
    - **task-name**: from devlog `taskName` or user input
    - **scope**: `work` (default; confirm if ambiguous)
    - **context**: summarize from `history` + artifacts (lifecycle) or user description (standalone)
-3. vault-retro saves to: `~/Documents/obsidian-vault/04_Notes/retrospect/<scope>-YYYY-MM-DD-<task-name>-retrospect.md`
+3. Write `retrospect.md` using this template:
+
+```markdown
+---
+date: YYYY-MM-DD
+task: <task-name>
+scope: <scope>
+tags: []
+summary: "<한 줄 요약>"
+effort: S | M | L
+related: []
+---
+
+## What Went Well
+
+## What Didn't Go Well
+
+## Key Takeaways
+
+## Action Items
+
+## Process Reflection
+
+## Task Links
+```
+
+Field guidance:
+- `tags`: required — use 1–3 topic tags
+- `summary`: required — one sentence capturing what was reflected on and the key lesson
+- `effort`: optional — S (< 2h), M (2–8h), L (> 8h)
+- `What I Learned` vs `Key Takeaways`: Key Takeaways = behavior/habit change ("다음엔 X 하겠다"); til What I Learned = technical facts
+- `What Didn't Go Well` vs `Process Reflection`: former = "무엇이 문제였나", latter = "다음에 프로세스를 어떻게 바꿀까"
 
 ---
 
@@ -62,7 +95,7 @@ Delegate to `vault-retro` skill inline:
 
 1. Update `_state.json`:
    - `currentStep` → 7, append 6 to `completedSteps`
-   - `artifacts.retro` ← retro file path
+   - `artifacts.retro` ← `04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md`
    - Append to `history`: `{ "step": 6, "action": "retro saved", "timestamp": "ISO 8601" }`
 
 2. Update `_index.md`:
@@ -80,7 +113,7 @@ Delegate to `vault-retro` skill inline:
 📄 <retro-path>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Next:  /dev wiki
-Start a new session and run `/dev wiki` — it will detect this task and resume.
+Next:  /dev til
+Start a new session and run `/dev til` — it will detect this task and resume.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```

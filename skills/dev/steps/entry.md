@@ -12,7 +12,7 @@ Before showing the entry menu, check for an existing task:
 2. Scan for directories containing `_state.json` under the devlogs path.
    - Active tasks: `currentStep NOT IN completedSteps`
    - Note: a task at currentStep=6 with 6 in completedSteps is considered done (core lifecycle
-     complete; retro/wiki are optional tools that can be run independently at any time).
+     complete; retro/til are optional tools that can be run independently at any time).
    - Prioritize entries whose `taskName` matches the current repo name.
      Current repo name: `basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)`
 

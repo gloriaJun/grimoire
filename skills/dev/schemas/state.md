@@ -8,7 +8,7 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
 ```json
 {
   "taskName": "string — kebab-case task identifier",
-  "currentStep": "number — 0-8 (6=complete, 7=retro-tool, 8=wiki-tool)",
+  "currentStep": "number — 0-8 (6=complete, 7=retro-tool, 8=til-tool)",
   "entryPoint": "idea | plan | design | build | direct",
   "completedSteps": [0, 1],
   "artifacts": {
@@ -98,7 +98,7 @@ The general mechanics — persist to disk, append to `history`, resolve paths �
 ### History Step Field
 
 - `step` must be the **router step number** (0–8) at the time the action occurred
-- Step mapping: 0=entry, 1=idea, 2=plan, 3=design, 4=breakdown, 5=build, 6=complete, 7=retro, 8=wiki
+- Step mapping: 0=entry, 1=idea, 2=plan, 3=design, 4=breakdown, 5=build, 6=complete, 7=retro, 8=til
 - Do NOT use session sequence numbers or arbitrary values
 - Example: all features built during step 5 (build) should record `"step": 5`
 
