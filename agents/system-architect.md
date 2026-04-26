@@ -73,9 +73,20 @@ Write `TRD-<task-name>.md`:
 | <path> | new / modify / delete | <what changes> |
 
 ## Testing Strategy
-- Unit: <approach>
-- Integration: <approach>
-- E2E: <approach, if applicable>
+
+| Layer | Framework | Config File | Run Command |
+|-------|-----------|-------------|-------------|
+| Unit / Integration | <jest \| vitest \| pytest \| other> | <e.g. vitest.config.ts> | <e.g. pnpm test> |
+| E2E | <playwright \| cypress \| none> | <e.g. playwright.config.ts> | <e.g. pnpm e2e> |
+
+### Unit Test Approach
+- Scope: components, utilities, business logic units
+- Strategy: <TDD (Red-Green-Refactor) \| Test-After \| Skip — choose one and state rationale>
+- File convention: `*.test.ts` / `__tests__/`
+
+### E2E Test Approach
+- Scope: <list critical user flows to cover>
+- Trigger: <manual \| CI only \| per-feature>
 
 ## Migration / Deployment Notes
 - <any deployment considerations>

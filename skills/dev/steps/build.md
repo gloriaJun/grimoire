@@ -19,28 +19,110 @@ Execute one feature per session.
 
 ## Implementation
 
-### Step A: Feature Execution
+### Pre-check: Testing Approach
+
+1. Read `features[i].testingApproach` from `_state.json`.
+2. Read `artifacts.testConfig` for framework and run command.
+   If `testConfig` is null, warn the user and ask for framework details before proceeding.
+3. Proceed to the matching flow (A: TDD, B: Test-After, C: Skip).
+
+---
+
+### Flow A: TDD (Red-Green-Refactor)
+
+**Step A-0: Write Failing Tests**
+
+1. State which feature is being worked on.
+2. Read the feature spec from `artifacts.featureSpecs[index]`.
+3. Invoke `/dev test` with TDD mode context:
+   - Feature spec (acceptance criteria → test case design)
+   - `testConfig` (framework, config file)
+   - Goal: write **failing** tests only — no implementation yet
+4. Run `testConfig.unit.command` to confirm tests fail (expected at this stage).
+
+**Step A-1: Feature Execution**
+
+1. Invoke the `feature-executor` agent (model: sonnet) with:
+   - The feature spec content
+   - PRD and TRD paths for context
+   - `testingApproach: "TDD"` — implement only what is needed to pass the failing tests
+   - `testConfig` for framework context
+2. The feature-executor asks the user to choose implementation agent (default: Codex).
+3. Set `features[i].executor` in `_state.json`.
+4. Implementation proceeds based on user choice.
+
+**Step A-2: Test Pass Confirmation**
+
+1. Run `testConfig.unit.command`.
+2. If all tests pass → proceed to Step A-3.
+3. If tests fail → return to feature-executor for fixes (max 2 iterations).
+   If still failing after 2 iterations, surface failures to the user and ask how to proceed.
+
+**Step A-3: Refactor**
+
+Invite the user: "Any refactoring needed before review? (skip to continue)"
+If the user proceeds: apply structural cleanup without changing behavior, then re-run tests.
+
+**Step A-4: Simplify (Pre-Review)**
+
+1. Invoke the `simplify` skill on the changed files.
+2. Wait for simplify to complete — code may be modified.
+3. Proceed to cross-review with the simplified code.
+
+---
+
+### Flow B: Test-After
+
+**Step B-1: Feature Execution**
 
 1. State which feature is being worked on.
 2. Read the feature spec from `artifacts.featureSpecs[index]`.
 3. Invoke the `feature-executor` agent (model: sonnet) with:
    - The feature spec content
    - PRD and TRD paths for context
-4. The feature-executor asks the user to choose implementation agent (default: Codex). See agent prompt for numbered choice format.
+4. The feature-executor asks the user to choose implementation agent (default: Codex).
 5. Set `features[i].executor` in `_state.json`.
 6. Implementation proceeds based on user choice.
 
-### Step A-2: Simplify (Pre-Review)
+**Step B-2: Test Generation**
 
-Before cross-review, clean up the implementation:
+After implementation is complete:
+1. Invoke `/dev test` with Test-After mode context:
+   - Implemented code as target
+   - `testConfig` (framework, config file)
+2. Run `testConfig.unit.command` to verify tests pass.
+
+**Step B-3: Simplify (Pre-Review)**
 
 1. Invoke the `simplify` skill on the changed files.
 2. Wait for simplify to complete — code may be modified.
 3. Proceed to cross-review with the simplified code.
 
-### Step B: Cross-Review
+---
 
-After implementation, update `features[i].status` to `"review"`.
+### Flow C: Skip
+
+**Step C-1: Feature Execution**
+
+1. State which feature is being worked on.
+2. Read the feature spec from `artifacts.featureSpecs[index]`.
+3. Invoke the `feature-executor` agent (model: sonnet) with:
+   - The feature spec content
+   - PRD and TRD paths for context
+4. The feature-executor asks the user to choose implementation agent (default: Codex).
+5. Set `features[i].executor` in `_state.json`.
+
+**Step C-2: Simplify (Pre-Review)**
+
+1. Invoke the `simplify` skill on the changed files.
+2. Wait for simplify to complete — code may be modified.
+3. Proceed to cross-review with the simplified code.
+
+---
+
+## Cross-Review (all flows)
+
+After simplify completes, update `features[i].status` to `"review"`.
 
 | Executor | Reviewer | Method |
 |----------|----------|--------|
@@ -49,16 +131,16 @@ After implementation, update `features[i].status` to `"review"`.
 
 Set `features[i].reviewer` accordingly.
 
-#### Parallel Review (frontend changes exist)
+### Parallel Review (frontend changes exist)
 
 Dispatch `code-reviewer` and `frontend-reviewer` simultaneously (single message, 2 Agent tool calls).
 Apply action markers per `agent-guidelines.md`. Wait for both, then aggregate findings.
 
-#### Sequential Review (no frontend changes)
+### Sequential Review (no frontend changes)
 
 Invoke only `code-reviewer`.
 
-### Step C: Review Resolution
+## Review Resolution
 
 1. Present review findings to the user.
 2. If changes requested: fix and re-review (max 2 iterations).

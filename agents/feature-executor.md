@@ -26,8 +26,18 @@ Read the following before starting:
 - `TRD-<task-name>.md` for technical approach
 - `architecture.md` if it exists
 - Relevant existing source code
+- `testingApproach` (from `_state.json features[i]`) — determines implementation mode
+- `testConfig` (from `_state.json artifacts`) — framework and run command for tests
 
 ## Process
+
+### 0. TDD Context Check
+
+If `testingApproach` is `"TDD"`:
+- Failing tests have already been written by the build orchestrator (Step A-0)
+- Your goal is to implement **only** what is needed to make those tests pass
+- Do not write code that goes beyond what the failing tests require
+- If the existing tests are insufficient to drive the implementation, flag this to the orchestrator rather than guessing
 
 ### 1. Implementation Agent Selection
 
@@ -80,4 +90,6 @@ After implementation, the orchestrator (g-task-process) will handle cross-review
 - If the TRD is insufficient, flag it to the user rather than guessing
 - Write tests for new functionality when a test framework is available
 - Commit-ready code: no TODOs, no commented-out code, no debug logs
+- TDD mode: implement to make existing failing tests pass — no gold-plating beyond test requirements
+- TDD mode: if tests are insufficient to drive the implementation, flag to the orchestrator rather than guessing
 - Respond in the same language the user is using

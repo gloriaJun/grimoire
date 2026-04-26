@@ -23,10 +23,19 @@ From `_state.json` artifacts:
    - Feature name, brief description, files/modules affected, acceptance criteria
 2. Write `features.md` in the task subdirectory.
 3. Write individual `feature-XX-<name>.md` files with detailed specs.
+   Each spec must include a **Testing Approach** section:
+   ```markdown
+   ## Testing Approach
+   - Strategy: TDD | Test-After | Skip
+   - Reason: <why this approach for this feature>
+   - Test scope: <unit only | unit + e2e | e2e only>
+   ```
+   Derive the default strategy from the TRD Testing Strategy. Override per-feature when rationale exists.
+   If `artifacts.testConfig` is null, ask the user to supply framework info before proceeding.
 4. Register paths in `_state.json`:
    - `artifacts.features` ← `"features.md"`
    - `artifacts.featureSpecs` ← array of spec filenames
-   - `features` ← array of feature objects with `status: "pending"`
+   - `features` ← array of feature objects with `status: "pending"` and `testingApproach` from each spec
 
 ## Review
 
@@ -39,7 +48,7 @@ Load `references/review-protocol.md` and execute the full review workflow.
 `currentStep` ← `"build"`, append `"breakdown"` to `completedSteps`
 `artifacts.features` ← features.md path
 `artifacts.featureSpecs` ← array of spec filenames
-`features` ← array with `status: "pending"`
+`features` ← array with `status: "pending"` and `testingApproach` from each feature spec
 `reviews.features` ← `{ mode, fallbackReason, approvedAt }`
 
 Follow update mechanics from `schemas/state.md`.

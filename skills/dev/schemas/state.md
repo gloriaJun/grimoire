@@ -17,7 +17,19 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
     "trd": "string | null",
     "wireframe": "\"skipped\" | { mockup: \"path/to/wireframe-<task>.md\", design: \"url-or-path | null\" } | null",
     "features": "string | null — path to features.md",
-    "featureSpecs": ["feature-01-auth.md", "feature-02-api.md"]
+    "featureSpecs": ["feature-01-auth.md", "feature-02-api.md"],
+    "testConfig": {
+      "unit": {
+        "framework": "vitest | jest | pytest | null",
+        "configFile": "string | null — e.g. vitest.config.ts",
+        "command": "string | null — e.g. pnpm test"
+      },
+      "e2e": {
+        "framework": "playwright | cypress | null",
+        "configFile": "string | null — e.g. playwright.config.ts",
+        "command": "string | null — e.g. pnpm e2e"
+      }
+    }
   },
   "reviews": {
     "prd": {
@@ -41,6 +53,7 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
       "id": "01",
       "name": "string",
       "status": "pending | in-progress | review | done",
+      "testingApproach": "TDD | Test-After | Skip",
       "executor": "claude | codex | null",
       "reviewer": "claude | codex | null",
       "frontendReviewer": "claude | null"

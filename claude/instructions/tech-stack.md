@@ -23,6 +23,24 @@
 node = "22"   # 메이저 버전 고정 (mise가 최신 패치 자동 선택)
 ```
 
+## JavaScript / TypeScript
+
+Defaults for JS/TS projects:
+- **Language**: Prefer TypeScript. If starting in JS, plan a migration path.
+- **Linting**: ESLint (configure at project init)
+- **Formatting**: Prettier (integrate with ESLint, use `.prettierrc` or `prettier.config.ts`)
+- Project-specific ESLint rule sets and Prettier config may override these in each repo's CLAUDE.md
+
+## JS/TS File Conventions
+
+Single-responsibility principle at the file level:
+
+- **No mixing constants and functions**: A file whose role is to export immutable values must not define functions (transformation logic, utilities)
+- **Split by role, even within the same domain**: e.g. `auth-constants.ts` + `auth-utils.ts`
+- This applies regardless of filename (`constants.ts`, `config.ts`, `tokens.ts`, etc.) — if the file's purpose is "a collection of immutable values", no function mixing allowed
+
+When file-level conventions grow to 5+ rules, extract to `instructions/js-ts-conventions.md`.
+
 ## General
 - Specific frameworks and libraries are defined per project in each repo's CLAUDE.md
 - This file covers cross-project preferences only
