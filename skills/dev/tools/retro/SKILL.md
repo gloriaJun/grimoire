@@ -54,7 +54,12 @@ Write `retrospect.md` directly to the task folder:
    - Create the task folder if it doesn't exist.
 2. Gather context:
    - **task-name**: from devlog `taskName` or user input
-   - **scope**: `work` (default; confirm if ambiguous)
+   - **scope**: resolve from cwd (mirrors devlogs root resolution):
+     | cwd contains | scope |
+     |---|---|
+     | `GitHubWork` | `work` |
+     | `GitHubPrivate` | `life` |
+     | neither | ask the user |
    - **context**: summarize from `history` + artifacts (lifecycle) or user description (standalone)
 3. Write `retrospect.md` using this template:
 
