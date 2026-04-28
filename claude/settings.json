@@ -28,15 +28,22 @@
       "Bash(curl -s http://localhost:*)",
       "Bash(* --version)",
       "Bash(* --help *)",
-      "mcp__chrome-devtools",
+      "mcp__chrome-devtools__*",
+      "mcp__n8n-mcp__validate_workflow",
+      "mcp__n8n-mcp__get_workflow_details",
+      "mcp__n8n-mcp__search_workflows",
+      "mcp__n8n-mcp__search_nodes",
+      "mcp__n8n-mcp__get_node_types",
+      "mcp__n8n-mcp__get_execution",
+      "mcp__n8n-mcp__get_sdk_reference",
       "WebSearch",
       "WebFetch(*)",
       "Read(/Users/al03155147/.claude/**)",
       "Read(/Users/al03155147/Documents/GitHubPrivate/grimoire/**)",
       "Read(/Users/al03155147/Documents/GitHubWork/my-claude-skills/**)",
-      "Read(/Users/al03155147/Documents/obsidian-vault/10_knowledge/**)",
-      "Read(/Users/al03155147/Documents/obsidian-vault/20_archive/**)",
-      "Read(/Users/al03155147/Documents/obsidian-vault/90_system/**)"
+      "Read(/Users/al03155147/Documents/obsidian-vault/**)",
+      "Bash(find /Users/al03155147/Documents/obsidian-vault:*)",
+      "Bash(ls /Users/al03155147/Documents/obsidian-vault:*)"
     ],
     "deny": [
       "Bash(rm -rf *)",
@@ -48,8 +55,8 @@
     "additionalDirectories": [
       "/Users/al03155147/Documents/obsidian-vault/.claude",
       "/Users/al03155147/Documents/obsidian-vault/02_Ideas",
-      "/Users/al03155147/Documents/obsidian-vault/04_Logs",
-      "/Users/al03155147/Documents/obsidian-vault/02_Notes"
+      "/Users/al03155147/Documents/obsidian-vault/03_Logs",
+      "/Users/al03155147/Documents/obsidian-vault/04_Notes"
     ]
   },
   "hooks": {

@@ -40,5 +40,6 @@ The following hooks are intentional exceptions to the "no autonomous modificatio
 - When invoking Opus as advisor, load `@instructions/references/opus-advisor-pattern.md`
 - When model selection is needed by agent task type → load `@instructions/references/agent-task-mapping.md`
 - When user requests a review of their own written code → load `@instructions/references/code-review.md`
+- When user references prior notes/ideas ("이전에 정리한", "메모", "노트", "기록"), requests knowledge lookup from personal materials, or task involves ideation with personal context → load `@instructions/references/obsidian-vault.md` and follow routing rules
 
 @RTK.md
