@@ -6,6 +6,22 @@ Goal: Decompose work into features, each completable in a single session.
 
 A feature is scoped so it can be fully implemented, tested, and committed within one Claude Code session. If a feature seems too large, split it further.
 
+## Feature Sizing Heuristics
+
+Use these as split signals — any one criterion triggers a split review:
+
+| Signal | Threshold | Action |
+|--------|-----------|--------|
+| New files | > 5 files | Consider split |
+| New code (est.) | > 300 LOC | Consider split |
+| Distinct concerns | 3+ unrelated responsibilities | Split by concern |
+| Test setup required | Needs new test infra (mocking layer, harness) | Extract as separate feature or sub-task |
+| Blocking dependency | One half cannot be tested without the other half existing | Split and order sequentially |
+
+**Split pattern:** if a feature has an "infrastructure" half and a "UI/behavior" half (e.g., store + component), prefer splitting into `F-Xa` (infra) and `F-Xb` (UI) before writing specs.
+
+Do not split mechanically — a 4-file feature with tight cohesion is better kept together than split into two awkward halves.
+
 ## Input
 
 From `_state.json` artifacts:
@@ -30,7 +46,15 @@ From `_state.json` artifacts:
    - Reason: <why this approach for this feature>
    - Test scope: <unit only | unit + e2e | e2e only>
    ```
-   Derive the default strategy from the TRD Testing Strategy. Override per-feature when rationale exists.
+   Derive the default strategy using this decision tree (override when rationale exists):
+
+   | Feature type | Default strategy |
+   |--------------|-----------------|
+   | API clients, pure business logic, utility functions | TDD |
+   | UI components, pages, hooks, routing | Test-After |
+   | Config, Docker, infrastructure, scaffolding | Skip |
+
+   Override when: (a) UI logic is complex enough to benefit from TDD, (b) infra has testable pure logic, (c) TRD specifies a different default.
    If `artifacts.testConfig` is null, ask the user to supply framework info before proceeding.
 4. Register paths in `_state.json`:
    - `artifacts.features` ← `"features.md"`

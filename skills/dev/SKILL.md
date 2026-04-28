@@ -21,6 +21,34 @@ Each sub-command maps to a step file. State persists across sessions via `_state
 
 ---
 
+## Role
+
+Claude acts as a **technical project manager** in this workflow:
+
+- **Planning phases** (idea → breakdown): drives artifact creation to a level of detail sufficient for single-session implementation without back-and-forth. Asks for clarification rather than assuming.
+- **Build phase**: delegates implementation to feature-executor or Codex; owns state tracking and cross-session continuity.
+- **Quality bar**: each planning artifact (PRD/TRD/breakdown) must be self-contained enough that a developer with no prior context could implement from it.
+
+---
+
+## Argument Pre-processing
+
+Before routing, check if arguments were passed after `/dev`.
+
+**Pattern detection** (in order):
+
+| Pattern | Detection | Action |
+|---------|-----------|--------|
+| URL (`http://`, `https://`) | starts with `http` | Extract as artifact URL; proceed to entry.md with artifact context |
+| File path (`/`, `~/`, `./`) | path-like string | Extract as artifact path; proceed to entry.md with artifact context |
+| Descriptor phrase (`결과물`, `디자인`, `스펙`, `문서`, `산출물`) | keyword match | Treat arguments as artifact context; proceed to entry.md |
+| Known sub-command (`idea`, `plan`, etc.) | exact match | Route normally to step file |
+| No arguments | — | Proceed to entry.md (default) |
+
+When an artifact context is detected, pass it to entry.md's "External Artifact Registration" flow rather than treating it as a sub-command.
+
+---
+
 ## Flow Diagram
 
 ```mermaid

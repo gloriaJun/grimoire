@@ -1,5 +1,31 @@
 # Entry: Starting Point Selection
 
+## External Artifact Registration
+
+If an artifact context was detected by the argument pre-processor (URL, file path, or descriptor phrase):
+
+1. Scan devlogs for active tasks (same logic as Active Task Check below).
+2. Present matching tasks and ask which task this artifact belongs to:
+   ```
+   이 아티팩트를 등록할 태스크를 선택하세요:
+
+     1. 2026-04-28-repo-task-name  (build — breakdown 완료)
+     2. 2026-04-20-repo-other-task  (wireframe)
+     n. 새 태스크 시작
+
+   > Enter number
+   ```
+3. On selection: identify the appropriate artifact slot from `_state.json.artifacts`:
+   - URL ending in known design tool domain → `wireframe.design`
+   - `.md` / `.pdf` path → ask "PRD, TRD, wireframe, or other?"
+   - Unrecognized → ask explicitly which field
+4. Update `_state.json` with the artifact value and append to `history`.
+5. Confirm: "✅ {field} 등록 완료 → 현재 단계: {currentStep}. 계속 진행할까요? (Y/n)"
+   - Y: load the step file for `currentStep`
+   - n: stop
+
+---
+
 ## Active Task Check
 
 Before showing the entry menu, check for an existing task:

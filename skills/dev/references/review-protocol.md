@@ -58,5 +58,22 @@ Run automatically after user approval. No additional prompt needed.
 2. Codex CLI: `codex exec -c model_reasoning_effort="low" --read <artifact-path> "<codex-focus>"`
 3. `code-reviewer` agent (model: sonnet) — if Codex unavailable; record fallback reason in `_state.json` history.
 
-Present Codex findings → user decides whether to incorporate.
-If incorporated: re-confirm user approval before advancing.
+### Severity-Based Discussion
+
+Classify each finding before presenting:
+
+| Severity | Definition | Handling |
+|----------|-----------|---------|
+| **Critical** | Missing requirement, broken dependency, incorrect constraint | Must discuss with user — block advancement until resolved |
+| **Major** | Suboptimal design, missing edge case, ambiguous spec | Recommend; user decides |
+| **Advisory** | Style, naming, minor improvement | List in summary only; no discussion needed |
+
+Present findings grouped by severity. Lead with Criticals, then Majors. Advisories can be listed as a bullet summary at the end.
+
+### Re-Approval Gate
+
+| Applied changes | Re-approval required? |
+|----------------|----------------------|
+| Critical finding(s) incorporated | Yes — re-confirm user approval |
+| Major finding(s) only | No — advance without re-approval |
+| Advisory only or no changes | No |
