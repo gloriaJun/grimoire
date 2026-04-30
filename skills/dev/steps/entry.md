@@ -35,27 +35,50 @@ Before showing the entry menu, check for an existing task:
    - Path contains `GitHubPrivate` → `~/Documents/GitHubPrivate/_claude/devlogs/`
    - Neither → ask the user which workspace to use
 
-2. Scan for directories containing `_state.json` under the devlogs path.
-   - Active tasks: `currentStep NOT IN completedSteps`
-   - Note: a task at currentStep=6 with 6 in completedSteps is considered done (core lifecycle
-     complete; retro/til are optional tools that can be run independently at any time).
-   - Prioritize entries whose `taskName` matches the current repo name.
-     Current repo name: `basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)`
+2. Resolve current repo name:
+   ```bash
+   basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
+   ```
 
-3. If incomplete tasks found:
+3. Pass 1 — repo-matched folders only (no broad scan):
+   - List folder names under the devlogs root (directory names only, no file reads).
+   - Filter: folders whose name contains the repo name as a substring.
+   - If matches found: read `_state.json` for matched folders only.
+     - Active: `currentStep NOT IN completedSteps`
+     - Note: a task at currentStep=6 with 6 in completedSteps is considered done.
+     - If active tasks found → go to step 5 (resume menu)
+     - If all matched tasks are done → go to step 7 (entry menu)
+
+4. Pass 2 — triggered only when Pass 1 finds no folder matches:
+   - List all folder names under the devlogs root (no file reads).
+   - Show to the user:
+     ```
+     현재 레포(<repo>)와 일치하는 devlog가 없습니다.
+     다른 태스크를 이어하시겠습니까?
+
+       1. 2026-04-28-openchat-release-op-release-lifecycle-app
+       2. 2026-04-22-my-playground-work-hub
+       ...
+
+     > 번호 선택 / n 새 태스크
+     ```
+   - On number: read `_state.json` for that folder only → go to step 5
+   - On `n`: go to step 7 (entry menu)
+
+5. Resume menu (when active tasks found):
    ```
    Active devlogs found:
 
-     1. 2026-04-19-one-theme-restructure  (design)
-     2. 2026-04-07-one-sentry-insight     (build — 2/4 features done)
+     1. 2026-04-29-one-insight-one  (breakdown — features.md 미작성)
+     2. ...
 
    Resume one, or start a new task?
    > [number] to resume / [n] for new task
    ```
-   - Resume: load `_state.json`, apply migration if `currentStep` is a number (see SKILL.md Session Restoration), verify artifact paths, load the step file for `currentStep`
-   - New task: continue to entry menu below
 
-4. If no incomplete tasks: proceed directly to the entry menu.
+6. On resume: load `_state.json`, apply migration if `currentStep` is a number (see SKILL.md Session Restoration), verify artifact paths, load the step file for `currentStep`.
+
+7. No active tasks → proceed to entry menu.
 
 ---
 
