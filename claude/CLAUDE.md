@@ -14,6 +14,11 @@
 - Prefer concise responses: skip unnecessary preambles and summaries; limit tool execution updates to one sentence.
 - When proposing code changes, state the reason and scope of impact.
 
+## Action Judgment Rules
+- `"~해줘"`, `"~해"` → execute. `"~하려고해"`, `"~할 예정이야"`, `"~할 계획이야"` → user's own plan, do NOT act.
+- Irreversible external actions (GitHub Discussion/Issue/PR creation, sending messages) → always confirm before executing, even when the request seems clear.
+- During design/planning: present a clear recommendation with reasoning first, then ask. Do not list options without a stated preference. Reserve confirmation requests for actual decision gates (before writing files, before creating Jira tickets, etc.).
+
 ## Hook Exceptions (Intentional Autonomous Behaviors)
 The following hooks are intentional exceptions to the "no autonomous modifications" principle, pre-approved by the user:
 - SessionStart: `codex login` — initialize Codex CLI session (async, only when OPENAI_CODEX_API_KEY is set)

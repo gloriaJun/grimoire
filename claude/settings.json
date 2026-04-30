@@ -38,9 +38,12 @@
       "mcp__n8n-mcp__get_sdk_reference",
       "WebSearch",
       "WebFetch(*)",
+      "Read(~/.claude/**)",
       "Read(/Users/al03155147/.claude/**)",
       "Read(/Users/al03155147/Documents/GitHubPrivate/grimoire/**)",
       "Read(/Users/al03155147/Documents/GitHubWork/my-claude-skills/**)",
+      "Read(/Users/al03155147/Documents/GitHubWork/_claude/**)",
+      "Read(/Users/al03155147/Documents/GitHubPrivate/_claude/**)",
       "Read(/Users/al03155147/Documents/obsidian-vault/**)",
       "Bash(find /Users/al03155147/Documents/obsidian-vault:*)",
       "Bash(ls /Users/al03155147/Documents/obsidian-vault:*)"
