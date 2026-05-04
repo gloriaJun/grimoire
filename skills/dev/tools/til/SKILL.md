@@ -1,3 +1,10 @@
+---
+name: til
+description: >
+  Tool loaded by /dev skill via Read(). Triggered by /dev til.
+  Not a standalone skill — invoked only from dev/SKILL.md.
+---
+
 # TIL — Today I Learned Note + Devlog Cleanup
 
 Capture a TIL note to the Obsidian vault and optionally clean up the devlog directory.

@@ -148,6 +148,41 @@ Invoke only `code-reviewer`.
 
 ---
 
+## UI Verification (frontend changes only)
+
+### Trigger Condition
+
+Check whether this feature introduced visible UI. Apply **either** heuristic:
+- Changed/added files include at least one non-test `.tsx` file (e.g., `.tsx` but not `.test.tsx`)
+- Feature spec explicitly mentions pages, components, layouts, or UI elements
+
+If neither applies (pure logic, API clients, config, infra) → skip this section entirely.
+
+### Verification Flow
+
+1. Start the dev server if not already running:
+   ```
+   pnpm dev
+   ```
+2. Present a concise checklist derived from the feature spec's **acceptance criteria**:
+   ```
+   🖥️  UI Verification — <feature name>
+   Please check the following in your browser:
+
+   [ ] <criterion 1 — e.g., "/ → /dashboard 자동 리다이렉트">
+   [ ] <criterion 2>
+   ...
+
+   Run: pnpm dev → http://localhost:5173
+   Confirm when done (or describe any issues found).
+   ```
+3. Wait for user response.
+4. **If all good** → proceed to Session Handoff.
+5. **If issues found** → fix, then re-present the checklist (max 1 re-verify iteration).
+   - If still failing after 1 fix: surface to user and ask how to proceed.
+
+---
+
 ## Session Handoff
 
 ### State Update

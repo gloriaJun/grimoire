@@ -1,3 +1,10 @@
+---
+name: review
+description: >
+  Tool loaded by /dev skill via Read(). Triggered by /dev review.
+  Not a standalone skill — invoked only from dev/SKILL.md.
+---
+
 # Review — Code Review
 
 On-demand code review. Does not require an active devlog.

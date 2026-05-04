@@ -1,3 +1,10 @@
+---
+name: retro
+description: >
+  Tool loaded by /dev skill via Read(). Triggered by /dev retro.
+  Not a standalone skill — invoked only from dev/SKILL.md.
+---
+
 # Retro — Session Retrospective
 
 Capture a retrospective note for a completed task and save it to the Obsidian vault.
