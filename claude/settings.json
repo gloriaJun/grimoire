@@ -94,8 +94,9 @@
         ]
       }
     ],
-    "ExitPlanMode": [
+    "PostToolUse": [
       {
+        "matcher": "ExitPlanMode",
         "hooks": [
           {
             "type": "command",
