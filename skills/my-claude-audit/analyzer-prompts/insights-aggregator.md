@@ -149,6 +149,7 @@ Based on session-anomaly data, generate a direct, data-driven session quality as
 Rules:
 - Only use efficiency data and logic — no praise, no softening language
 - If no anomaly tags detected: write "세션 로그가 제공되지 않았거나 이상 패턴이 감지되지 않았습니다."
+- Each anomaly tag must appear EXACTLY ONCE in criticalIssues. If multiple sessions share the same tag, merge their evidence into a single entry — do NOT create duplicate objects with the same `tag` value.
 
 ### 6. Instruction Patches — System Instruction Patch Designer
 

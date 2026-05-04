@@ -1654,8 +1654,10 @@
           structureDesc: "Checks for custom commands, agents, and memory file setup",
           tipsDesc: "Actionable improvements for your Claude Code setup",
           sectionCommands: "Commands You Might Not Know",
-          sectionAutomation: "Automation Opportunities",
+          sectionAutomation: "Automation Script Review",
           sectionRecommendations: "Recommendations",
+          noAutomationOpps: "No automation opportunities found.",
+          noMissedCommands: "You're already using all recommended commands.",
           copyBtn: "Copy",
           sessionId: "Session ID",
           tokenAnalysisDesc: "Analyzes how much of Claude's context window is consumed by your configuration files. Files over 5,000 tokens are flagged as oversized.",
@@ -1824,8 +1826,10 @@
           structureDesc: "사용자 정의 커맨드, 에이전트, 메모리 파일 설정 확인",
           tipsDesc: "Claude Code 설정을 개선할 수 있는 실행 가능한 제안",
           sectionCommands: "놓치고 있는 커맨드",
-          sectionAutomation: "자동화 기회",
+          sectionAutomation: "자동화 스크립트 검토",
           sectionRecommendations: "개선 사항",
+          noAutomationOpps: "자동화 기회가 발견되지 않았습니다.",
+          noMissedCommands: "모든 권장 커맨드를 이미 활용하고 있습니다.",
           copyBtn: "복사",
           sessionId: "세션 ID",
           tokenAnalysisDesc: "Claude의 컨텍스트 윈도우(200K 토큰) 중 설정 파일이 차지하는 비중을 분석합니다. 5,000 토큰을 초과하는 파일은 과대 용량으로 표시됩니다.",
@@ -2697,7 +2701,7 @@
         </div>
         <div class="collapsible-body" id="tips-commands" style="display:block">
           <div class="collapsible-body-inner">
-            ${ins.missedCommands
+            ${(ins.missedCommands || [])
               .map(
                 (c) => `
               <div class="cmd-card">
@@ -2711,7 +2715,7 @@
               </div>
             `,
               )
-              .join("")}
+              .join("") || `<p style="color:var(--text-muted);padding:8px 0">${t("noMissedCommands")}</p>`}
           </div>
         </div>
       </div>
@@ -2724,7 +2728,7 @@
         </div>
         <div class="collapsible-body" id="tips-automation">
           <div class="collapsible-body-inner">
-            ${ins.automationOpportunities
+            ${(ins.automationOpportunities || [])
               .map(
                 (a) => `
               <div class="auto-card">
@@ -2743,7 +2747,7 @@
               </div>
             `,
               )
-              .join("")}
+              .join("") || `<p style="color:var(--text-muted);padding:8px 0">${t("noAutomationOpps")}</p>`}
           </div>
         </div>
       </div>
@@ -2886,24 +2890,27 @@
           ${ins.sessionInsights.criticalIssues && ins.sessionInsights.criticalIssues.length > 0 ? `
             <div class="subsection">
               <h3 class="section-heading">${t("sessionCritical")}</h3>
-              ${ins.sessionInsights.criticalIssues.map(issue => {
-                const relatedPatch = ins.sessionInsights.instructionPatches ? ins.sessionInsights.instructionPatches.find(p => p.triggerTag === issue.tag) : null;
-                return `
+              ${(() => {
+                const seen = new Set();
+                return (ins.sessionInsights.criticalIssues || [])
+                  .filter(issue => { if (seen.has(issue.tag)) return false; seen.add(issue.tag); return true; })
+                  .map(issue => {
+                    const relatedPatch = ins.sessionInsights.instructionPatches ? ins.sessionInsights.instructionPatches.find(p => p.triggerTag === issue.tag) : null;
+                    return `
                 <div class="card" style="margin-bottom:12px">
                   <span class="badge badge-warn">${esc(tagLabel(issue.tag))}</span>
                   <p style="margin-top:8px">${esc(issue.critique)}</p>
-                  <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">${esc(issue.evidence)}</p>
+                  ${issue.evidence ? `<p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">${esc(issue.evidence)}</p>` : ''}
                   ${relatedPatch ? `
                     <div style="margin-top:12px;padding:10px;background:var(--bg-input);border-radius:var(--radius);border-left:3px solid var(--blue)">
                       <p style="color:var(--blue);font-size:0.82rem;font-weight:600;margin-bottom:6px">${t("patchSuggestion")}</p>
-                      <div class="patch-code" style="margin-bottom:0">
-                        <button class="copy-btn" onclick="copyPatch(this, ${JSON.stringify(relatedPatch.patch).replace(/'/g, "\\\\'")})">${t("copyBtn")}</button>
-${esc(relatedPatch.patch)}</div>
+                      <div class="patch-code" style="margin-bottom:0"><button class="copy-btn" onclick="copyPatch(this, ${JSON.stringify(relatedPatch.patch).replace(/'/g, "\\\\'")})">${t("copyBtn")}</button>${esc(relatedPatch.patch.trim())}</div>
                       ${relatedPatch.scenario ? `<p style="color:var(--text-muted);font-size:0.8rem;margin-top:6px">${t("scenario")}: ${esc(relatedPatch.scenario)}</p>` : ''}
                     </div>
                   ` : ''}
                 </div>`;
-              }).join('')}
+                  }).join('');
+              })()}
             </div>
           ` : ''}
           <div class="card" style="border-left:3px solid var(--green);margin-top:16px">
