@@ -22,7 +22,7 @@
 ## Hook Exceptions (Intentional Autonomous Behaviors)
 The following hooks are intentional exceptions to the "no autonomous modifications" principle, pre-approved by the user:
 - SessionStart: `codex login` — initialize Codex CLI session (async, only when OPENAI_CODEX_API_KEY is set)
-- ExitPlanMode: `plannotator` — display plan review UI (timeout: 300s)
+- ExitPlanMode: `plannotator` — display plan review UI (managed by plannotator plugin via PermissionRequest hook; do not add a duplicate hook in settings.json)
 
 ## Recommended Model
 - Default CLI model: **Sonnet** (cost-efficient orchestrator)

@@ -93,18 +93,6 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "ExitPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "plannotator",
-            "timeout": 300
-          }
-        ]
-      }
     ]
   },
   "statusLine": {
