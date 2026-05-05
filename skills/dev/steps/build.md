@@ -191,6 +191,22 @@ If neither applies (pure logic, API clients, config, infra) → skip this sectio
 - If all features done: `currentStep` ← `"complete"`, append `"build"` to `completedSteps`
 - Append to `history`
 
+### Feature Spec Update
+
+- Open the completed feature's spec file (`artifacts.featureSpecs[i]`).
+- Mark all implemented checklist items: `[ ]` → `[x]`.
+- If the actual implementation diverges from the spec (design change, extra commands, different storage strategy, etc.):
+  - Add a `> **구현 변경**:` callout block at the top of the spec explaining the deviation and reason.
+  - Update affected sections (file paths, interfaces, verification steps) to match reality.
+- If implementation matches spec exactly: only update the checklist.
+
+### next-session.md Update
+
+- Move the completed feature from "잔여" to "완료된 Feature" table (with branch name).
+- Update "잔여 Feature 목록" — remove done items, mark the next recommended feature as `next`.
+- Update "현재 코드베이스 주요 파일" to reflect any new or changed files introduced by this feature.
+- Update frontmatter `updated:` to today's date and `branch:` to current branch.
+
 ### _index.md Update
 
 - Find the row matching the current task directory in `<devlogs-root>/_index.md`
