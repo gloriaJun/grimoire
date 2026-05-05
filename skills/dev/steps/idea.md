@@ -4,6 +4,16 @@ Goal: Expand a vague development idea into a structured brainstorm document.
 
 ## Process
 
+### 0. Vault Context Check
+
+Read `shared/vault-context.md` and execute with:
+- **keywords**: 2–5 terms extracted from the user's idea description
+- **search_focus**: `duplicate`, `past-mistakes`
+- **scope_hint**: resolved from cwd (GitHubWork → `work`, GitHubPrivate → `life`, else nil)
+
+Present results before moving to Step 1.
+Pass vault findings to the idea-explorer agent prompt as additional context.
+
 ### 1. Capture the Idea
 
 Ask the user to describe their idea freely — no structure required yet.

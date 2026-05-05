@@ -64,7 +64,20 @@ Proceed with this mode, or choose a different one?
 3. performance — Bottleneck analysis
 ```
 
-## 0e. Dispatch Explore Agent (Parallel)
+## 0e. Vault History Lookup + Dispatch Explore Agent (Parallel)
+
+Run both in parallel:
+
+**0e-1. Vault History Lookup**
+
+Read `shared/vault-context.md` and execute with:
+- **keywords**: 2–5 terms from the error message, exception class, or symptom description
+- **search_focus**: `error-history`
+- **scope_hint**: resolved from cwd
+
+If matching TIL/retro found, include in Triage Summary under `Past Solutions`.
+
+**0e-2. Dispatch Explore Agent (Parallel)**
 
 While waiting for user confirmation, dispatch an Explore agent to search the codebase:
 
@@ -95,6 +108,7 @@ Combine user-provided context with Explore agent results:
 - **Key error**: <primary error message or symptom>
 - **Related files**: <list from Explore agent>
 - **Recent changes**: <relevant commits if found>
+- **Past solutions**: <matching vault TIL/retro — omit if none found>
 ```
 
 **Confirm with user before proceeding to Step 1.**

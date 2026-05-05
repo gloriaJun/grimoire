@@ -20,6 +20,15 @@ If skipping:
 - Existing codebase context
 - Tech stack defaults: read `~/.claude/instructions/tech-stack.md` and pass relevant sections (JS/TS defaults, file conventions) to the agent prompt
 
+## Vault Context Check
+
+Before invoking the agent, read `shared/vault-context.md` and execute with:
+- **keywords**: 2–5 terms extracted from the PRD title/scope/tech stack
+- **search_focus**: `references`, `past-mistakes`
+- **scope_hint**: resolved from cwd
+
+Pass vault findings (relevant 10_Knowledge docs + past architecture decisions) to the `system-architect` agent prompt.
+
 ## Process
 
 1. Read `~/.claude/instructions/tech-stack.md` to extract JS/TS defaults and file conventions.

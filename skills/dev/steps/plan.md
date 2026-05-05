@@ -13,6 +13,15 @@ One of the following (check `_state.json` artifacts):
 - User's requirements description, OR
 - External planning document
 
+## Vault Context Check
+
+Before invoking the agent, read `shared/vault-context.md` and execute with:
+- **keywords**: 2–5 terms extracted from the brainstorm title/summary (or user input)
+- **search_focus**: `duplicate`, `past-mistakes`
+- **scope_hint**: resolved from cwd
+
+Pass vault findings to the `requirements-analyst` agent prompt as background context.
+
 ## Process
 
 1. Invoke the `requirements-analyst` agent with available inputs.

@@ -101,6 +101,20 @@ Field guidance:
 - `What I Learned` vs `Key Takeaways`: Key Takeaways = behavior/habit change ("다음엔 X 하겠다"); til What I Learned = technical facts
 - `What Didn't Go Well` vs `Process Reflection`: former = "무엇이 문제였나", latter = "다음에 프로세스를 어떻게 바꿀까"
 
+After writing the file, fill the `related:` field:
+
+1. Read `shared/vault-context.md` and execute with:
+   - **keywords**: `tags` values + `task-name` terms
+   - **search_focus**: `references`, `past-mistakes`
+   - **scope_hint**: same as `scope` field
+2. Top matching files (max 3) → rewrite `related:` as:
+   ```yaml
+   related:
+     - "[[04_Notes/work/2026-04-07-sentry-insight/til]]"
+     - "[[10_Knowledge/dev/debugging-tips]]"
+   ```
+3. If no matches → leave `related: []` as-is.
+
 ---
 
 ## State Update (lifecycle mode only)

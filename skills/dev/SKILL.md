@@ -8,8 +8,12 @@ description: >
   Also triggers on: code refactoring requests ("리팩토링 해줘", "코드 정리해줘",
   "클린 아키텍처 적용해줘", "중복 코드 정리해줘", "타입 추가해줘", "구드 냄새 제거해줘",
   "성능 개선해줘", "refactor this", "clean up this code"),
-  error analysis and debugging ("에러 고쳐줘", "에러 원인 분석해", "왜 안 돼",
-  "디버깅 해줘", "왜 느리지", error logs, stack traces, Sentry alerts).
+  error analysis and debugging ("에러 고쳐줘", "에러 원인 분석해줘", "버그 원인이 뭐야",
+  "오류가 왜 나지", "왜 에러가 나지", "이 에러 뭔지", "에러 원인을 분석해줘",
+  "어디서 실패하는 거야", "스택트레이스 분석해줘", "디버깅 해줘",
+  error logs, stack traces, Sentry alerts, GitHub Actions failure output).
+  Performance issues trigger only when accompanied by log/metric artifacts
+  ("느리다", "타임아웃", "latency" + log or trace data).
   Manages devlogs for cross-session state persistence.
   Manual planning steps (idea/plan/design/breakdown/build/complete) require explicit invocation.
 ---
@@ -156,7 +160,9 @@ When triggered by natural language (not an explicit `/dev` command):
 
 1. Analyze the trigger:
    - Refactoring keywords → load `tools/refactor/SKILL.md` directly, skip entry menu
-   - Error/debug keywords or stack trace → load `tools/troubleshoot/SKILL.md` directly, skip entry menu
+   - Error/debug signal (error keyword + action verb, stack trace, Sentry/log artifact,
+     or performance keywords **with** log/metric artifact) → load `tools/troubleshoot/SKILL.md` directly, skip entry menu
+   - Generic questions without error artifact ("왜 안돼", "왜 느리지" alone) → do NOT auto-route to troubleshoot; treat as general conversation
    - Otherwise → proceed to `steps/entry.md`
 
 2. Skip the active devlog check for utility tools (test/refactor/troubleshoot).

@@ -107,6 +107,17 @@ Field guidance:
 - `Resources` entries: each link must include a one-line description of why it's useful
 - `Task Links`: PR, ticket links — no description needed
 
+After writing the file, fill `related:` and `Resources`:
+
+1. Read `shared/vault-context.md` and execute with:
+   - **keywords**: `keywords` field values (if set), else `tags` + `task-name` terms
+   - **search_focus**: `references`, `error-history`
+   - **scope_hint**: same as `scope` field
+2. From top matching files (max 3):
+   - Files in `04_Notes` → add to `related:` as `"[[path/to/file]]"`
+   - Files in `10_Knowledge` → add to `Resources` section as `[[path/to/file]] — <summary from frontmatter>`
+3. If no matches → leave fields as-is.
+
 ### Step 2: Devlog Cleanup (lifecycle mode only)
 
 After process note is saved:
