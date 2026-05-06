@@ -21,14 +21,15 @@ flowchart TD
     C["1. Gather Changes"]
     C --> D{"staged changes?"}
     D -- None --> E["Notify unstaged"]
-    D -- Yes --> F["2. Summarize"]
-    F --> G["3. Review Checklist"]
-    G --> H["4. Present Results"]
-    H --> I{"Issues?"}
-    I -- No --> J(["Proceed"])
-    I -- Yes --> K["5. User Decision"]
-    K -- Fix --> C
-    K -- Proceed --> J
+    D -- Yes --> F["2. Auto-fix"]
+    F --> G["3. Summarize"]
+    G --> H["4. Review Checklist"]
+    H --> I["5. Present Results"]
+    I --> J{"Issues?"}
+    J -- No --> K(["Proceed"])
+    J -- Yes --> L["6. User Decision"]
+    L -- Fix --> C
+    L -- Proceed --> K
 ```
 
 ---
@@ -47,14 +48,25 @@ flowchart TD
 Run `git diff --cached --stat` and `git diff --cached` to see all staged changes.
 If nothing is staged, check `git diff` for unstaged changes and inform the user.
 
-### 2. Summarize Changes
+### 2. Auto-fix
+
+Run ESLint auto-fix on staged files to apply formatter corrections (prettier, import order, etc.):
+
+```bash
+eslint <staged-files> --fix
+```
+
+- If any files were modified, re-stage them with `git add <modified-files>` and notify the user (e.g. "prettier formatting applied to X files").
+- If ESLint is not available in the project, skip this step silently.
+
+### 3. Summarize Changes
 
 Produce a brief summary:
 - Files changed (added/modified/deleted)
 - Nature of changes (feature, bugfix, refactor, docs, etc.)
 - Estimated scope (small / medium / large)
 
-### 3. Review Checklist
+### 4. Review Checklist
 
 Check each item against the staged diff:
 
@@ -80,7 +92,7 @@ Check each item against the staged diff:
 - [ ] Related documentation updated if needed
 - [ ] All acceptance criteria met (if working on a tracked feature)
 
-### 4. Present Results
+### 5. Present Results
 
 Format the review as:
 
@@ -100,7 +112,7 @@ Format the review as:
 - Proceed with commit / Fix issues first
 ```
 
-### 5. Decision
+### 6. Decision
 
 - If all checks pass: proceed with the commit
 - If issues found: present them and wait for user decision
