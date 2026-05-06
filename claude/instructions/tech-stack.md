@@ -41,6 +41,12 @@ Single-responsibility principle at the file level:
 
 When file-level conventions grow to 5+ rules, extract to `instructions/js-ts-conventions.md`.
 
+## Terminal Environment
+
+- **Terminal**: cmux (macOS native, AI-agent-optimized, Ghostty-based, no tmux/prefix key needed)
+- **Built-in browser**: When suggesting "open in browser" (e.g., HTML reports in `/tmp/`), reference cmux's built-in browser alongside the system default
+- **Split panes**: Available natively — suggest split pane usage when recommending parallel long-running terminal processes (e.g., dev server + test watcher)
+
 ## General
 - Specific frameworks and libraries are defined per project in each repo's CLAUDE.md
 - This file covers cross-project preferences only
