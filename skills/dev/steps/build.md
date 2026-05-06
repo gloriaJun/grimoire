@@ -148,6 +148,43 @@ Invoke only `code-reviewer`.
 
 ---
 
+## Local Verification Checkpoint
+
+Run after Review Resolution, for every feature regardless of testingApproach.
+
+### Step 1: testingApproach별 확인
+
+| testingApproach | 확인 항목 |
+|-----------------|-----------|
+| `skip` | 대상 파일 존재 확인 + 가능하면 lint |
+| `test-after` | Flow B-2에서 테스트 통과 재확인 |
+| `tdd` | Flow A-2에서 테스트 통과 재확인 |
+
+`skip` 피처의 lint 확인:
+```bash
+pnpm nx lint <project-name>
+```
+node_modules 미설치로 실행 불가 시: 사유를 명시하고 F-09(build/deploy) 단계로 검증 defer.
+
+### Step 2: 로컬 UI 미리보기 가능 여부 안내
+
+아래 중 하나를 명시적으로 출력한다:
+
+- **미리보기 가능**: 이 feature로 navigable page 또는 visible UI가 생긴 경우
+  ```
+  🖥️  로컬에서 확인 가능합니다:
+  pnpm nx dev <project-name>  →  http://localhost:<port>
+  확인 항목: <spec의 acceptance criteria 중 UI 관련 항목>
+  ```
+- **미리보기 불가**: 타입, 유틸, API client, 상수 등 직접 UI 없는 경우
+  ```
+  ⏭️  로컬 UI 확인: F-XX (<feature-name>) 완료 후 가능합니다.
+  ```
+
+사용자 확인을 기다리지 않고 다음 단계로 진행한다 (미리보기 가능 케이스만 대기).
+
+---
+
 ## UI Verification (frontend changes only)
 
 ### Trigger Condition
