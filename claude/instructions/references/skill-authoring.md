@@ -262,6 +262,40 @@ Before creating or modifying any skill or instruction file:
 | CLAUDE.md On-Demand fit | Is this instruction only needed in specific situations (not always)? | Use On-Demand References pattern — add a trigger line, put content in `references/` |
 | Placeholder intent | Is the target a placeholder or stub? | Confirm the intended behavior with the user before designing |
 
+## External Research (Optional)
+
+When the skill addresses an unfamiliar domain or the user references an external tool
+or workflow as inspiration, consult external repos for design ideas before writing the skill.
+
+**Trigger conditions (any one):**
+- No similar skill exists in grimoire and the problem space is unfamiliar
+- The user explicitly references an external tool or workflow as inspiration
+- The reuse check found nothing and the skill involves novel orchestration patterns
+
+**How to execute:**
+```
+WebFetch("https://github.com/<owner>/<repo>")
+```
+Read `README.md`, skill/command entry points, and any workflow definition files.
+
+**Extract only:**
+- Step organization and sequencing ideas
+- Trigger condition patterns (what signals invoke the skill)
+- Agent delegation patterns (when/how sub-tasks are split)
+- Workflow branching logic
+
+**Hard limits — never copy:**
+- File names, directory structures, or variable names
+- Prompt text, descriptions, or instruction wording
+- Any schema or format directly (re-derive from grimoire conventions)
+
+**Adaptation checklist before designing:**
+- [ ] SKILL.md stays orchestrator-only — no inline logic borrowed from source
+- [ ] Mermaid diagram drawn from scratch to match grimoire flow
+- [ ] All files English-only
+- [ ] Agent dispatch follows `@instructions/agent-guidelines.md` (max 3 parallel, model tiers)
+- [ ] Step extraction threshold (3+ independent steps) applied fresh
+
 ## Runtime Behavior Checklist
 
 When designing a skill, review these items to ensure the skill leverages the full
