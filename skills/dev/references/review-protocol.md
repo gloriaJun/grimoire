@@ -7,36 +7,66 @@ The calling step file specifies the **artifact** and **Codex focus**.
 
 ---
 
-## 0. Stage 0: 구조적 사전 체크
+## 0. Stage 0: Structural Pre-Check
 
-Mode Selection 전에 실행. orchestrator inline — 위임 없음.
-아티팩트 유형에 맞는 항목을 평가한다.
+Run before Mode Selection. Orchestrator inline — no delegation.
+Evaluate checklist items matching the artifact type.
 
 **PRD:**
 ```
-[ ] 문제/배경 서술 존재
-[ ] 모든 기능 요구사항에 AC(수락 기준) 존재
-[ ] Non-goals 섹션 존재 (비어 있어도 명시되면 통과)
-[ ] MVP 범위 경계 정의
-[ ] 미해결 항목에 TBD:[담당자 또는 "미정"] 표기
+[ ] Problem / background statement present
+[ ] Acceptance criteria present for every functional requirement
+[ ] Non-goals section present (may be empty, but must be explicitly stated)
+[ ] MVP scope boundary defined
+[ ] Open items marked TBD:[owner or "TBD"]
 ```
 
 **TRD:**
 ```
-[ ] 테스팅 전략 테이블 존재 (framework / configFile / command)
-[ ] 핵심 아키텍처 결정에 ≥2 대안 기록 (또는 "단일 선택지 이유" 명시)
-[ ] 외부 의존성에 fallback 또는 "없음" 명시
+[ ] Testing strategy table present (framework / configFile / command)
+[ ] Each key architecture decision has ≥2 alternatives recorded (or a stated reason for a single option)
+[ ] External dependencies have fallback or "none" stated
 ```
 
 **Feature Breakdown:**
 ```
-[ ] 모든 피처에 Testing Approach 섹션 존재
-[ ] 모든 피처에 AC 1개 이상 존재
-[ ] 의존성 있는 피처가 선행 피처보다 뒤에 정렬
+[ ] Testing Approach section present for every feature
+[ ] At least one AC present for every feature
+[ ] Dependent features ordered after their prerequisites
 ```
 
-미체크 항목 → 즉시 인라인 수정 후 Mode Selection으로 진행.
-전체 체크 → 즉시 Mode Selection으로 진행.
+Unchecked items → fix inline immediately, then proceed to Stage 0.5.
+All checked → proceed to Stage 0.5.
+
+---
+
+## 0.5. Grill Phase (optional)
+
+Run after structural pre-check, before Mode Selection. Orchestrator inline — no delegation.
+
+Ask the user:
+
+```
+Run grill review?
+Surfaces gaps in decisions one question at a time. (y/n)
+```
+
+**n → proceed to Stage 1.**
+
+**y → execute the following:**
+
+1. Read artifact contents.
+2. Determine question focus by artifact type:
+   - **PRD**: problem definition specificity, missing AC coverage, ambiguous non-goal boundaries, MVP scope rationale
+   - **TRD**: rationale for technology choices, missing edge cases, external dependency risks, testing strategy fit
+   - **Feature Breakdown**: dependency completeness, session sizing rationale, missing features
+3. Extract a list of decision points and assumptions (internal only — not shown to user).
+4. Ask one question at a time:
+   - If answerable from the codebase → search via Explore and cite findings in the recommended answer.
+   - Otherwise → provide a recommended answer only.
+   - Format: question + `(Recommended: <answer>. Reason: <one-line rationale>)`
+5. If the user's answer differs from the artifact → propose artifact update (apply after Stage 1).
+6. All decision points resolved → proceed to Stage 1.
 
 ---
 
