@@ -54,9 +54,11 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
       "name": "string",
       "status": "pending | in-progress | review | done",
       "testingApproach": "TDD | Test-After | Skip",
+      "dependsOn": ["02", "03"],
       "executor": "claude | codex | null",
       "reviewer": "claude | codex | null",
-      "frontendReviewer": "claude | null"
+      "frontendReviewer": "claude | null",
+      "stagnationResolution": "pending-tests | null"
     }
   ],
   "history": [

@@ -40,6 +40,21 @@ Register in `_state.json`:
 { "artifacts": { "brainstorm": "brainstorm.md" } }
 ```
 
+### 3.5 Readiness Check
+
+brainstorm.md를 아래 5가지 기준으로 평가 (위임 없음, orchestrator inline):
+
+```
+[ ] 특정 사용자/유스케이스 명시 (not "모두를 위한")
+[ ] 구체적인 성공 신호 또는 AC 1개 이상
+[ ] 접근 방법 후보 1개 이상
+[ ] 제약 조건 명시 (시간/기술/예산, 또는 "없음")
+[ ] MVP와 부가 기능 경계 구분 가능
+```
+
+- **2개 이상 미체크**: idea-explorer에 gap당 후속 질문 1개 전달 → brainstorm.md 업데이트 → 재평가
+- **1개 이하 미체크**: Step 4로 진행
+
 ### 4. Present and Confirm
 
 Show the brainstorm to the user.

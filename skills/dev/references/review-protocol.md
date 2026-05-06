@@ -7,6 +7,39 @@ The calling step file specifies the **artifact** and **Codex focus**.
 
 ---
 
+## 0. Stage 0: 구조적 사전 체크
+
+Mode Selection 전에 실행. orchestrator inline — 위임 없음.
+아티팩트 유형에 맞는 항목을 평가한다.
+
+**PRD:**
+```
+[ ] 문제/배경 서술 존재
+[ ] 모든 기능 요구사항에 AC(수락 기준) 존재
+[ ] Non-goals 섹션 존재 (비어 있어도 명시되면 통과)
+[ ] MVP 범위 경계 정의
+[ ] 미해결 항목에 TBD:[담당자 또는 "미정"] 표기
+```
+
+**TRD:**
+```
+[ ] 테스팅 전략 테이블 존재 (framework / configFile / command)
+[ ] 핵심 아키텍처 결정에 ≥2 대안 기록 (또는 "단일 선택지 이유" 명시)
+[ ] 외부 의존성에 fallback 또는 "없음" 명시
+```
+
+**Feature Breakdown:**
+```
+[ ] 모든 피처에 Testing Approach 섹션 존재
+[ ] 모든 피처에 AC 1개 이상 존재
+[ ] 의존성 있는 피처가 선행 피처보다 뒤에 정렬
+```
+
+미체크 항목 → 즉시 인라인 수정 후 Mode Selection으로 진행.
+전체 체크 → 즉시 Mode Selection으로 진행.
+
+---
+
 ## 1. Mode Selection
 
 Ask the user before proceeding:

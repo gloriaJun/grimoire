@@ -37,6 +37,19 @@ From `_state.json` artifacts:
 1. Based on PRD + TRD + wireframe (if available), produce a numbered feature list:
    - If wireframe exists: decompose at screen/component granularity using the mockup as reference
    - Feature name, brief description, files/modules affected, acceptance criteria
+
+1b. 의존성 맵 (features.md 작성 전, orchestrator inline):
+   각 피처 쌍 (F-A, F-B)을 확인: "F-B를 F-A 없이 구현·테스트할 수 있는가?"
+   - 불가능하면 F-A → F-B 선행 관계로 기록
+   - `features.md`에 의존성 테이블 포함:
+     ```
+     | 피처 | 의존 대상 | 비고 |
+     |------|---------|------|
+     | F-02 | F-01    | F-01 store 필요 |
+     ```
+   - 의존성 없는 피처: "독립 — 임의 순서 구현 가능"으로 명시
+   - 각 피처 `dependsOn` 배열 결정 (없으면 `[]`)
+
 2. Write `features.md` in the task subdirectory.
 3. Write individual `feature-XX-<name>.md` files with detailed specs.
    Each spec must include a **Testing Approach** section:
@@ -59,13 +72,13 @@ From `_state.json` artifacts:
 4. Register paths in `_state.json`:
    - `artifacts.features` ← `"features.md"`
    - `artifacts.featureSpecs` ← array of spec filenames
-   - `features` ← array of feature objects with `status: "pending"` and `testingApproach` from each spec
+   - `features` ← array of feature objects with `status: "pending"`, `testingApproach` from each spec, and `dependsOn` array
 
 ## Review
 
 Load `references/review-protocol.md` and execute the full review workflow.
 - **Artifact**: feature breakdown at `artifacts.features`
-- **Codex focus**: "Review this feature breakdown for missing features, session-scoping issues, and dependency ordering"
+- **Codex focus**: "Review this feature breakdown for missing features, session-scoping issues, dependency ordering, and whether the dependency table captures all blocking relationships"
 
 ## State Update
 

@@ -6,10 +6,12 @@ Execute one feature per session.
 
 1. Read `_state.json` from the devlogs task subdirectory.
 2. Display pending features:
+   - `dependsOn`의 모든 피처가 `"done"`인 피처: 선택 가능
+   - 미완료 의존 피처가 있는 피처: `[blocked: F-XX]`로 표시
    ```
    Pending features:
    [ ] feature-01-<name>
-   [ ] feature-02-<name>
+   [ ] feature-02-<name>        [blocked: F-01]
    ...
 
    Which feature would you like to work on? (enter number or name)
@@ -56,7 +58,21 @@ Execute one feature per session.
 1. Run `testConfig.unit.command`.
 2. If all tests pass → proceed to Step A-3.
 3. If tests fail → return to feature-executor for fixes (max 2 iterations).
-   If still failing after 2 iterations, surface failures to the user and ask how to proceed.
+   If still failing after 2 iterations, show the stagnation escape menu:
+   ```
+   테스트가 2회 시도 후에도 통과되지 않습니다.
+
+   복구 방법을 선택하세요:
+     1. 범위 축소   — non-essential AC 제외 후 재구현
+     2. 실행기 전환 — Claude ↔ Codex 전환
+     3. 피처 분할   — F-Xa(기반) + F-Xb(막힌 부분)으로 분할; F-Xb 연기
+     4. 테스트 연기 — "pending" 마킹 후 /dev complete 전 처리
+     5. 에스컬레이션 — 진단 메모와 함께 사용자에게 위임
+
+   > 번호 입력
+   ```
+   - 옵션 3: features.md + `_state.json`에 F-Xa/F-Xb 추가 후 계속
+   - 옵션 4: `features[i].stagnationResolution: "pending-tests"` 기록, feature spec에 `> ⚠️ 테스트 연기됨` 경고 추가
 
 **Step A-3: Refactor**
 
@@ -91,6 +107,8 @@ After implementation is complete:
    - Implemented code as target
    - `testConfig` (framework, config file)
 2. Run `testConfig.unit.command` to verify tests pass.
+   If tests fail → fix and retry (max 2 iterations).
+   If still failing after 2 iterations, show the stagnation escape menu (same as Flow A-2).
 
 **Step B-3: Simplify (Pre-Review)**
 

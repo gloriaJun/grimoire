@@ -22,6 +22,21 @@ When all features are done.
    - What was built
    - Files changed
    - Follow-up items
+3.5 Wonder & Reflect (inline pass 1회 — 위임 없음, 사용자 입력 불요):
+
+   **Wonder — 무엇이 불확실한 채로 남았나?**
+   - PRD의 미해결 항목 최대 3개 추출 (Open Questions 섹션 또는 TBD 표기 항목)
+   - `features[i].stagnationResolution` 이벤트 목록 (구현 가정/우회 지점)
+   - TRD 가정 중 빌드에서 검증되지 않은 항목
+
+   **Reflect — 다음에는 무엇을 바꿔야 하나?**
+   - 피처 사이징(breakdown)이 실제 구현 공수와 맞았는가?
+   - feature spec AC 중 테스트 불가능한 항목이 있었는가?
+   - 빌드 중 발견됐지만 spec에 없던 요구사항이 있었는가?
+
+   결과를 태스크 요약의 끝에 `## Retrospective Notes` 섹션으로 추가.
+   이 출력을 Step 4 insight 디스패치 컨텍스트에 포함.
+
 4. Dispatch **insight** as a subagent (isolated context, avoids session-end context bloat):
    - Load `~/.claude/skills/insight/SKILL.md` via Read tool
    - Dispatch via `Agent(subagent_type: "Explore")` with:
