@@ -94,6 +94,7 @@ Select your starting point:
   5. breakdown  — TRD exists, go to feature decomposition
   6. build      — planning done, go straight to implementation
   7. resume     — continue an existing task by path
+  8. import     — already have artifacts, bootstrap devlog from them
 
 > Enter number or sub-command name
 ```
@@ -107,6 +108,7 @@ Select your starting point:
 | breakdown | `steps/breakdown.md` | PRD exists (TRD optional) |
 | build     | `steps/build.md` | feature breakdown exists |
 | resume    | prompts for devlog path | `_state.json` exists |
+| import    | Import Flow (below) | existing artifacts in any form |
 
 ## New Task Initialization
 
@@ -127,9 +129,53 @@ After entry point is confirmed:
    - Update frontmatter `updated:` to today's date
 5. Load the step file for the selected entry point
 
-## External Document Handling
+## Import Flow
 
-If the user has an existing PRD, TRD, or planning doc:
-- Ask for the file path
-- Copy it into the task directory and register in `_state.json` artifacts
-- Use it as input for the appropriate step
+Triggered by `/dev import` or entry menu option 8.
+Use when the user already has completed artifacts (PRD, TRD, feature specs, plan files, or inline content from the conversation).
+
+1. **Resolve devlog root** (same as Active Task Check step 1).
+2. **Ask for task name** (kebab-case).
+3. **Create task directory**: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
+4. **Collect artifacts**: for each slot, ask for source or "skip":
+
+   | Slot | `_state.json` key | File to create |
+   |------|-------------------|----------------|
+   | Brainstorm | `artifacts.brainstorm` | `brainstorm.md` |
+   | PRD | `artifacts.prd` | `PRD-<task-name>.md` |
+   | TRD | `artifacts.trd` | `TRD-<task-name>.md` |
+   | Feature breakdown | `artifacts.features` | `features.md` |
+   | Feature specs | `artifacts.featureSpecs[]` | `feature-NN-<name>.md` |
+
+   Source can be:
+   - **File path**: copy file content into task directory
+   - **Inline / plan file**: user points to content in conversation or another file → write to task directory
+   - **Skip**: leave as `null` in `_state.json`
+
+5. **Infer `currentStep`** from artifacts provided:
+
+   | Artifacts present | `currentStep` |
+   |---|---|
+   | none | `"idea"` |
+   | brainstorm only | `"plan"` |
+   | PRD (no TRD) | `"design"` |
+   | PRD + TRD | `"breakdown"` |
+   | PRD + TRD + features | `"build"` |
+
+6. **Create `_state.json`**:
+   - `taskName`, `currentStep` (inferred above), `entryPoint: "import"`
+   - `completedSteps`: all lifecycle steps preceding `currentStep`
+   - `features[]`: populate from feature spec files if provided, else `[]`
+
+7. **Update `_index.md`** (same as New Task Initialization step 4).
+
+8. Confirm:
+   ```
+   ✅ Devlog 초기화 완료
+   경로: <task-dir>
+   현재 단계: <currentStep>
+
+   /dev <currentStep> 을 이어서 실행하시겠습니까? (Y/n)
+   ```
+   - Y: load the step file for `currentStep`
+   - n: stop

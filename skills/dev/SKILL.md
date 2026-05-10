@@ -110,6 +110,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `breakdown` | `steps/breakdown.md` | Feature decomposition → features.md |
 | `build` | `steps/build.md` | Feature implementation (1 feature/session) |
 | `complete` | `steps/complete.md` | Wrap-up, insight, summary |
+| `import` | `steps/entry.md` (Import Flow) | existing artifacts → bootstrap devlog |
 
 ### Utility Tools (devlog optional)
 
@@ -139,6 +140,7 @@ Planning lifecycle (devlog-tracked):
   breakdown     TRD/wireframe → feature breakdown
   build         implement features (1 feature/session)
   complete      wrap-up + summary
+  import        existing artifacts → bootstrap devlog
 
 Utility tools (devlog optional):
   test          test code generation
@@ -167,6 +169,19 @@ When triggered by natural language (not an explicit `/dev` command):
 
 2. Skip the active devlog check for utility tools (test/refactor/troubleshoot).
    They operate on the current working files, not on a tracked devlog task.
+
+---
+
+## External Reference Behavior
+
+When this skill is *referenced* rather than directly invoked — e.g., "'/dev' 스킬에 맞춰 정리해줘", "devlog 형식으로 저장해줘", "이 내용을 /dev 경로에 기록해줘" — from plan mode, general conversation, or another skill:
+
+1. **Read this skill file first.** Never act on memory of the format.
+2. **Resolve the devlog path** using the Devlog Path Detection rules below.
+3. **Create actual files** at `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`. Do not reformat content inline — create the directory and individual artifact files.
+4. When the user has completed artifacts, use the **Import Flow** in `steps/entry.md`.
+
+> **Plan mode exception**: if write operations are currently blocked, record the target devlog path and artifact file list in the plan file. Create the actual files after ExitPlanMode.
 
 ---
 
