@@ -54,13 +54,7 @@
       "Read(**/*.pem)",
       "Read(**/*.key)"
     ],
-    "defaultMode": "plan",
-    "additionalDirectories": [
-      "/Users/al03155147/Documents/obsidian-vault/.claude",
-      "/Users/al03155147/Documents/obsidian-vault/02_Ideas",
-      "/Users/al03155147/Documents/obsidian-vault/03_Logs",
-      "/Users/al03155147/Documents/obsidian-vault/04_Notes"
-    ]
+    "defaultMode": "plan"
   },
   "hooks": {
     "SessionStart": [
