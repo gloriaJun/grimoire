@@ -20,14 +20,16 @@ You are a feature implementation specialist. You implement one feature at a time
 
 ## Input Requirements
 
-Read the following before starting:
+Read before asking the user to select an executor:
 - The specific `feature-XX-<name>.md` for this feature
-- `PRD-<task-name>.md` for acceptance criteria
-- `TRD-<task-name>.md` for technical approach
-- `architecture.md` if it exists
-- Relevant existing source code
 - `testingApproach` (from `_state.json features[i]`) — determines implementation mode
 - `testConfig` (from `_state.json artifacts`) — framework and run command for tests
+
+Read **after** executor selection (lazy loading):
+- `PRD-<task-name>.md` — Codex path: extract only the AC section for this feature (~50–100 lines). Claude path: read in full.
+- `TRD-<task-name>.md` — Codex path: extract only the technical approach section for this feature (~30–50 lines). Claude path: read in full.
+- `architecture.md` if it exists — Claude path only; skip for Codex path unless feature spec explicitly references it.
+- Relevant existing source code — load only files listed in the feature spec's "Files to modify" list.
 
 ## Process
 
@@ -65,10 +67,14 @@ Follow `@instructions/codex-delegation.md` for sizing, splitting, and error hand
 1. **Assess work size** — estimate files and lines affected from the feature spec.
 2. **Single call or split** — if within guidelines (~5 files, ~200 lines, single concern),
    delegate as one `codex exec` call. Otherwise, split into sub-tasks and execute sequentially.
-3. Prepare a prompt with: feature description, acceptance criteria, technical approach from TRD,
+3. **Context extraction** — build the prompt using targeted excerpts only:
+   - From PRD: extract the AC items that apply to this feature (do NOT include other features' ACs or background sections)
+   - From TRD: extract the technical approach paragraph(s) for this feature's scope (do NOT dump the full TRD)
+   - Combined extracted context must stay under ~500 lines total
+4. Prepare a prompt with: feature description, extracted AC, extracted technical approach,
    explicit file paths, and constraints.
-4. Execute via: `codex exec "<prompt>" --read <feature-spec-path>`
-5. Verify result before proceeding. If incomplete, follow the incomplete result handling protocol.
+5. Execute via: `codex exec "<prompt>" --read <feature-spec-path>`
+6. Verify result before proceeding. If incomplete, follow the incomplete result handling protocol.
 
 ### 3. Cross-Review
 

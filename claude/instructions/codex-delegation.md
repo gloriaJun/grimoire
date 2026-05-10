@@ -60,13 +60,24 @@ Sub-task 2: codex exec -c model_reasoning_effort="low" "<prompt-2>" → verify r
 - Verify each result before starting the next — later sub-tasks may depend on earlier changes.
 - Include prior sub-task context in subsequent prompts so Codex understands the current state.
 
+### Context Cap Rule (for sequential sub-tasks)
+
+Prior context accumulates linearly and inflates Codex input tokens.
+Apply a hard cap when N > 2 sub-tasks are in progress:
+
+- Include at most the **2 most recent** sub-task summaries (not all previous ones).
+- Each summary: 1–2 sentences, max 150 chars. No diffs, no full code snippets.
+- Prepend a single-sentence overall goal as anchor.
+- Older sub-task history is in git log — do not repeat it in the prompt.
+
 ### Prompt Template for Sequential Sub-Tasks
 
 ```
+Goal: <one-sentence overall feature goal>
 Context: This is sub-task N of M for feature "<name>".
-Previous sub-tasks completed:
-- Sub-task 1: <summary of what was done>
-- Sub-task 2: <summary of what was done>
+Recent sub-tasks completed (last 2 only):
+- Sub-task N-1: <max 150-char summary>
+- Sub-task N-2: <max 150-char summary>
 
 Current sub-task: <description>
 Files to modify: <list>
@@ -99,9 +110,10 @@ A well-structured prompt is the primary lever for Codex delegation success.
 
 ### Anti-Patterns
 
-- Avoid dumping an entire PRD as the prompt — extract only the relevant section.
+- Avoid dumping an entire PRD as the prompt — extract only the relevant AC and technical approach section. Combined extracted context must stay under ~500 lines total.
 - Avoid ambiguous instructions like "improve the code" — specify exactly what to change.
 - Avoid omitting file paths — Codex works better with explicit `--read` targets.
+- Avoid accumulating all prior sub-task summaries — apply the Context Cap Rule above.
 
 ## Integration with Cross-Review
 

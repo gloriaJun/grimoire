@@ -116,7 +116,22 @@ Review mode:
 
 Run automatically after user approval. No additional prompt needed.
 
-**Invocation priority (try in order):**
+### Pre-Check: Codex Availability Cache
+
+Before attempting any invocation method:
+
+1. Read `_state.json` → check `codexAvailability` field.
+2. If the field is already set, skip straight to the matching step:
+   - `"plugin"` → go directly to method 1
+   - `"cli"` → go directly to method 2
+   - `"unavailable"` → go directly to method 3 (code-reviewer fallback)
+3. If the field is `null` (first review of this session):
+   a. Check plugin availability: attempt a no-op `/codex:rescue` call or verify it appears in the active skill list.
+   b. If plugin unavailable, check CLI: run `which codex` via Bash.
+   c. Record result in `_state.json.codexAvailability` (`"plugin"` | `"cli"` | `"unavailable"`).
+   d. Proceed with the confirmed method.
+
+**Invocation priority (try in order; skip steps already ruled out by cache):**
 1. `codex-plugin-cc`: `/codex:rescue "<codex-focus>: <artifact-path>"`
 2. Codex CLI: `codex exec -c model_reasoning_effort="low" --read <artifact-path> "<codex-focus>"`
 3. `code-reviewer` agent (model: sonnet) — if Codex unavailable; record fallback reason in `_state.json` history.

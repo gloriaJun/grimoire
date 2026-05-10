@@ -31,6 +31,7 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
       }
     }
   },
+  "codexAvailability": "plugin | cli | unavailable | null",
   "reviews": {
     "prd": {
       "mode": "plannotator | text | skipped | null",
@@ -121,6 +122,12 @@ The general mechanics â€” persist to disk, append to `history`, resolve paths â€
 - Valid values: `"entry"`, `"idea"`, `"plan"`, `"design"`, `"wireframe"`, `"breakdown"`, `"build"`, `"complete"`, `"retro"`, `"til"`
 - Do NOT use numbers or arbitrary values
 - Example: all features built during build step should record `"step": "build"`
+
+### Codex Availability Cache
+- `codexAvailability` starts as `null` (unchecked)
+- Values: `"plugin"` (codex-plugin-cc available), `"cli"` (CLI only), `"unavailable"` (neither)
+- Set once at first Stage 4 review invocation; reused for all subsequent reviews in the session
+- Reset to `null` if the session environment changes (e.g., plugin reinstalled)
 
 ### Feature Tracking
 - `features` array populated at breakdown step
