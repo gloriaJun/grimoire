@@ -178,10 +178,12 @@ Run after Review Resolution, for every feature regardless of testingApproach.
 | `test-after` | Flow B-2에서 테스트 통과 재확인 |
 | `tdd` | Flow A-2에서 테스트 통과 재확인 |
 
-`skip` 피처의 lint 확인:
-```bash
-pnpm nx lint <project-name>
-```
+`skip` 피처의 lint 확인 — 다음 우선순위로 명령을 결정한다:
+
+1. `artifacts.lintConfig.eslint.command` 있으면 → 해당 명령 사용 (e.g. `pnpm lint`)
+2. nx monorepo 감지 시 (`nx.json` 존재) → `pnpm nx lint <project-name>`
+3. 둘 다 없으면 → lint 확인 skip, 이유 명시 (`/dev setup`으로 lint 설정 권장)
+
 node_modules 미설치로 실행 불가 시: 사유를 명시하고 F-09(build/deploy) 단계로 검증 defer.
 
 ### Step 2: 로컬 UI 미리보기 가능 여부 안내

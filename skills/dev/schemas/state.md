@@ -29,6 +29,25 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
         "configFile": "string | null — e.g. playwright.config.ts",
         "command": "string | null — e.g. pnpm e2e"
       }
+    },
+    "lintConfig": {
+      "eslint": {
+        "version": "v9-flat | legacy | null",
+        "configFile": "string | null — e.g. eslint.config.ts",
+        "command": "string | null — e.g. pnpm lint"
+      },
+      "prettier": {
+        "configFile": "string | null — e.g. prettier.config.ts",
+        "command": "string | null — e.g. pnpm format"
+      },
+      "typecheck": {
+        "configFile": "string | null — e.g. tsconfig.json",
+        "command": "string | null — e.g. pnpm typecheck"
+      },
+      "husky": {
+        "configured": "boolean | null",
+        "hooks": ["pre-commit", "pre-push", "commit-msg"]
+      }
     }
   },
   "codexAvailability": "plugin | cli | unavailable | null",

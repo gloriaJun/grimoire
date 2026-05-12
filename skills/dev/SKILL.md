@@ -86,6 +86,7 @@ stateDiagram-v2
         retro_tool: tools/retro
         til_tool: tools/til
         review_tool: tools/review
+        setup_tool: tools/setup
     }
 
     StepFile --> Handoff: step complete
@@ -122,6 +123,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `review` | `Read("tools/review/SKILL.md")` |
 | `retro` | `Read("tools/retro/SKILL.md")` |
 | `til` | `Read("tools/til/SKILL.md")` |
+| `setup` | `Read("tools/setup/SKILL.md")` |
 | `status` | `steps/status.md` | scan devlogs root → print task status summary |
 | `help` | inline | print available sub-commands |
 
@@ -149,6 +151,7 @@ Utility tools (devlog optional):
   review        code review workflow
   retro         retrospective → vault note
   til           TIL note → vault + devlog cleanup
+  setup         configure lint, prettier, type-check, and husky
   status        show all devlog task statuses
 
   help          show this message
