@@ -42,23 +42,24 @@ refactor/theme-single-file         # no ticket
 
 ## Branch Confirmation Rule
 
-When the user specifies a target branch (e.g., "X 브랜치에서 작업해줘", "X 브랜치 생성해서 작업해"), record it as the **designated branch** for the session.
+When the user specifies a target branch (e.g., "work on branch X", "create branch X and work there"), record it as the **designated branch** for the session.
 
 Before committing or pushing, if the current branch differs from the designated branch, always confirm:
 
 ```
-지정 브랜치: fix/LNSQW-1977_color-scheme
-현재 브랜치: worktree-openchat-theme  ← 다름
+Designated branch : fix/LNSQW-1977_color-scheme
+Current branch    : worktree-openchat-theme  ← mismatch
 
-이 브랜치(worktree-openchat-theme)에 커밋할까요?
-아니면 지정 브랜치(fix/LNSQW-1977_color-scheme)로 전환할까요?
+Commit to current branch (worktree-openchat-theme)?
+Or switch to the designated branch (fix/LNSQW-1977_color-scheme)?
 ```
 
 ## Rules
 - Co-Authored-By line is optional — include only when user requests
 - Always create new commits, never amend unless explicitly asked
 - Stage specific files, avoid `git add -A`
+- When editing an existing file, follow the language convention of that file
 
 ## GitHub CLI
 
-GitHub 관련 작업에는 `gh` CLI를 사용한다.
+Use `gh` CLI for all GitHub-related operations.
