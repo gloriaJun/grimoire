@@ -136,6 +136,29 @@ Before attempting any invocation method:
 2. Codex CLI: `codex exec -c model_reasoning_effort="low" --read <artifact-path> "<codex-focus>"`
 3. `code-reviewer` agent (model: sonnet) — if Codex unavailable; record fallback reason in `_state.json` history.
 
+### Large Artifact Optimization (>500 lines)
+
+When the artifact exceeds ~500 lines, passing the full file to Codex wastes tokens and adds latency without improving review quality. Instead:
+
+1. **Extract a focused excerpt** (~150 lines max) containing only the security-sensitive and architecture-critical sections:
+   - Security: crypto/auth code samples
+   - Architecture: inter-component messaging, lifecycle management code
+   - Contract: API/interface type definitions
+   - Config: manifest, build config
+
+2. **Write the excerpt to a temp file** (e.g. `/tmp/trd-review-excerpt.md`).
+
+3. **Narrow focus to 3 areas** (not 8+). Example:
+   - SECURITY: [specific section] — [specific question]
+   - ARCHITECTURE: [specific section] — [specific question]
+   - MISSING: [specific section] — [specific question]
+
+4. **Pass the temp file** to Codex instead of the full artifact path.
+
+5. After Codex returns findings, apply them to the **original artifact file** (not the excerpt).
+
+**Why**: Codex review quality correlates with focus specificity, not context size. Smaller input → faster response, same or better finding quality. The main bottleneck is Codex CLI cold start (~30s), not context processing — so keeping focus tight maximizes the value of that startup cost.
+
 ### Severity-Based Discussion
 
 Classify each finding before presenting:
