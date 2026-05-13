@@ -76,7 +76,19 @@ Before showing the entry menu, check for an existing task:
    > [number] to resume / [n] for new task
    ```
 
-6. On resume: load `_state.json`, apply migration if `currentStep` is a number (see SKILL.md Session Restoration), verify artifact paths, load the step file for `currentStep`.
+6. On resume: load `_state.json`, apply migration if `currentStep` is a number (see SKILL.md Session Restoration), verify artifact paths.
+   - If `currentStep` is `"build"` and `next-session.md` exists in the task directory:
+     - Read it and display a context block before loading the step file:
+       ```
+       Resuming **<taskName>** at step build
+
+       Branch: <branch from _state.json>
+       Worktree: <worktreePath from _state.json, or "(main repo)" if null>
+
+       📝 구현 결정사항: <"구현 결정사항 & 아키텍처 노트" section content, or "(없음)">
+       ⚠️ 블로커: <"블로커 / 다음 세션 전 확인사항" section content, or "(없음)">
+       ```
+   - Otherwise: display the standard resume confirmation and load the step file.
 
 7. No active tasks → proceed to entry menu.
 

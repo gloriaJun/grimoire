@@ -247,6 +247,7 @@ If neither applies (pure logic, API clients, config, infra) → skip this sectio
 - `features[i].status` ← `"done"`, `features[i].executor/reviewer` ← from selection
 - If all features done: `currentStep` ← `"complete"`, append `"build"` to `completedSteps`
 - Append to `history`
+- On first feature completion of this task: set `branch` (via `git branch --show-current`) and `worktreePath` (null unless repo root differs from workspace root)
 
 ### Feature Spec Update
 
@@ -259,10 +260,16 @@ If neither applies (pure logic, API clients, config, infra) → skip this sectio
 
 ### next-session.md Update
 
-- Move the completed feature from "잔여" to "완료된 Feature" table (with branch name).
-- Update "잔여 Feature 목록" — remove done items, mark the next recommended feature as `next`.
-- Update "현재 코드베이스 주요 파일" to reflect any new or changed files introduced by this feature.
-- Update frontmatter `updated:` to today's date and `branch:` to current branch.
+Schema: `schemas/next-session.md`
+
+If the file does not exist yet, create it with the frontmatter and section headers.
+
+- Update "구현 결정사항 & 아키텍처 노트": append any non-obvious design decisions or tradeoffs from this feature.
+- Update "현재 코드베이스 주요 파일": add or update rows for files introduced or significantly changed by this feature.
+- Update "블로커 / 다음 세션 전 확인사항": add any known blockers or open questions; remove resolved items.
+- Update frontmatter `updated:` to today's date.
+
+Do NOT include feature completion tables — those are tracked in `_state.json.features[]`.
 
 ### _index.md Update
 

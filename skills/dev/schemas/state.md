@@ -11,6 +11,8 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
   "currentStep": "string — step name: entry | idea | plan | design | wireframe | breakdown | build | complete | retro | til",
   "entryPoint": "idea | plan | design | wireframe | breakdown | build | direct",
   "completedSteps": ["entry", "idea"],
+  "branch": "string | null — current working branch (set at build step start)",
+  "worktreePath": "string | null — absolute worktree path; null if working in main repo",
   "artifacts": {
     "brainstorm": "string | null — relative path from task dir",
     "prd": "string | null",
@@ -112,12 +114,14 @@ The general mechanics — persist to disk, append to `history`, resolve paths �
 - `currentStep` set to the entry point step name (e.g., `"idea"`, `"plan"`)
 - All `artifacts` fields default to `null`
 - All `reviews` fields default to `null`
+- `branch` and `worktreePath` default to `null`
 
 ### Updates
 - Update `currentStep` BEFORE loading the next step file
 - Append to `completedSteps` AFTER user confirms step completion
 - Register artifact paths as soon as files are created
 - Append to `history` at every state transition
+- Set `branch` and `worktreePath` at build step start (detect via `git branch --show-current` and `git rev-parse --show-toplevel`; set `worktreePath` only when the repo root differs from the workspace root)
 
 ### Session Restoration
 1. Read `_state.json` from the task directory
