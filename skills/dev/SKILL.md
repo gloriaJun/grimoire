@@ -107,7 +107,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `idea` | `steps/idea.md` | Ideation → brainstorm.md |
 | `plan` | `steps/plan.md` | Requirements → PRD |
 | `design` | `steps/design.md` | Architecture → TRD |
-| `wireframe` | `steps/wireframe.md` | UI design → mockup + tool prompt (optional) |
+| `wireframe` | `steps/wireframe.md` | UI design → HTML mockup (local preview, `/tmp/`) |
 | `breakdown` | `steps/breakdown.md` | Feature decomposition → features.md |
 | `build` | `steps/build.md` | Feature implementation (1 feature/session) |
 | `complete` | `steps/complete.md` | Wrap-up, insight, summary |
@@ -138,7 +138,7 @@ Planning lifecycle (devlog-tracked):
   idea          vague concept → brainstorm.md
   plan          requirements → PRD
   design        PRD → TRD
-  wireframe     TRD → UI mockup + design tool prompt (optional)
+  wireframe     TRD → HTML mockup (local preview, scenario cases)
   breakdown     TRD/wireframe → feature breakdown
   build         implement features (1 feature/session)
   complete      wrap-up + summary

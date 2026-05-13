@@ -1,6 +1,15 @@
 # Wireframe: UI Design
 
-Goal: Produce a text mockup and design tool prompt before feature decomposition.
+Goal: Produce an interactive HTML mockup for browser preview before feature decomposition.
+
+## Rules
+
+> **deploy-wireframe은 자동 호출하지 않는다.**
+> 사용자가 명시적으로 `/deploy-wireframe`을 실행할 때만 배포한다.
+> 절대로 `pages.linecorp.com` URL을 자동 생성하거나 공유하지 않는다.
+
+> **외부 도구 프롬프트(Figma, Google Stitch 등)는 사용자가 별도 요청할 때만 생성한다.**
+> Claude가 직접 HTML 디자인을 진행하는 경우, 외부 도구용 프롬프트는 생성하지 않는다.
 
 ## Skip Condition
 
@@ -31,48 +40,56 @@ Read both artifacts and extract:
 - UI components and their relationships
 - Interaction flows and state transitions
 - Data display requirements
+- **User scenario cases per screen** (derived from requirements — not generic states)
+  - Examples: "신규 사용자 첫 진입", "권한 없는 사용자", "데이터 0건 vs 10건 이상", "에러 응답 시" etc.
+  - These scenarios are the toggle cases shown in the HTML mockup
 
-### 2. Generate Text Mockup (Primary Artifact)
+### 2. Generate HTML Mockup (Primary Artifact)
 
-Produce an ASCII/markdown wireframe for each screen:
-- Layout structure and component placement
-- Navigation and interaction flows
-- Key UI states (empty, loading, error, filled)
-- Annotations for behavior or data binding
+Write an interactive HTML file to `/tmp/<task-name>-mockup.html`:
 
-Write to `wireframe-<task-name>.md` in the task subdirectory.
+- **Screens**: each screen in its own section, navigable via sidebar or top tabs
+- **Scenario cases**: for each screen, include toggle buttons derived from PRD requirements
+  - Generic states (empty, loading, error) are included only when relevant to requirements
+  - Primary cases are requirement-based user scenarios
+- **Version badge**: display `v1` badge in a header/footer area that does not overlap the design canvas. On each revision, update only the badge (v1 → v2 → ...) — do NOT create a new file.
+- Provide the local preview URL:
+  ```
+  file:///private/tmp/<task-name>-mockup.html
+  ```
 
-### 3. Generate Design Tool Prompt (Secondary Artifact)
-
-Ask the user which tool they will use:
+HTML structure guidance:
 ```
-Which design tool will you use?
-  1. Google Stitch
-  2. Figma Maker
-  3. Claude Design
-  4. Other (describe)
+<header>  ← version badge here (e.g., "Mockup v1 · 2026-05-13")
+<nav>     ← screen/page selector
+<main>    ← design canvas
+  <section> per screen
+    <div class="case-controls"> ← scenario case toggles from requirements
+    <div class="canvas">        ← rendered mockup state
+<footer>  ← optional version note / last updated
 ```
 
-Generate a tool-optimized prompt as a section in `wireframe-<task-name>.md`:
-- **Google Stitch**: screen description + component list + style guide keywords
-- **Figma Maker**: layout structure + component spec + spacing/typography hints
-- **Claude Design**: visual rendering prompt with layout, color, and interaction description
-- **Other**: generic design brief format
+### 3. User Review
 
-### 4. User Design Work
+The user opens `file:///private/tmp/<task-name>-mockup.html` in the browser to review scenario cases.
 
-The user runs the generated prompt in the chosen tool.
-After completing the design, the user optionally provides:
-- Figma link, Google Stitch export URL, or local image paths
+On feedback:
+- Update the same file (no new file)
+- Increment the version badge (v1 → v2 → ...)
+- Re-provide the same `file://` URL
 
-### 5. Register Artifacts
+Repeat until the user approves.
 
-Accept the user's design asset reference (optional) and register in `_state.json`.
+### 4. Register Artifacts
+
+Register in `_state.json`:
+- `artifacts.wireframe.mockup` ← `/tmp/<task-name>-mockup.html` (path stays the same across versions)
+- `artifacts.wireframe.design` ← user-provided URL/path if supplied, otherwise `null`
 
 ## State Update
 
 `currentStep` ← `"breakdown"`, append `"wireframe"` to `completedSteps`
-`artifacts.wireframe.mockup` ← path to `wireframe-<task-name>.md` (or `null` if skipped)
+`artifacts.wireframe.mockup` ← `/tmp/<task-name>-mockup.html` (or `null` if skipped)
 `artifacts.wireframe.design` ← URL/path (user-provided, or `null`)
 
 If skipped entirely: `artifacts.wireframe` ← `"skipped"`
