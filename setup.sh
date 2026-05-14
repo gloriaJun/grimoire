@@ -414,12 +414,32 @@ if [ -d "$HARNESS_DIR/bin" ]; then
     for f in "$HARNESS_DIR"/bin/*; do
         [ -f "$f" ] || continue
         fname="$(basename "$f")"
-        if alias "$fname" &>/dev/null 2>&1; then
-            warn "Alias conflict: '$fname' is already aliased. Add to ~/.zshrc:"
-            warn "  unalias $fname 2>/dev/null; $fname() { $f \"\$@\"; }"
+        abs="$f"
+        if [[ "$fname" == "gwt" ]]; then
+            # gwt needs a smart wrapper so 'gwt go' can cd in the calling shell
+            gwt_snippet="gwt() {
+  if [[ \"\${1:-}\" == go ]]; then
+    local _p; _p=\"\$($abs go \"\${@:2}\")\" && builtin cd \"\$_p\"
+  else
+    $abs \"\$@\"
+  fi
+}"
+            if alias "$fname" &>/dev/null 2>&1; then
+                warn "Alias conflict: '$fname' is already aliased. Add to ~/.zshrc:"
+                warn "  unalias $fname 2>/dev/null"
+                echo "$gwt_snippet" | sed 's/^/  /'
+            else
+                info "To expose '$fname' with 'go' (cd) support, add to ~/.zshrc:"
+                echo "$gwt_snippet" | sed 's/^/  /'
+            fi
         else
-            info "To expose '$fname', add to ~/.zshrc:"
-            info "  $fname() { $f \"\$@\"; }"
+            if alias "$fname" &>/dev/null 2>&1; then
+                warn "Alias conflict: '$fname' is already aliased. Add to ~/.zshrc:"
+                warn "  unalias $fname 2>/dev/null; $fname() { $abs \"\$@\"; }"
+            else
+                info "To expose '$fname', add to ~/.zshrc:"
+                info "  $fname() { $abs \"\$@\"; }"
+            fi
         fi
     done
 else
