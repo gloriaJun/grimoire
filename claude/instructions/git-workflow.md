@@ -54,6 +54,21 @@ Commit to current branch (worktree-openchat-theme)?
 Or switch to the designated branch (fix/LNSQW-1977_color-scheme)?
 ```
 
+### Worktree Branch Guard
+
+Before committing or pushing, if the current branch matches the `worktree-*` pattern AND no designated branch has been recorded, always block and confirm:
+
+```
+⚠️  Current branch is a worktree-managed branch: worktree-openchat-theme
+    This branch is typically not a deployment target.
+
+    Which branch should this commit go to?
+    (Enter the intended feature branch, e.g. feat/LNSQW-1977_openchat-main-theme)
+```
+
+After the user provides the branch, switch to it (`git checkout <branch>`) and proceed.
+This check applies to every commit and push until a designated branch is confirmed for the session.
+
 ## Rules
 - Co-Authored-By line is optional — include only when user requests
 - Always create new commits, never amend unless explicitly asked

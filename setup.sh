@@ -399,6 +399,25 @@ merge_global_mcp() {
 }
 merge_global_mcp
 
+# --- 10. CLI tools: bin/ ---
+echo ""
+echo "--- CLI tools: bin/ ---"
+LOCAL_BIN="$HOME/.local/bin"
+if [ -d "$HARNESS_DIR/bin" ]; then
+    mkdir -p "$LOCAL_BIN" 2>/dev/null || true
+    for f in "$HARNESS_DIR"/bin/*; do
+        [ -f "$f" ] || continue
+        fname="$(basename "$f")"
+        safe_link "$f" "$LOCAL_BIN/$fname"
+    done
+    if [[ ":$PATH:" != *":$LOCAL_BIN:"* ]]; then
+        warn "~/.local/bin is not in PATH. Add to ~/.zshrc:"
+        warn "  export PATH=\"\$HOME/.local/bin:\$PATH\""
+    fi
+else
+    skip "No bin/ directory found"
+fi
+
 echo ""
 echo "=== Setup complete ==="
 if $DRY_RUN; then

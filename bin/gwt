@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+# gwt — git worktree + Claude launcher
+# Usage: gwt <new|resume|list|rm> [args]
+set -euo pipefail
+
+GWT_SUBDIR=".claude/worktrees"
+
+_git_root() {
+  git rev-parse --show-toplevel 2>/dev/null || { echo "Error: not in a git repository" >&2; exit 1; }
+}
+
+_list_worktrees() {
+  local root="$1"
+  local wt_dir="$root/$GWT_SUBDIR"
+  [[ -d "$wt_dir" ]] || return 0
+  find "$wt_dir" -mindepth 1 -maxdepth 1 -type d | sort
+}
+
+_ensure_gitignore() {
+  local root="$1"
+  local gi="$root/.gitignore"
+  local entry=".claude/worktrees/"
+  if [[ -f "$gi" ]] && grep -qF "$entry" "$gi"; then
+    return
+  fi
+  echo "$entry" >> "$gi"
+  echo "Added '$entry' to .gitignore"
+}
+
+cmd_new() {
+  if [[ $# -lt 2 ]]; then
+    echo "Usage: gwt new <name> <branch> [base-branch]" >&2
+    exit 1
+  fi
+  local name="$1"
+  local branch="$2"
+  local base="${3:-HEAD}"
+
+  local root; root=$(_git_root)
+  local path="$root/$GWT_SUBDIR/$name"
+
+  if [[ -d "$path" ]]; then
+    echo "Worktree '$name' already exists. Use: gwt resume $name" >&2
+    exit 1
+  fi
+
+  mkdir -p "$root/$GWT_SUBDIR"
+  _ensure_gitignore "$root"
+
+  if git -C "$root" show-ref --verify --quiet "refs/heads/$branch" 2>/dev/null; then
+    git -C "$root" worktree add "$path" "$branch"
+  else
+    git -C "$root" worktree add -b "$branch" "$path" "$base"
+    echo "Created new branch: $branch"
+  fi
+
+  echo "Worktree '$name' → $path"
+  echo "Launching claude..."
+  claude --cwd "$path"
+}
+
+cmd_resume() {
+  local name="${1:-}"
+  local root; root=$(_git_root)
+
+  if [[ -z "$name" ]]; then
+    echo "Available worktrees:"
+    cmd_list
+    exit 0
+  fi
+
+  local path="$root/$GWT_SUBDIR/$name"
+  if [[ ! -d "$path" ]]; then
+    echo "Worktree '$name' not found." >&2
+    echo ""
+    cmd_list
+    exit 1
+  fi
+
+  echo "Resuming '$name' at: $path"
+  claude --cwd "$path"
+}
+
+cmd_list() {
+  local root; root=$(_git_root)
+  local wt_dir="$root/$GWT_SUBDIR"
+
+  if [[ ! -d "$wt_dir" ]]; then
+    echo "(no worktrees — directory not found: $GWT_SUBDIR)"
+    return
+  fi
+
+  local i=1
+  local found=false
+  while IFS= read -r dir; do
+    [[ -d "$dir" ]] || continue
+    found=true
+    local name; name=$(basename "$dir")
+    local branch; branch=$(git -C "$dir" branch --show-current 2>/dev/null || echo "(detached)")
+    local dirty=""
+    if ! git -C "$dir" diff --quiet 2>/dev/null || ! git -C "$dir" diff --cached --quiet 2>/dev/null; then
+      dirty="  [uncommitted changes]"
+    fi
+    printf "  %d) %-20s → %s%s\n" "$i" "$name" "$branch" "$dirty"
+    ((i++))
+  done < <(_list_worktrees "$root")
+
+  if ! $found; then
+    echo "(no worktrees)"
+  fi
+}
+
+cmd_rm() {
+  local root; root=$(_git_root)
+  local wt_dir="$root/$GWT_SUBDIR"
+
+  if [[ ! -d "$wt_dir" ]]; then
+    echo "No worktrees found."
+    exit 0
+  fi
+
+  local -a names=()
+  local -a paths=()
+  while IFS= read -r dir; do
+    [[ -d "$dir" ]] || continue
+    names+=("$(basename "$dir")")
+    paths+=("$dir")
+  done < <(_list_worktrees "$root")
+
+  if [[ ${#names[@]} -eq 0 ]]; then
+    echo "No worktrees to remove."
+    exit 0
+  fi
+
+  echo "Select worktree to remove:"
+  for i in "${!names[@]}"; do
+    local branch; branch=$(git -C "${paths[$i]}" branch --show-current 2>/dev/null || echo "(detached)")
+    local dirty=""
+    if ! git -C "${paths[$i]}" diff --quiet 2>/dev/null || ! git -C "${paths[$i]}" diff --cached --quiet 2>/dev/null; then
+      dirty="  ⚠ uncommitted changes"
+    fi
+    printf "  %d) %-20s → %s%s\n" "$((i+1))" "${names[$i]}" "$branch" "$dirty"
+  done
+  echo "  0) cancel"
+
+  local choice
+  read -r -p "Choice: " choice
+
+  if [[ "$choice" == "0" ]] || [[ -z "$choice" ]]; then
+    echo "Cancelled."
+    exit 0
+  fi
+
+  if ! [[ "$choice" =~ ^[0-9]+$ ]]; then
+    echo "Invalid choice." >&2
+    exit 1
+  fi
+
+  local idx=$((choice - 1))
+  if [[ $idx -lt 0 ]] || [[ $idx -ge ${#names[@]} ]]; then
+    echo "Invalid choice." >&2
+    exit 1
+  fi
+
+  local target_path="${paths[$idx]}"
+  local target_name="${names[$idx]}"
+
+  if ! git -C "$target_path" diff --quiet 2>/dev/null || ! git -C "$target_path" diff --cached --quiet 2>/dev/null; then
+    echo ""
+    echo "⚠  '$target_name' has uncommitted changes:"
+    git -C "$target_path" status --short
+    echo ""
+    local confirm
+    read -r -p "Remove anyway? [y/N] " confirm
+    if [[ "$confirm" != "y" ]] && [[ "$confirm" != "Y" ]]; then
+      echo "Cancelled."
+      exit 0
+    fi
+  fi
+
+  git -C "$root" worktree remove --force "$target_path"
+  echo "Removed worktree: $target_name"
+}
+
+case "${1:-help}" in
+  new)    shift; cmd_new "$@" ;;
+  resume) shift; cmd_resume "${1:-}" ;;
+  list)   cmd_list ;;
+  rm)     cmd_rm ;;
+  *)
+    echo "Usage: gwt <command> [args]"
+    echo ""
+    echo "Commands:"
+    echo "  new <name> <branch> [base]  Create worktree on <branch> and launch claude"
+    echo "  resume [name]               Launch claude in existing worktree"
+    echo "  list                        List worktrees with branch and dirty status"
+    echo "  rm                          Select and remove a worktree"
+    echo ""
+    echo "Worktrees are stored under: <git-root>/$GWT_SUBDIR/"
+    ;;
+esac
