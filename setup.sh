@@ -416,7 +416,7 @@ if [ -d "$HARNESS_DIR/bin" ]; then
         fname="$(basename "$f")"
         if alias "$fname" &>/dev/null 2>&1; then
             warn "Alias conflict: '$fname' is already aliased. Add to ~/.zshrc:"
-            warn "  $fname() { $f \"\$@\"; }"
+            warn "  unalias $fname 2>/dev/null; $fname() { $f \"\$@\"; }"
         else
             info "To expose '$fname', add to ~/.zshrc:"
             info "  $fname() { $f \"\$@\"; }"
