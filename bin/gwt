@@ -292,15 +292,6 @@ _help() {
   echo "  -h, --help                  Show this help"
   echo ""
   echo "Worktrees are stored under: <git-root>/$GWT_SUBDIR/"
-  echo ""
-  echo "Shell wrapper (add to ~/.zshrc for 'gwt go' cd support):"
-  echo "  gwt() {"
-  echo "    if [[ \"\${1:-}\" == go ]]; then"
-  echo "      local _p; _p=\"\$(~/.local/bin/gwt go \"\${@:2}\")\" && builtin cd \"\$_p\""
-  echo "    else"
-  echo "      ~/.local/bin/gwt \"\$@\""
-  echo "    fi"
-  echo "  }"
 }
 
 case "${1:-help}" in
