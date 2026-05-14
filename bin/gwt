@@ -127,7 +127,7 @@ cmd_new() {
 
   echo "Worktree '$name' → $path"
   echo "Launching claude..."
-  claude --cwd "$path"
+  cd "$path" && exec claude
 }
 
 cmd_resume() {
@@ -139,7 +139,7 @@ cmd_resume() {
       local path
       path=$(_fzf_pick_worktree "$root" "Resume worktree") || exit 0
       echo "Resuming '$(basename "$path")' at: $path"
-      claude --cwd "$path"
+      cd "$path" && exec claude
     else
       echo "Available worktrees:"
       _print_worktrees "$root"
@@ -156,7 +156,7 @@ cmd_resume() {
   fi
 
   echo "Resuming '$name' at: $path"
-  claude --cwd "$path"
+  cd "$path" && exec claude
 }
 
 cmd_list() {
