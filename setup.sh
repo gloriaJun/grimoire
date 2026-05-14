@@ -410,10 +410,20 @@ if [ -d "$HARNESS_DIR/bin" ]; then
         fname="$(basename "$f")"
         safe_link "$f" "$LOCAL_BIN/$fname"
     done
+    # PATH check
     if [[ ":$PATH:" != *":$LOCAL_BIN:"* ]]; then
         warn "~/.local/bin is not in PATH. Add to ~/.zshrc:"
         warn "  export PATH=\"\$HOME/.local/bin:\$PATH\""
     fi
+    # zsh alias override hint (e.g. oh-my-zsh defines gwt='git worktree')
+    for f in "$HARNESS_DIR"/bin/*; do
+        [ -f "$f" ] || continue
+        fname="$(basename "$f")"
+        if alias "$fname" &>/dev/null 2>&1; then
+            info "Alias conflict detected: '$fname' is already aliased."
+            info "Add to ~/.zshrc to override:  $fname() { command $fname \"\$@\"; }"
+        fi
+    done
 else
     skip "No bin/ directory found"
 fi
