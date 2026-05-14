@@ -3,6 +3,7 @@
 # Usage: gwt <new|resume|list|rm> [args]
 set -euo pipefail
 
+VERSION="0.1.0"
 GWT_SUBDIR=".claude/worktrees"
 
 _git_root() {
@@ -182,20 +183,34 @@ cmd_rm() {
   echo "Removed worktree: $target_name"
 }
 
+_help() {
+  echo "gwt v$VERSION — git worktree + Claude launcher"
+  echo ""
+  echo "Usage: gwt <command> [args]"
+  echo ""
+  echo "Commands:"
+  echo "  new <name> <branch> [base]  Create worktree on <branch> and launch claude"
+  echo "  resume [name]               Launch claude in existing worktree (list if omitted)"
+  echo "  list                        List worktrees with branch and dirty status"
+  echo "  rm                          Select and remove a worktree (with uncommit check)"
+  echo ""
+  echo "Options:"
+  echo "  -v, --version               Show version"
+  echo "  -h, --help                  Show this help"
+  echo ""
+  echo "Worktrees are stored under: <git-root>/$GWT_SUBDIR/"
+}
+
 case "${1:-help}" in
-  new)    shift; cmd_new "$@" ;;
-  resume) shift; cmd_resume "${1:-}" ;;
-  list)   cmd_list ;;
-  rm)     cmd_rm ;;
+  new)              shift; cmd_new "$@" ;;
+  resume)           shift; cmd_resume "${1:-}" ;;
+  list)             cmd_list ;;
+  rm)               cmd_rm ;;
+  -v|--version)     echo "gwt v$VERSION" ;;
+  -h|--help|help)   _help ;;
   *)
-    echo "Usage: gwt <command> [args]"
-    echo ""
-    echo "Commands:"
-    echo "  new <name> <branch> [base]  Create worktree on <branch> and launch claude"
-    echo "  resume [name]               Launch claude in existing worktree"
-    echo "  list                        List worktrees with branch and dirty status"
-    echo "  rm                          Select and remove a worktree"
-    echo ""
-    echo "Worktrees are stored under: <git-root>/$GWT_SUBDIR/"
+    echo "gwt: unknown command '${1}'" >&2
+    echo "Run 'gwt --help' for usage." >&2
+    exit 1
     ;;
 esac
