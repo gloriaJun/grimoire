@@ -16,21 +16,25 @@ Comprehensive audit of your Claude Code configuration with an interactive HTML d
 
 ```mermaid
 flowchart TD
-    A(["/g-my-claude-audit"]) --> B["Phase 0: Scope Selection"]
+    A(["/g-my-claude-audit"]) --> S0{"Step 0: /insights ran?"}
+    S0 -- "No" --> S0B["Instruct user to run /insights\nthen re-invoke skill"]
+    S0 -- "Yes" --> B["Phase 0: Scope Selection"]
     B --> C["Phase 0.5: Model Selection"]
     C --> D["Phase 1: Discovery\nsettings.json + session logs"]
     D --> D2["Phase 1.5: Agent Usage\nPython script (no tokens)"]
-    D2 --> E["Phase 2: Parallel Dispatch"]
+    D2 --> D3["Phase 1.6: Extract insightsJson\nfrom context"]
+    D3 --> E["Phase 2: Parallel Dispatch\n(Wave 1)"]
 
     E --> F1["Token & Config Analyzer"]
     E --> F2["Skills Ecosystem Analyzer"]
-    E --> F3["Session Anomaly Tagger\n+ agent usage data"]
+    E --> F3["Session Anomaly Tagger\n(quantitative only)"]
 
-    F1 & F2 & F3 --> G["Wait for all agents"]
+    F1 & F2 & F3 --> G["Wait for Wave 1"]
+    G --> G2["Phase 2.5: Insights Gap Analyzer\n(/insights output vs config)"]
 
-    G --> H{"Selected model?"}
+    G2 --> H{"Selected model?"}
     H -- "external CLI" --> I["scripts/delegate.sh"]
-    H -- "claude-code" --> J["Insights Aggregator"]
+    H -- "claude-code" --> J["Insights Aggregator\n(all inputs)"]
     I -- "success" --> J
     I -- "fail" --> K["Fallback: Claude internal"]
     K --> J
@@ -39,6 +43,24 @@ flowchart TD
     L --> M["Phase 5: Open in browser"]
     M --> N(["Phase 6: Terminal Summary"])
 ```
+
+## Step 0: /insights Prerequisite Check
+
+This skill requires a fresh `/insights` run in the **current conversation** immediately before invocation. `/insights` is Claude Code's official behavioral analysis — this skill does not re-implement it.
+
+Use AskUserQuestion with the following:
+
+- **Question**: "`/insights`를 방금 이 대화에서 실행하셨나요?"
+- **Options**:
+  - "예, 방금 실행했습니다" → proceed to Phase 0
+  - "아직 실행하지 않았습니다" → display the message below and **stop**:
+
+```
+먼저 `/insights`를 실행해주세요.
+완료 후 `/g-my-claude-audit`을 다시 실행하면 됩니다.
+```
+
+Do NOT proceed past Step 0 unless the user confirms they just ran `/insights`.
 
 ## Phase 0: Scope Selection
 
@@ -104,6 +126,15 @@ Pass `agentUsageData` to:
 - **Agent 3** (Session Anomaly Tagger) as additional input
 - **Agent 4** (Insights Aggregator) as additional input
 
+## Phase 1.6: Extract insightsJson from Context
+
+Step 0 guarantees `/insights` was just run. Extract the full structured JSON from the current conversation context.
+
+Locate the `/insights` output in context — it contains top-level fields: `project_areas`, `interaction_style`, `what_works`, `friction_analysis`, `suggestions`, `on_the_horizon`, `at_a_glance`. Store the entire object as `insightsJson`.
+
+Pass `insightsJson` to:
+- **Phase 2.5** (Insights Gap Analyzer) — as the authoritative behavior source
+
 ## Phase 2: Dispatch Parallel Subagents
 
 Dispatch using the Agent tool (subagent_type: Explore).
@@ -119,12 +150,25 @@ Dispatch using the Agent tool (subagent_type: Explore).
 ```
 Agent 1: token-and-config.md prompt + discovery data + scope
 Agent 2: skills-ecosystem.md prompt + enabledPlugins + pluginMarketplaces
-Agent 3: session-anomaly-tagger.md prompt + session JSONL file paths + agentUsageData JSON
+Agent 3: session-anomaly-tagger.md prompt + session JSONL file paths + agentUsageData JSON + insightsData
 ```
 
 All three run in parallel. Wait for all to complete.
 
 **Agent failure policy:** If an agent returns invalid JSON or empty output, continue with remaining agents — substitute `{}` for that agent's contribution and note the failure in the Phase 6 terminal summary. Abort only if all 3 agents fail simultaneously.
+
+## Phase 2.5: Insights Gap Analyzer
+
+After Wave 1 completes, dispatch a single agent to find gaps between behavior and configuration.
+
+1. Read `analyzer-prompts/insights-gap-analyzer.md` using the Read tool
+2. Build input context:
+   - `insightsJson` from Phase 1.6 (authoritative — always present at this point)
+   - Agent 1 output (token-and-config) — for hook/permission state
+   - Agent 2 output (skills-ecosystem) — for skills list
+   - CLAUDE.md content(s) discovered in Phase 1
+3. Dispatch: `Agent 4 (insights-gap-analyzer)` with `subagent_type: Explore`, `model: sonnet`
+4. Wait for completion. If it returns invalid JSON or fails, set `insightsGapData = null` and continue.
 
 ## Phase 3: Insights Aggregation (delegatable)
 
@@ -133,7 +177,7 @@ After all parallel agents complete:
 **If selected model is Claude Code (internal):**
 
 ```
-Agent 4: insights-aggregator.md prompt + combined JSON from Agents 1, 2 & 3 + scope
+Agent 5: insights-aggregator.md prompt + combined JSON from Agents 1, 2, 3 + insightsGapData + insightsData + scope
 ```
 
 **If selected model is an external CLI tool:**
@@ -161,21 +205,23 @@ Combine all 3 outputs into a single object:
   "meta": {
     "timestamp": "<ISO 8601>",
     "scope": "both|global|project",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "analyzer": "gemini|openai|codex|claude-code|custom",
     "analyzerCommand": "<actual command used>",
     "fallbackUsed": false,
-    "projectPath": "<$PWD if scope includes project, null otherwise>"
+    "projectPath": "<$PWD if scope includes project, null otherwise>",
+    "insightsDataSource": "context_json"
   },
   "tokenAndConfig": {},
   "skillsEcosystem": {},
   "sessionAnomaly": {},
   "agentUsage": {},
+  "insightsGap": {},
   "insights": {}
 }
 ```
 
-**Note:** `agentUsage` is the raw JSON output from Phase 1.5 Python script (not from a subagent).
+**Note:** `agentUsage` is the raw JSON output from Phase 1.5 Python script (not from a subagent). `insightsGap` is the output from Phase 2.5 insights-gap-analyzer (null if unavailable).
 
 Then:
 
