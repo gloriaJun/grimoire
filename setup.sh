@@ -410,35 +410,44 @@ if [ -d "$HARNESS_DIR/bin" ]; then
         fname="$(basename "$f")"
         safe_link "$f" "$LOCAL_BIN/$fname"
     done
-    # Suggest zsh function wrappers using absolute path (PATH modification not needed)
+    # Suggest shell integration for each binary
     for f in "$HARNESS_DIR"/bin/*; do
         [ -f "$f" ] || continue
         fname="$(basename "$f")"
-        abs="$f"
-        if [[ "$fname" == "gwt" ]]; then
-            # gwt needs a smart wrapper so 'gwt go' can cd in the calling shell
-            gwt_snippet="gwt() {
-  if [[ \"\${1:-}\" == go ]]; then
-    local _p; _p=\"\$($abs go \"\${@:2}\")\" && builtin cd \"\$_p\"
-  else
-    $abs \"\$@\"
-  fi
-}"
-            if alias "$fname" &>/dev/null 2>&1; then
-                warn "Alias conflict: '$fname' is already aliased. Add to ~/.zshrc:"
-                warn "  unalias $fname 2>/dev/null"
-                echo "$gwt_snippet" | sed 's/^/  /'
+        if [[ "$fname" == "cwt" ]]; then
+            # cwt supports dual-mode: source it for 'go' cd support
+            SOURCE_HINT="source \"$LOCAL_BIN/cwt\""
+            ZSHRC="$HOME/.zshrc"
+
+            if [[ ":$PATH:" != *":$LOCAL_BIN:"* ]]; then
+                warn "~/.local/bin is not in PATH. Add to ~/.zshrc before the source line:"
+                warn "  export PATH=\"\$HOME/.local/bin:\$PATH\""
+            fi
+
+            if [[ -f "$ZSHRC" ]] && grep -qF "local/bin/cwt" "$ZSHRC"; then
+                log "cwt already integrated in ~/.zshrc"
+            elif $DRY_RUN; then
+                info "[dry-run] Would offer to add to ~/.zshrc: $SOURCE_HINT"
             else
-                info "To expose '$fname' with 'go' (cd) support, add to ~/.zshrc:"
-                echo "$gwt_snippet" | sed 's/^/  /'
+                echo ""
+                printf "  Add cwt shell integration to ~/.zshrc? [Y/n] "
+                read -r _ans
+                if [[ "${_ans:-Y}" =~ ^[Yy]$ ]]; then
+                    { echo ""; echo "# cwt — Claude WorkTree: git worktree + Claude launcher"; echo "$SOURCE_HINT"; } >> "$ZSHRC"
+                    log "Added cwt to ~/.zshrc"
+                    info "Run: source ~/.zshrc  (or open a new terminal)"
+                else
+                    info "Skipped. To add manually, append to ~/.zshrc:"
+                    info "  $SOURCE_HINT"
+                fi
             fi
         else
             if alias "$fname" &>/dev/null 2>&1; then
                 warn "Alias conflict: '$fname' is already aliased. Add to ~/.zshrc:"
-                warn "  unalias $fname 2>/dev/null; $fname() { $abs \"\$@\"; }"
+                warn "  unalias $fname 2>/dev/null; $fname() { command $fname \"\$@\"; }"
             else
                 info "To expose '$fname', add to ~/.zshrc:"
-                info "  $fname() { $abs \"\$@\"; }"
+                info "  $fname() { command $fname \"\$@\"; }"
             fi
         fi
     done

@@ -1,9 +1,24 @@
 #!/usr/bin/env bash
-# gwt — git worktree + Claude launcher
-# Usage: gwt <new|resume|list|rm|go> [args]
-set -euo pipefail
+# cwt — Claude WorkTree: git worktree + Claude launcher
+# Usage: cwt <new|resume|list|rm|go> [args]
+#
+# Shell integration (enables 'go' cd support):
+#   Add to ~/.zshrc:  source ~/.local/bin/cwt
+#   Then run:         source ~/.zshrc
 
-VERSION="0.2.0"
+# --- Source detection (bash & zsh compatible) ---
+_CWT_SOURCED=false
+if [[ -n "${ZSH_VERSION:-}" ]]; then
+  [[ "${ZSH_EVAL_CONTEXT:-}" == *:file* ]] && _CWT_SOURCED=true
+elif [[ -n "${BASH_VERSION:-}" ]]; then
+  [[ "${BASH_SOURCE[0]:-}" != "${0}" ]] && _CWT_SOURCED=true
+fi
+
+# Enable strict error handling only in script mode.
+# In sourced mode this would modify the user's shell options.
+[[ "$_CWT_SOURCED" != "true" ]] && set -euo pipefail
+
+VERSION="0.3.0"
 GWT_SUBDIR=".claude/worktrees"
 
 _git_root() {
@@ -100,19 +115,19 @@ _print_worktrees() {
 
 cmd_new() {
   if [[ $# -lt 2 ]]; then
-    echo "Usage: gwt new <name> <branch> [base-branch]" >&2
-    exit 1
+    echo "Usage: cwt new <name> <branch> [base-branch]" >&2
+    return 1
   fi
   local name="$1"
   local branch="$2"
   local base="${3:-HEAD}"
 
-  local root; root=$(_git_root)
+  local root; root=$(_git_root) || return 1
   local path="$root/$GWT_SUBDIR/$name"
 
   if [[ -d "$path" ]]; then
-    echo "Worktree '$name' already exists. Use: gwt resume $name" >&2
-    exit 1
+    echo "Worktree '$name' already exists. Use: cwt resume $name" >&2
+    return 1
   fi
 
   mkdir -p "$root/$GWT_SUBDIR"
@@ -132,19 +147,19 @@ cmd_new() {
 
 cmd_resume() {
   local name="${1:-}"
-  local root; root=$(_git_root)
+  local root; root=$(_git_root) || return 1
 
   if [[ -z "$name" ]]; then
     if _has_fzf; then
       local path
-      path=$(_fzf_pick_worktree "$root" "Resume worktree") || exit 0
+      path=$(_fzf_pick_worktree "$root" "Resume worktree") || return 0
       echo "Resuming '$(basename "$path")' at: $path"
       cd "$path" && exec claude
     else
       echo "Available worktrees:"
       _print_worktrees "$root"
     fi
-    exit 0
+    return 0
   fi
 
   local path="$root/$GWT_SUBDIR/$name"
@@ -152,7 +167,7 @@ cmd_resume() {
     echo "Worktree '$name' not found." >&2
     echo ""
     _print_worktrees "$root"
-    exit 1
+    return 1
   fi
 
   echo "Resuming '$name' at: $path"
@@ -160,7 +175,7 @@ cmd_resume() {
 }
 
 cmd_list() {
-  local root; root=$(_git_root)
+  local root; root=$(_git_root) || return 1
 
   if _has_fzf; then
     local lines
@@ -180,18 +195,18 @@ cmd_list() {
 }
 
 cmd_rm() {
-  local root; root=$(_git_root)
+  local root; root=$(_git_root) || return 1
   local wt_dir="$root/$GWT_SUBDIR"
 
   if [[ ! -d "$wt_dir" ]]; then
     echo "No worktrees found."
-    exit 0
+    return 0
   fi
 
   local target_path target_name
 
   if _has_fzf; then
-    target_path=$(_fzf_pick_worktree "$root" "Remove worktree") || { echo "Cancelled."; exit 0; }
+    target_path=$(_fzf_pick_worktree "$root" "Remove worktree") || { echo "Cancelled."; return 0; }
     target_name=$(basename "$target_path")
   else
     local -a names=()
@@ -204,7 +219,7 @@ cmd_rm() {
 
     if [[ ${#names[@]} -eq 0 ]]; then
       echo "No worktrees to remove."
-      exit 0
+      return 0
     fi
 
     echo "Select worktree to remove:"
@@ -223,18 +238,18 @@ cmd_rm() {
 
     if [[ "$choice" == "0" ]] || [[ -z "$choice" ]]; then
       echo "Cancelled."
-      exit 0
+      return 0
     fi
 
     if ! [[ "$choice" =~ ^[0-9]+$ ]]; then
       echo "Invalid choice." >&2
-      exit 1
+      return 1
     fi
 
     local idx=$((choice - 1))
     if [[ $idx -lt 0 ]] || [[ $idx -ge ${#names[@]} ]]; then
       echo "Invalid choice." >&2
-      exit 1
+      return 1
     fi
 
     target_path="${paths[$idx]}"
@@ -250,7 +265,7 @@ cmd_rm() {
     read -r -p "Remove anyway? [y/N] " confirm
     if [[ "$confirm" != "y" ]] && [[ "$confirm" != "Y" ]]; then
       echo "Cancelled."
-      exit 0
+      return 0
     fi
   fi
 
@@ -260,51 +275,102 @@ cmd_rm() {
 
 cmd_go() {
   local name="${1:-}"
-  local root; root=$(_git_root)
+  local root; root=$(_git_root) || return 1
 
   local path
   if [[ -z "$name" ]]; then
-    _has_fzf || { echo "Error: fzf required for interactive selection" >&2; exit 1; }
-    path=$(_fzf_pick_worktree "$root" "Go to worktree") || exit 0
+    _has_fzf || { echo "Error: fzf required for interactive selection" >&2; return 1; }
+    path=$(_fzf_pick_worktree "$root" "Go to worktree") || return 0
   else
     path="$root/$GWT_SUBDIR/$name"
-    [[ -d "$path" ]] || { echo "Worktree '$name' not found." >&2; exit 1; }
+    [[ -d "$path" ]] || { echo "Worktree '$name' not found." >&2; return 1; }
   fi
 
-  # Output path only — shell function wrapper does the actual cd
-  echo "$path"
+  if [[ "$_CWT_SOURCED" == "true" ]]; then
+    builtin cd "$path"
+  else
+    echo "$path"
+    local label="${name:-$(basename "$path")}"
+    printf '\nTo navigate, run:\n  cd "$(cwt go %s)"\n' "$label" >&2
+  fi
+}
+
+cmd_show() {
+  local root; root=$(_git_root) || return 1
+  local found=false
+  while IFS= read -r dir; do
+    [[ -d "$dir" ]] || continue
+    found=true
+    basename "$dir"
+  done < <(_list_worktrees "$root")
+  $found || echo "(no worktrees)"
+}
+
+cmd_exec() {
+  if [[ $# -lt 2 ]]; then
+    echo "Usage: cwt exec <name> <command> [args...]" >&2
+    return 1
+  fi
+  local name="$1"
+  shift
+  local root; root=$(_git_root) || return 1
+  local path="$root/$GWT_SUBDIR/$name"
+  [[ -d "$path" ]] || { echo "Worktree '$name' not found." >&2; return 1; }
+  (cd "$path" && "$@")
 }
 
 _help() {
-  echo "gwt v$VERSION — git worktree + Claude launcher"
+  echo "cwt v$VERSION — Claude WorkTree: git worktree + Claude launcher"
   echo ""
-  echo "Usage: gwt <command> [args]"
+  echo "Usage: cwt <command> [args]"
   echo ""
   echo "Commands:"
   echo "  new <name> <branch> [base]  Create worktree on <branch> and launch claude"
   echo "  resume [name]               Launch claude in existing worktree (fzf if omitted)"
+  echo "  show                        List worktree names"
   echo "  list                        Browse worktrees interactively with fzf"
+  echo "  go [name]                   Print worktree path (fzf if omitted)"
+  echo "  exec <name> <cmd> [args]    Run command inside a worktree"
   echo "  rm                          Select and remove a worktree (fzf + uncommit check)"
-  echo "  go [name]                   cd to worktree directory (requires shell wrapper)"
   echo ""
   echo "Options:"
   echo "  -v, --version               Show version"
   echo "  -h, --help                  Show this help"
   echo ""
   echo "Worktrees are stored under: <git-root>/$GWT_SUBDIR/"
+  echo ""
+  echo "Navigation:"
+  echo "  cwt go <name>               prints the path"
+  echo "  cd \"\$(cwt go <name>)\"       cd into the worktree"
+  echo ""
+  echo "Examples:"
+  echo "  cwt new feat feat/my-feature"
+  echo "  cwt show"
+  echo "  cd \"\$(cwt go feat)\""
+  echo "  cwt exec feat git status"
 }
 
-case "${1:-help}" in
-  new)              shift; cmd_new "$@" ;;
-  resume)           shift; cmd_resume "${1:-}" ;;
-  list)             cmd_list ;;
-  rm)               cmd_rm ;;
-  go)               shift; cmd_go "${1:-}" ;;
-  -v|--version)     echo "gwt v$VERSION" ;;
-  -h|--help|help)   _help ;;
-  *)
-    echo "gwt: unknown command '${1}'" >&2
-    echo "Run 'gwt --help' for usage." >&2
-    exit 1
-    ;;
-esac
+_cwt_dispatch() {
+  case "${1:-help}" in
+    new)           shift; cmd_new "$@" ;;
+    resume)        shift; cmd_resume "${1:-}" ;;
+    show)          cmd_show ;;
+    list)          cmd_list ;;
+    go)            shift; cmd_go "${1:-}" ;;
+    exec)          shift; cmd_exec "$@" ;;
+    rm)            cmd_rm ;;
+    -v|--version)  echo "cwt v$VERSION" ;;
+    -h|--help|help) _help ;;
+    *)
+      echo "cwt: unknown command '${1}'" >&2
+      echo "Run 'cwt --help' for usage." >&2
+      return 1
+      ;;
+  esac
+}
+
+if [[ "$_CWT_SOURCED" == "true" ]]; then
+  cwt() { _cwt_dispatch "$@"; }   # define function in current shell; go can builtin cd
+else
+  _cwt_dispatch "$@"              # run directly as script
+fi
