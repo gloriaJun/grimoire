@@ -187,6 +187,11 @@ Generate patches ONLY for tags that were actually detected in the session-anomal
 
 Return ONLY valid JSON. No prose, no markdown, no explanation outside the JSON.
 
+**CRITICAL field name constraints** — do NOT rename these fields:
+- Use `"optimizationScore"` (not `"auditScore"`, not `"score"`)
+- `breakdown` values must be **plain numbers** (not objects): `"tokenEfficiency": 80` (not `{ "score": 80, "weight": ... }`)
+- `"bonuses"` and `"deductions"` must be string arrays: `["Token budget under 10% (+8)"]`
+
 ```json
 {
   "category": "insights",

@@ -92,6 +92,14 @@ From `settings.json` (both global and project levels):
 
 Return ONLY valid JSON. No prose, no markdown, no explanation outside the JSON.
 
+**CRITICAL field name constraints** — do NOT rename or restructure these fields:
+- Top-level keys must be exactly: `category`, `findings`, `metrics`, `recommendations`, `tokenBreakdown`, `configMap`
+- Do NOT use: `tokenBudget`, `configurationHealth`, `configDiscovery`, `analysis_date`, `summary`
+- `findings` must be a flat array at the top level
+- `metrics` must be a flat object with the exact keys shown below
+- `tokenBreakdown` must have `global` and `project` arrays
+- `configMap` must have `hooks`, `mcpAlignment`, `customCommands`, `customAgents`, `memoryFiles`
+
 ```json
 {
   "category": "token-and-config",

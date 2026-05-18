@@ -193,8 +193,8 @@
       .meta-tag.info { background:var(--info-bg); color:var(--info); border-color:transparent; }
       .meta-tag.accent { background:var(--accent-dim); color:var(--accent); border-color:transparent; }
       .trigger-badge { display:inline-flex; align-items:center; padding:1px 7px; border-radius:5px; font-size:.68rem; font-family:"SF Mono",monospace; font-weight:700; background:var(--accent-dim); color:var(--accent); }
-      .ref-badge { display:inline-flex; padding:1px 6px; border-radius:4px; font-size:.65rem; font-family:monospace; background:var(--info-bg); color:var(--info); }
-      .ref-badges { display:flex; flex-wrap:wrap; gap:3px; margin-top:4px; }
+      .ref-badge { display:block; padding:1px 6px; border-radius:4px; font-size:.65rem; font-family:monospace; background:var(--info-bg); color:var(--info); width:fit-content; }
+      .ref-badges { display:flex; flex-direction:column; gap:3px; margin-top:5px; }
 
       /* Tag badges for timeline/session */
       .tag-badge { display:inline-flex; align-items:center; padding:1px 7px; border-radius:6px; font-size:.62rem; font-weight:700; white-space:nowrap; }
@@ -205,6 +205,8 @@
 
       /* ── Cards: info / skill / session / list ── */
       .info-card, .session-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; }
+      .info-card strong { font-size:.85rem; font-weight:600; display:block; margin-bottom:3px; }
+      .info-card .card-subtitle { font-size:.78rem; color:var(--text-sub); margin-top:2px; }
       .skill-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; box-shadow:var(--shadow); transition:box-shadow var(--trans); }
       .skill-card:hover { box-shadow:var(--shadow-md); }
       .skill-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; }
@@ -544,6 +546,15 @@
         align-self: flex-start;
         margin-top: 4px;
       }
+      .action-text-row { display:flex; align-items:flex-start; gap:4px; }
+      .action-text-row .action-content { flex:1; }
+      .copy-icon-btn {
+        flex-shrink:0; background:none; border:none; padding:2px 1px; cursor:pointer;
+        color:var(--text-muted); opacity:0.4; transition:opacity var(--trans),color var(--trans);
+        line-height:0; margin-top:1px;
+      }
+      .copy-icon-btn:hover { opacity:1; color:var(--accent); }
+      .copy-icon-btn.copied { opacity:1; color:var(--positive); }
       .finding-grid { display: flex; flex-direction: column; }
 
       /* === Section head with severity-summary === */
@@ -1371,7 +1382,7 @@
 
       function collectFindings() {
         return [
-          ...safeArray(data.tokenAndConfig?.findings),
+          ...safeArray(normalizeTokenAndConfig(data.tokenAndConfig)?.findings),
           ...safeArray(data.skillsEcosystem?.findings),
           ...safeArray(data.sessionAnomaly?.findings),
           ...safeArray(data.insights?.findings),
@@ -1428,7 +1439,7 @@
             <div class="dims-title">핵심 지표</div>
             ${entries
               .map(([key, value]) => {
-                const percent = clamp(value);
+                const percent = clamp(typeof value === 'object' && value !== null ? value.score : value);
                 const barMod = percent >= 70 ? "bar-good" : percent >= 40 ? "bar-ok" : "bar-poor";
                 const scoreMod = percent >= 70 ? "score-good" : percent >= 40 ? "score-ok" : "score-poor";
                 return `
@@ -1454,11 +1465,14 @@
 
         const complete = () => {
           if (!button) return;
-          const original = button.dataset.label || "복사";
-          button.textContent = "복사됨";
-          window.setTimeout(() => {
-            button.textContent = original;
-          }, 1200);
+          if (button.classList.contains("copy-icon-btn")) {
+            button.classList.add("copied");
+            window.setTimeout(() => button.classList.remove("copied"), 1200);
+          } else {
+            const original = button.dataset.label || "복사";
+            button.textContent = "복사됨";
+            window.setTimeout(() => { button.textContent = original; }, 1200);
+          }
         };
 
         if (navigator.clipboard?.writeText) {
@@ -1656,18 +1670,23 @@
             </div>
             <div class="finding-body">
               <div class="action-block">
-                <span class="action-label">영향</span>
+                <span class="action-label">${mode === "recommendation" ? "영향" : "분류"}</span>
                 <span class="action-content">${escapeHtml(impact)}</span>
               </div>
               <div class="action-block">
                 <span class="action-label">조치</span>
                 <div class="action-content-wrap">
-                  <span class="action-content">${escapeHtml(action)}</span>
+                  <div class="action-text-row">
+                    <span class="action-content">${escapeHtml(action)}</span>
+                    ${action !== "검토 필요" ? `
+                      <button class="copy-icon-btn" type="button" data-copy="${escapeHtml(item.command || action)}" title="복사">
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                      </button>` : ""}
+                  </div>
                   ${item.command ? `
                     <div class="action-code">
                       <span>${escapeHtml(item.command)}</span>
-                      <button class="copy-btn" type="button" data-copy="${escapeHtml(item.command)}" data-label="복사">복사</button>
-                    </div>` : `<button class="copy-btn copy-btn-inline" type="button" data-copy="${escapeHtml(copyText)}" data-label="복사">복사</button>`}
+                    </div>` : ""}
                 </div>
               </div>
               <div class="action-block">
@@ -1728,11 +1747,11 @@
         return `
           <div class="table-card">
             <div class="table-head">
-              <div>파일</div>
-              <div>문자</div>
-              <div>토큰</div>
-              <div>비중</div>
-              <div>전이 토큰</div>
+              <div>파일 / @참조</div>
+              <div>문자 수</div>
+              <div>예상 토큰</div>
+              <div>컨텍스트 비중</div>
+              <div title="@참조 파일 포함 전체 토큰">@참조 합산</div>
             </div>
             ${list
               .map((entry) => {
@@ -1851,7 +1870,7 @@
 
       function renderPageHeader() {
         const meta = safeObject(data.meta);
-        const scoreData = safeObject(data.insights?.optimizationScore);
+        const scoreData = safeObject(data.insights?.optimizationScore ?? data.insights?.auditScore);
         const header = document.getElementById("page-header");
 
         const score = num(scoreData.total);
@@ -1907,9 +1926,99 @@
         });
       }
 
+      // Adapter: normalize alternate schema (tokenBudget/configurationHealth) to expected schema
+      function normalizeTokenAndConfig(raw) {
+        if (!raw) return raw;
+        if (raw.metrics && raw.tokenBreakdown && raw.configMap) return raw;
+
+        const tb = safeObject(raw.tokenBudget);
+        const gl = safeObject(tb.globalLayer);
+        const transitive = safeObject(tb.transitiveReferences);
+        const onDemand = safeObject(tb.onDemandReferences);
+        const ch = safeObject(raw.configurationHealth);
+        const hooksData = safeObject(ch.hooks);
+        const cd = safeObject(raw.configDiscovery);
+        const mcp = safeObject(raw.mcpDocumentation);
+        const perms = safeObject(ch.permissions);
+
+        const globalFiles = safeArray(gl.files);
+        const configuredHooks = safeArray(hooksData.configuredHooks);
+
+        const findings = [];
+        safeArray(perms.overbroad).forEach(p =>
+          findings.push({ severity: "warning", category: "permissions", title: "과도한 권한 패턴", detail: p })
+        );
+        if ((cd.customCommandsCount || 0) === 0)
+          findings.push({ severity: "info", category: "config", title: "커스텀 명령어 없음",
+            detail: "~/.claude/commands/에 명령어 파일이 없습니다.", suggestion: "자주 쓰는 워크플로를 명령어로 추가하면 편의성이 올라갑니다." });
+        // summary.recommendations는 긍정적 메모이므로 findings로 표시하지 않음
+
+        const breakdownGlobal = globalFiles.map(f => ({
+          file: f.file || f.path || "",
+          chars: f.bytes || 0,
+          tokens: f.estimatedTokens || 0,
+          contextPercent: f.percentOfWindow || 0,
+          atRefs: [],
+          transitiveTokens: 0,
+        }));
+        if (safeArray(transitive.files).length > 0)
+          breakdownGlobal.push({ file: "(@-references) transitive imports", chars: 0,
+            tokens: transitive.totalTransitiveTokens || 0, contextPercent: transitive.totalTransitivePercent || 0,
+            atRefs: safeArray(transitive.files).map(f => f.file), transitiveTokens: transitive.totalTransitiveTokens || 0 });
+        if (safeArray(onDemand.files).length > 0)
+          breakdownGlobal.push({ file: "on-demand references", chars: 0,
+            tokens: onDemand.totalOnDemandTokens || 0, contextPercent: onDemand.totalOnDemandPercent || 0,
+            atRefs: safeArray(onDemand.files).map(f => f.file), transitiveTokens: 0 });
+
+        const configured = safeArray(mcp.configuredMcpServers);
+        const documented = safeArray(mcp.mcpFilesInGlobalClaude);
+
+        return {
+          ...raw,
+          findings,
+          metrics: {
+            globalFiles: globalFiles.length,
+            globalTotalTokens: gl.globalFilesTotalTokens || 0,
+            globalContextPercent: gl.globalFilesPercentOfWindow || 0,
+            projectTotalTokens: 0,
+            projectContextPercent: 0,
+            combinedContextPercent: tb.totalInstructionPercent || gl.globalFilesPercentOfWindow || 0,
+            globalHooksCount: configuredHooks.length,
+            projectHooksCount: 0,
+            hookConflicts: 0,
+            permissionsAllowCount: perms.allowRulesCount || 0,
+            permissionsDenyCount: perms.denyRulesCount || 0,
+            redundantPermissions: 0,
+            overbroadPermissions: safeArray(perms.overbroad).length,
+            semanticConflicts: 0,
+            mcpDocumented: documented.length,
+            mcpConfigured: configured.length,
+            hasCustomCommands: (cd.customCommandsCount || 0) > 0,
+            hasCustomAgents: (cd.customAgentsCount || 0) > 0,
+            hasMemoryFiles: cd.hasMemoryFiles || false,
+            customCommandsCount: cd.customCommandsCount || 0,
+            customAgentsCount: cd.customAgentsCount || 0,
+            missingHookScripts: 0,
+          },
+          tokenBreakdown: { global: breakdownGlobal, project: [] },
+          configMap: {
+            hooks: {
+              global: configuredHooks.map(h => ({ event: h.trigger || "", matcher: "", command: h.command || h.script || "" })),
+              project: [],
+            },
+            mcpAlignment: { documented, configured,
+              documentedNotConfigured: documented.filter(d => !configured.includes(d)),
+              configuredNotDocumented: configured.filter(c => !documented.includes(c)) },
+            customCommands: [],
+            customAgents: safeArray(cd.customAgents),
+            memoryFiles: cd.hasMemoryFiles ? [`${cd.memoryFilesCount || 0}개 메모리 파일 (${cd.memoryProjects || 0}개 프로젝트)`] : [],
+          },
+        };
+      }
+
       function renderTokenAndConfig() {
         const root = document.getElementById("panel-token-config");
-        const section = data.tokenAndConfig;
+        const section = normalizeTokenAndConfig(data.tokenAndConfig);
         if (!isMeaningful(section)) {
           root.innerHTML = emptyState();
           return;
@@ -2195,7 +2304,7 @@
 
       function renderConfigState() {
         const root = document.getElementById("panel-config-state");
-        const section = data.tokenAndConfig;
+        const section = normalizeTokenAndConfig(data.tokenAndConfig);
         if (!isMeaningful(section)) {
           root.innerHTML = emptyState();
           return;
@@ -2862,7 +2971,7 @@
           return;
         }
 
-        const score = safeObject(section.optimizationScore);
+        const score = safeObject(section.optimizationScore ?? section.auditScore);
         const recommendations = safeArray(section.recommendations);
         const matrix = splitRecommendations(recommendations);
 
@@ -2983,7 +3092,7 @@
             return;
           }
 
-          const copyButton = event.target.closest(".copy-btn");
+          const copyButton = event.target.closest(".copy-btn, .copy-icon-btn");
           if (copyButton) {
             copyPayload(copyButton.dataset.copy, copyButton);
             return;
