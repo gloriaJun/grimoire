@@ -40,7 +40,7 @@ Plus the scope: "both", "global", or "project"
 - **Personal skills:** If no personal skills in `~/.claude/skills/`, note as opportunity.
 - **Output styles:** If no output style configured, mention available options.
 
-Only include items in `missedCommands[]` that are **slash commands or CLI commands** (e.g., `/clear`, `/compact`, `/memory`). Settings changes and hook additions belong in `automationOpportunities[]` or `recommendations[]`.
+Only include items in `missedCommands[]` that are **actual slash commands** the user can type directly (e.g., `/clear`, `/compact`, `/memory`). Do NOT include suggestions to create or configure things (like "Custom /commands" or "Add hooks") — those belong in `recommendations[]` or `automationOpportunities[]`.
 
 ### 3. Automation Opportunities
 
@@ -248,16 +248,10 @@ Return ONLY valid JSON. No prose, no markdown, no explanation outside the JSON.
   },
   "missedCommands": [
     {
-      "command": "clear",
-      "description": "Fully resets conversation context. Use when switching to unrelated tasks.",
-      "benefit": "Frees entire context window instead of just summarizing",
+      "command": "/clear",
+      "description": "Fully resets conversation context. Use when switching to unrelated tasks — not just summarizing.",
+      "benefit": "Frees entire context window; avoids carrying irrelevant history into new tasks",
       "fix": "/clear"
-    },
-    {
-      "command": "Custom /commands",
-      "description": "Create ~/.claude/commands/*.md -- each file becomes a slash command.",
-      "benefit": "Codify frequent workflows as instant-access commands",
-      "fix": "mkdir -p ~/.claude/commands"
     }
   ],
   "automationOpportunities": [

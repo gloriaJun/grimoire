@@ -130,7 +130,7 @@
       h2.section-title { font-size:1rem; }
 
       /* ── Grid layouts ── */
-      .split-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      .split-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
       .tri-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
       .detail-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
       .inventory-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
@@ -237,7 +237,7 @@
       .status-badge.info { background:var(--info-bg); color:var(--info); }
 
       /* ── Toggle sections ── */
-      .toggle-section { border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+      .toggle-section { border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-top:12px; }
       .toggle-head { display:flex; align-items:center; justify-content:space-between; width:100%; padding:12px 16px; background:var(--surface); border:none; cursor:pointer; text-align:left; transition:background var(--trans); }
       .toggle-head:hover { background:var(--card); }
       .toggle-head strong { display:block; font-size:.85rem; font-weight:600; color:var(--text-sub); }
@@ -531,11 +531,11 @@
         flex-shrink: 0;
         padding-top: 1px;
       }
-      .action-content { font-size: .82rem; color: var(--text-sub); flex: 1; }
-      .action-content-wrap { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+      .action-content { font-size: .82rem; color: var(--text-sub); flex: 1; overflow-wrap: break-word; word-break: break-word; }
+      .action-content-wrap { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
       .action-code {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 8px;
         background: var(--surface);
         border: 1px solid var(--border);
@@ -545,7 +545,7 @@
         font-family: monospace;
         color: var(--text);
       }
-      .action-code span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .action-code span { flex: 1; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; }
       .effort-tag {
         display: inline-block;
         padding: 2px 8px;
@@ -1725,8 +1725,8 @@
                 <div class="section-kicker">Findings</div>
                 <h3 class="section-title">${escapeHtml(title)}</h3>
                 <p>${escapeHtml(subtitle)}</p>
+                <div class="sev-row" style="margin-top:8px;">${summarizeSeverity(list)}</div>
               </div>
-              <div class="sev-row">${summarizeSeverity(list)}</div>
             </div>
             ${
               list.length
@@ -2253,8 +2253,8 @@
                   <div class="section-kicker">Ecosystem</div>
                   <h2 class="section-title">스킬 생태계 현황</h2>
                   <p>마켓플레이스, 플러그인, 설명 품질, 중복 정도를 함께 봅니다.</p>
+                  <div class="sev-row" style="margin-top:8px;">${summarizeSeverity(section.findings)}</div>
                 </div>
-                <div class="sev-row">${summarizeSeverity(section.findings)}</div>
               </div>
               ${renderMetricCards([
                 {
@@ -2814,8 +2814,8 @@
                   <div class="section-kicker">Sessions</div>
                   <h2 class="section-title">세션 이상 패턴 분석</h2>
                   <p>세션 길이, 프롬프트 규모, 검증 비율, 이상 태그를 가시적으로 정리합니다.</p>
+                  <div class="sev-row" style="margin-top:8px;">${summarizeSeverity(section.findings)}</div>
                 </div>
-                <div class="sev-row">${summarizeSeverity(section.findings)}</div>
               </div>
               ${renderMetricCards([
                 {
@@ -3102,18 +3102,21 @@
                 ${
                   safeArray(section.missedCommands).length
                     ? `<div class="list-stack">${safeArray(section.missedCommands)
-                        .map(
-                          (item) => `
+                        .map((item) => {
+                          const benefit = item.benefit && !/^[-–—\s]*$/.test(item.benefit) ? item.benefit : null;
+                          const fix = item.fix && !/^[-–—\s]*$/.test(item.fix) ? item.fix : null;
+                          const tags = [
+                            benefit ? createMetaTag(`언제 사용 ${benefit}`, "positive") : "",
+                            fix ? createMetaTag(`입력: ${fix}`, "accent") : "",
+                          ].filter(Boolean).join("");
+                          return `
                             <article class="list-card">
                               <strong>${escapeHtml(text(item.command))}</strong>
                               <p>${escapeHtml(text(item.description))}</p>
-                              <div class="meta-tags">
-                                ${createMetaTag(`효과 ${text(item.benefit)}`, "positive")}
-                                ${createMetaTag(`조치 ${text(item.fix)}`, "accent")}
-                              </div>
+                              ${tags ? `<div class="meta-tags">${tags}</div>` : ""}
                             </article>
-                          `,
-                        )
+                          `;
+                        })
                         .join("")}</div>`
                     : emptyState()
                 }
