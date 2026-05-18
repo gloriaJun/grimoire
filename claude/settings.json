@@ -29,13 +29,6 @@
       "Bash(* --version)",
       "Bash(* --help *)",
       "mcp__chrome-devtools__*",
-      "mcp__n8n-mcp__validate_workflow",
-      "mcp__n8n-mcp__get_workflow_details",
-      "mcp__n8n-mcp__search_workflows",
-      "mcp__n8n-mcp__search_nodes",
-      "mcp__n8n-mcp__get_node_types",
-      "mcp__n8n-mcp__get_execution",
-      "mcp__n8n-mcp__get_sdk_reference",
       "WebSearch",
       "WebFetch(*)",
       "Read(~/.claude/**)",
@@ -91,7 +84,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "npx -y @owloops/claude-powerline@latest --style=powerline --theme=tokyo-night"
+    "command": "mise exec 'npm:@owloops/claude-powerline@1.26.0' -- claude-powerline --style=powerline --theme=tokyo-night"
   },
   "enabledPlugins": {
     "plannotator@plannotator": true,
