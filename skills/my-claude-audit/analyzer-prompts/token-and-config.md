@@ -92,6 +92,11 @@ From `settings.json` (both global and project levels):
 
 Return ONLY valid JSON. No prose, no markdown, no explanation outside the JSON.
 
+**Finding field constraints:**
+- `title`: short label, max 60 chars
+- `detail`: one concrete sentence describing the observed problem — do NOT restate the title
+- `suggestion`: **REQUIRED for `warning`, `error`, `critical` severity** — must be a specific, actionable instruction (1–2 sentences explaining exactly what to do). Do NOT leave empty, set to `"-"`, or use vague phrases like "검토 필요". For `info` severity, omit the field.
+
 **CRITICAL field name constraints** — do NOT rename or restructure these fields:
 - Top-level keys must be exactly: `category`, `findings`, `metrics`, `recommendations`, `tokenBreakdown`, `configMap`
 - Do NOT use: `tokenBudget`, `configurationHealth`, `configDiscovery`, `analysis_date`, `summary`

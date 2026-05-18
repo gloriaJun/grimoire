@@ -90,8 +90,10 @@
       .dimension-label { display:flex; align-items:center; justify-content:space-between; }
       .dimension-label span { font-size:.82rem; color:var(--text-sub); }
       .dimension-label strong { font-size:.82rem; font-weight:700; margin-left:6px; flex-shrink:0; }
-      .bar-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+      .bar-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; display:flex; }
       .bar-fill { height:100%; border-radius:3px; background:var(--positive); }
+      .dist-bar-enabled { height:100%; background:var(--positive); flex-shrink:0; }
+      .dist-bar-inactive { height:100%; background:var(--positive); opacity:0.2; flex-shrink:0; }
 
       /* ── Tabs ── */
       .tab-nav {
@@ -256,9 +258,21 @@
 
       /* ── Distribution bars ── */
       .distribution-list, .model-list { display:flex; flex-direction:column; gap:8px; }
-      .distribution-row, .model-row { display:grid; grid-template-columns:120px 1fr 50px; gap:10px; align-items:center; font-size:.82rem; }
+      .distribution-row, .model-row { display:grid; grid-template-columns:140px 1fr 60px; gap:10px; align-items:center; font-size:.82rem; }
       .distribution-row span, .model-row span { color:var(--text-sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       .distribution-row strong, .model-row strong { text-align:right; font-weight:700; }
+
+      /* ── Trigger quality issue list ── */
+      .quality-issue-list { display:flex; flex-direction:column; margin-top:10px; }
+      .quality-issue-row { display:flex; align-items:center; justify-content:space-between; font-size:.8rem; padding:5px 0; border-bottom:1px solid var(--border); }
+      .quality-issue-row:last-child { border-bottom:none; }
+      .quality-skill-name { color:var(--text-sub); font-family:monospace; font-size:.77rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+      /* ── Marketplace grouped inventory ── */
+      .marketplace-group + .marketplace-group { margin-top:20px; padding-top:18px; border-top:1px solid var(--border); }
+      .marketplace-group-header { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+      .marketplace-group-name { font-size:.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; font-family:monospace; }
+      .marketplace-group-count { font-size:.72rem; color:var(--text-muted); }
 
       /* ── Mini bars ── */
       .metric-note-list { display:flex; flex-direction:column; gap:10px; }
@@ -1624,8 +1638,12 @@
 
         const title = text(item.title, "제목 없음");
         const detail = text(item.detail ?? item.description, "-");
-        const action = text(item.suggestion ?? item.action ?? item.fix, "검토 필요");
         const severity = item.severity || "info";
+        const rawAction = text(item.suggestion ?? item.action ?? item.fix);
+        const actionEmpty = !rawAction || /^[-–—\s]*$|^n\/?a$/i.test(rawAction.trim());
+        const action = actionEmpty
+          ? (severity === "info" ? "해당 없음" : "검토 필요")
+          : rawAction;
         const category = text(item.category, "일반");
         const difficulty =
           mode === "recommendation"
@@ -1678,7 +1696,7 @@
                 <div class="action-content-wrap">
                   <div class="action-text-row">
                     <span class="action-content">${escapeHtml(action)}</span>
-                    ${action !== "검토 필요" ? `
+                    ${action !== "검토 필요" && action !== "해당 없음" ? `
                       <button class="copy-icon-btn" type="button" data-copy="${escapeHtml(item.command || action)}" title="복사">
                         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                       </button>` : ""}
@@ -1790,21 +1808,37 @@
 
       function renderDistribution(obj) {
         const entries = Object.entries(safeObject(obj));
-        if (!entries.length) {
-          return emptyState();
+        if (!entries.length) return emptyState();
+
+        function getTotal(v) {
+          if (typeof v === "number") return v;
+          if (v && typeof v === "object") return num(v.total_skills);
+          return 0;
+        }
+        function getEnabled(v) {
+          if (v && typeof v === "object" && v.enabled !== undefined) return num(v.enabled);
+          return null;
         }
 
-        const max = Math.max(...entries.map(([, value]) => num(value)), 1);
+        const max = Math.max(...entries.map(([, v]) => getTotal(v)), 1);
         return `
           <div class="distribution-list">
             ${entries
               .map(([key, value]) => {
-                const ratio = (num(value) / max) * 100;
+                const total = getTotal(value);
+                const enabled = getEnabled(value);
+                const totalPct = (total / max) * 100;
+                const enabledPct = enabled !== null && total > 0 ? (enabled / total) * totalPct : totalPct;
+                const disabledPct = totalPct - enabledPct;
+                const countLabel = enabled !== null ? `${enabled}/${total}` : formatNumber(total);
                 return `
                   <div class="distribution-row">
-                    <span>${escapeHtml(key)}</span>
-                    <div class="bar-track"><div class="bar-fill" style="width:${ratio}%"></div></div>
-                    <strong>${escapeHtml(formatNumber(num(value)))}</strong>
+                    <span title="${escapeHtml(key)}">${escapeHtml(key)}</span>
+                    <div class="bar-track">
+                      <div class="dist-bar-enabled" style="width:${enabledPct}%"></div>
+                      ${disabledPct > 0 ? `<div class="dist-bar-inactive" style="width:${disabledPct}%"></div>` : ""}
+                    </div>
+                    <strong>${escapeHtml(countLabel)}</strong>
                   </div>
                 `;
               })
@@ -2128,13 +2162,12 @@
         return "미정";
       }
 
-      function triggerPrefix(name) {
+      function triggerType(name) {
         const base = String(name || "");
-        if (/^g-/.test(base)) return "/g";
-        if (/^l-/.test(base)) return "/l";
-        if (/^dev/.test(base)) return "/dev";
+        if (/^g-/.test(base)) return "global";
+        if (/^l-/.test(base)) return "local";
         if (base.includes(":")) return "plugin";
-        return "direct";
+        return "personal";
       }
 
       function renderSkillsEcosystem() {
@@ -2148,6 +2181,69 @@
         const metrics = safeObject(section.metrics);
         const skills = safeArray(section.skillsInventory);
         const overlapPairs = safeArray(section.overlapPairs);
+
+        // Low-quality skills for Trigger Quality card
+        const lowQualitySkills = skills.filter(
+          (s) => s.csoQuality === "warning" || s.csoQuality === "bad",
+        );
+        const qualityIssueList = lowQualitySkills.length
+          ? `<div class="quality-issue-list">
+              ${lowQualitySkills
+                .map(
+                  (s) => `
+                <div class="quality-issue-row">
+                  <span class="quality-skill-name" title="/${escapeHtml(text(s.name))}">/${escapeHtml(text(s.name))}</span>
+                  ${createMetaTag(qualityLabel(s.csoQuality), qualityTone(s.csoQuality))}
+                </div>`,
+                )
+                .join("")}
+            </div>`
+          : "";
+
+        // Skills grouped by marketplace
+        const grouped = {};
+        skills.forEach((s) => {
+          const mkt = text(s.marketplace) || "personal";
+          (grouped[mkt] = grouped[mkt] || []).push(s);
+        });
+        const groupedInventory = Object.entries(grouped)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(
+            ([mkt, mktSkills]) => `
+            <div class="marketplace-group">
+              <div class="marketplace-group-header">
+                <span class="marketplace-group-name">${escapeHtml(mkt)}</span>
+                <span class="marketplace-group-count">${mktSkills.length}개</span>
+              </div>
+              <div class="skills-grid">
+                ${mktSkills
+                  .map((skill) => {
+                    const tone = qualityTone(skill.csoQuality);
+                    return `
+                      <article class="skill-card">
+                        <div class="skill-top">
+                          <div>
+                            <h4 class="skill-name">/${escapeHtml(text(skill.name))}</h4>
+                            <div class="meta-tag-row" style="margin-top:8px;">
+                              <span class="trigger-badge">${escapeHtml(triggerType(skill.name))}</span>
+                              ${createMetaTag(skill.enabled ? "활성" : "비활성", skill.enabled ? "positive" : "warning")}
+                              ${createMetaTag(qualityLabel(skill.csoQuality), tone)}
+                            </div>
+                          </div>
+                        </div>
+                        <p class="skill-desc">${escapeHtml(text(skill.description))}</p>
+                        <div class="meta-tags">
+                          ${createMetaTag(`플러그인 ${text(skill.plugin)}`)}
+                          ${createMetaTag(`버전 ${text(skill.version)}`)}
+                        </div>
+                      </article>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            </div>`,
+          )
+          .join("");
 
         root.innerHTML = `
           <div class="panel-grid">
@@ -2209,9 +2305,9 @@
               <section class="section-card">
                 <div class="section-head">
                   <div>
-                    <div class="section-kicker">CSO</div>
-                    <h3 class="section-title">설명 품질</h3>
-                    <p>설명 명확도와 중복 위험을 점검합니다.</p>
+                    <div class="section-kicker">Trigger Quality</div>
+                    <h3 class="section-title">트리거 설명 품질</h3>
+                    <p>스킬이 올바른 상황에서 탐색되도록 트리거 설명을 평가합니다. <code>"Use when..."</code> 형식이 이상적입니다.</p>
                   </div>
                 </div>
                 <div class="badge-row">
@@ -2219,9 +2315,7 @@
                   ${createPill(`주의 ${formatNumber(num(metrics.csoWarning))}`, "warning")}
                   ${createPill(`미흡 ${formatNumber(num(metrics.csoBad))}`, "error")}
                 </div>
-                <div class="footnote">
-                  설명 품질이 낮은 스킬부터 정리하면 탐색 비용과 중복 호출을 함께 줄일 수 있습니다.
-                </div>
+                ${qualityIssueList}
               </section>
             </div>
 
@@ -2236,38 +2330,10 @@
                 <div>
                   <div class="section-kicker">Skills</div>
                   <h3 class="section-title">스킬 인벤토리</h3>
-                  <p>이름, 트리거 접두, 설명, 메타 태그를 카드 단위로 표시합니다.</p>
+                  <p>마켓플레이스별로 그룹핑된 전체 스킬 목록입니다.</p>
                 </div>
               </div>
-              ${
-                skills.length
-                  ? `<div class="skills-grid">${skills
-                      .map((skill) => {
-                        const tone = qualityTone(skill.csoQuality);
-                        return `
-                          <article class="skill-card">
-                            <div class="skill-top">
-                              <div>
-                                <h4 class="skill-name">${escapeHtml(text(skill.name))}</h4>
-                                <div class="meta-tag-row" style="margin-top:8px;">
-                                  <span class="trigger-badge">${escapeHtml(triggerPrefix(skill.name))}</span>
-                                  ${createMetaTag(skill.enabled ? "활성" : "비활성", skill.enabled ? "positive" : "warning")}
-                                  ${createMetaTag(qualityLabel(skill.csoQuality), tone)}
-                                </div>
-                              </div>
-                            </div>
-                            <p class="skill-desc">${escapeHtml(text(skill.description))}</p>
-                            <div class="meta-tags">
-                              ${createMetaTag(`마켓 ${text(skill.marketplace)}`)}
-                              ${createMetaTag(`플러그인 ${text(skill.plugin)}`)}
-                              ${createMetaTag(`버전 ${text(skill.version)}`)}
-                            </div>
-                          </article>
-                        `;
-                      })
-                      .join("")}</div>`
-                  : emptyState()
-              }
+              ${skills.length ? groupedInventory : emptyState()}
             </section>
 
             ${renderToggle(

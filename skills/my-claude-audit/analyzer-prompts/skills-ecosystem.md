@@ -64,6 +64,11 @@ Count skills per marketplace for visualization.
 
 Return ONLY valid JSON. No prose, no markdown, no explanation outside the JSON.
 
+**Finding field constraints:**
+- `title`: short label, max 60 chars
+- `detail`: one concrete sentence describing the observed problem — do NOT restate the title
+- `suggestion`: **REQUIRED for `warning`, `error`, `critical` severity** — must be a specific, actionable instruction (1–2 sentences explaining exactly what to do). Do NOT leave empty, set to `"-"`, or use vague phrases like "검토 필요". For `info` severity, omit the field.
+
 ```json
 {
   "category": "skills-ecosystem",

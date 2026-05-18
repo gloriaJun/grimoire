@@ -187,6 +187,11 @@ Generate patches ONLY for tags that were actually detected in the session-anomal
 
 Return ONLY valid JSON. No prose, no markdown, no explanation outside the JSON.
 
+**Finding field constraints:**
+- `title`: short label, max 60 chars
+- `detail`: one concrete sentence describing the observed problem — do NOT restate the title
+- `suggestion`: **REQUIRED for `warning`, `error`, `critical` severity** — must be a specific, actionable instruction (1–2 sentences explaining exactly what to do). Do NOT leave empty, set to `"-"`, or use vague phrases like "검토 필요". For `info` severity, omit the field.
+
 **CRITICAL field name constraints** — do NOT rename these fields:
 - Use `"optimizationScore"` (not `"auditScore"`, not `"score"`)
 - `breakdown` values must be **plain numbers** (not objects): `"tokenEfficiency": 80` (not `{ "score": 80, "weight": ... }`)
