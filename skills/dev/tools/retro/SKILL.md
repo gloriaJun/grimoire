@@ -68,7 +68,19 @@ Write `retrospect.md` directly to the task folder:
      | `GitHubPrivate` | `life` |
      | neither | ask the user |
    - **context**: summarize from `history` + artifacts (lifecycle) or user description (standalone)
-3. Write `retrospect.md` using this template:
+3. **Action Items 초안 확인** (lifecycle mode only, `history.md`가 있을 때):
+   - `history.md` Decision Log의 `status: resolved` 항목 + `artifacts` 목록에서 후보 3–5개 도출
+   - 사용자에게 제시:
+     ```
+     Action Items 초안:
+     - [ ] ...
+     - [ ] ...
+
+     수정하거나 추가할 항목이 있으면 알려주세요. 없으면 그대로 진행합니다.
+     ```
+   - 사용자 응답을 반영해 Action Items 확정 후 다음 단계 진행
+   - `history.md` 없거나 standalone mode이면 이 단계를 건너뜀
+4. Write `retrospect.md` using this template:
 
 ```markdown
 ---

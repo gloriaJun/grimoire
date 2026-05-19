@@ -83,6 +83,7 @@ follow_up: []
 ## What I Learned
 
 ## Context
+- **Goal:** (이 태스크에서 해결하려 했던 것 — 태스크명 없이도 읽힐 수 있게)
 - Stack / Tool:
 - Environment:
 
@@ -91,6 +92,7 @@ follow_up: []
 - **Symptom:**
 - **Root Cause:** (불명확하면 Unknown으로 명시)
 - **Solution:**
+- **Remaining Questions:** (해결했지만 여전히 이해 못한 부분 — `follow_up`에 연결)
 
 ## Commands / Snippets
 
@@ -105,6 +107,8 @@ Field guidance:
 - `summary`: required — one sentence capturing what was learned/solved
 - `follow_up`: optional — technical debt or follow-up exploration items
 - `What I Learned` = technical facts/patterns ("X 상황에서는 Y 방법을 쓴다" 형태로 일반화)
+- `Context` > `Goal`: 필수. 태스크명을 모르는 독자가 이 TIL을 발견했을 때 배경을 한 문장으로 이해할 수 있게 작성한다 (Every Page is Page One 원칙).
+- `Troubleshooting` > `Remaining Questions`: 해결은 됐지만 왜 작동했는지 명확하지 않은 부분. 비워도 되지만 있으면 반드시 `follow_up` 필드와 연결한다.
 - `Resources` entries: each link must include a one-line description of why it's useful
 - `Task Links`: PR, ticket links — no description needed
 
