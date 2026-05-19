@@ -1,9 +1,9 @@
 ---
 name: test
 description: >
-  Tool loaded by /dev skill via Read(). Triggered by /dev test or
-  explicit invocation from the dev orchestrator.
-  Not a standalone skill — invoked only from dev/SKILL.md.
+  Sub-tool of /dev skill. Triggered by /dev test.
+  Supports TDD (Red-Green-Refactor), Storybook TDD (Story-first), and
+  Test-After (behavior-based) approaches. Detects test framework automatically.
 ---
 
 # g-test-writer Orchestrator

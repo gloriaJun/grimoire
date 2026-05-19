@@ -1,9 +1,10 @@
 ---
 name: refactor
 description: >
-  Tool loaded by /dev skill via Read(). Triggered by /dev refactor or
-  natural language refactoring requests routed through the dev orchestrator.
-  Not a standalone skill — invoked only from dev/SKILL.md.
+  Sub-tool of /dev skill. Triggered by /dev refactor or natural language
+  routed through /dev: "리팩토링 해줘", "코드 정리해줘", "클린 아키텍처 적용해줘",
+  "중복 코드 정리해줘", "타입 추가해줘", "코드 냄새 제거해줘", "성능 개선해줘",
+  "refactor this", "clean up this code".
 ---
 
 # g-refactor Orchestrator

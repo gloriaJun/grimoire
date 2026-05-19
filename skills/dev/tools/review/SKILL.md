@@ -1,8 +1,9 @@
 ---
 name: review
 description: >
-  Tool loaded by /dev skill via Read(). Triggered by /dev review.
-  Not a standalone skill — invoked only from dev/SKILL.md.
+  Sub-tool of /dev skill. Triggered by /dev review or natural language
+  routed through /dev: "이 코드 리뷰해줘", "이 부분 검토해줘", "코드 봐줘",
+  "review this", "check this code".
 ---
 
 # Review — Code Review

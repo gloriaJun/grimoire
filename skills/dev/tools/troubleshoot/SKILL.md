@@ -1,9 +1,9 @@
 ---
 name: troubleshoot
 description: >
-  Tool loaded by /dev skill via Read(). Triggered by /dev troubleshoot or
-  natural language error/debug requests routed through the dev orchestrator.
-  Not a standalone skill — invoked only from dev/SKILL.md.
+  Sub-tool of /dev skill. Triggered by /dev troubleshoot or natural language
+  routed through /dev: error logs, stack traces, Sentry alerts,
+  GitHub Actions failure output, "에러 고쳐줘", "에러 원인 분석해줘", etc.
 ---
 
 # g-troubleshoot Orchestrator

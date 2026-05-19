@@ -1,19 +1,28 @@
 ---
 name: dev
 description: >
-  Unified development lifecycle skill. Triggered by /dev or sub-commands:
+  Unified development workflow skill. Triggered by /dev or sub-commands:
   /dev idea, /dev plan, /dev design, /dev breakdown, /dev build, /dev complete,
   /dev test, /dev refactor, /dev review, /dev troubleshoot,
   /dev retro, /dev til, /dev help, /dev status, /dev handoff.
+  Also triggers on: code refactoring requests ("리팩토링 해줘", "코드 정리해줘",
+  "클린 아키텍처 적용해줘", "중복 코드 정리해줘", "타입 추가해줘", "코드 냄새 제거해줘",
+  "성능 개선해줘", "refactor this", "clean up this code"),
+  error analysis and debugging ("에러 고쳐줘", "에러 원인 분석해줘", "버그 원인이 뭐야",
+  "오류가 왜 나지", "왜 에러가 나지", "이 에러 뭔지", "에러 원인을 분석해줘",
+  "어디서 실패하는 거야", "스택트레이스 분석해줘", "디버깅 해줘",
+  error logs, stack traces, Sentry alerts, GitHub Actions failure output).
+  Performance issues trigger only when accompanied by log/metric artifacts
+  ("느리다", "타임아웃", "latency" + log or trace data).
   Devlog write/note ("devlogs에 정리해줘", "devlog에 기록해줘", "오늘 작업 기록해줘",
   "작업 내용 정리해줘", "이거 기록해줘", "devlog에 남겨줘", "작업 노트 써줘").
   Session resume/status ("작업 이어하자", "이어서 진행하자", "작업 현황 보여줘", "devlog 상태 보여줘").
+  Code review/modification ("이 부분 검토해줘", "이 코드 리뷰해줘", "이 코드 봐줘",
+  "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this", "check this code").
   Next-session handoff ("다음 세션 프롬프트 생성해줘", "세션 인계 프롬프트",
   "이어서 할 프롬프트 만들어줘", "다음 작업 프롬프트", "handoff prompt").
   Manages devlogs for cross-session state persistence.
   Manual planning steps (idea/plan/design/breakdown/build/complete) require explicit invocation.
-  Utility tools (refactor/troubleshoot/test/review/setup) are independent skills;
-  /dev delegates to them as a thin wrapper.
 ---
 
 # dev — Unified Development Workflow
@@ -116,15 +125,15 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 
 ### Utility Tools (devlog optional)
 
-| Sub-command | Tool file |
-|-------------|-----------|
-| `test` | `Read("~/.claude/skills/test/SKILL.md")` |
-| `refactor` | `Read("~/.claude/skills/refactor/SKILL.md")` |
-| `troubleshoot` | `Read("~/.claude/skills/troubleshoot/SKILL.md")` |
-| `review` | `Read("~/.claude/skills/review/SKILL.md")` |
+| Sub-command / Natural language trigger | Tool file |
+|----------------------------------------|-----------|
+| `test` | `Read("tools/test/SKILL.md")` |
+| `refactor`, "리팩토링 해줘", "코드 정리해줘", etc. | `Read("tools/refactor/SKILL.md")` |
+| `troubleshoot`, error logs, stack traces, "에러 고쳐줘", etc. | `Read("tools/troubleshoot/SKILL.md")` |
+| `review`, "이 코드 리뷰해줘", "이 부분 검토해줘", "코드 봐줘", "review this", "check this code", etc. | `Read("tools/review/SKILL.md")` |
 | `retro` | `Read("tools/retro/SKILL.md")` |
 | `til` | `Read("tools/til/SKILL.md")` |
-| `setup` | `Read("~/.claude/skills/setup/SKILL.md")` |
+| `setup` | `Read("tools/setup/SKILL.md")` |
 | `devlog-note`, "devlogs에 기록/정리해줘", "오늘 작업 기록해줘", "작업 노트 써줘", etc. | `Read("tools/devlog-note/SKILL.md")` |
 | `status` | `steps/status.md` | scan devlogs root → print task status summary |
 | `help` | inline | print available sub-commands |
@@ -177,14 +186,20 @@ Examples:
 When triggered by natural language (not an explicit `/dev` command):
 
 1. Analyze the trigger (in order):
+   - Refactoring keywords → load `tools/refactor/SKILL.md` directly, skip entry menu
+   - Error/debug signal (error keyword + action verb, stack trace, Sentry/log artifact,
+     or performance keywords **with** log/metric artifact) → load `tools/troubleshoot/SKILL.md` directly, skip entry menu
    - Devlog write/note signal ("devlogs에 기록/정리/남겨줘", "작업 노트", "오늘 작업 기록", etc.)
      → load `tools/devlog-note/SKILL.md` directly, skip entry menu
    - Session resume/status signal:
      - "작업 현황 보여줘", "devlog 상태 보여줘" → load `steps/status.md`
      - "작업 이어하자", "이어서 진행하자" → proceed to `steps/entry.md` (resume flow)
+   - Code review/modification signal ("이 코드 리뷰/검토해줘", "이 코드 봐줘",
+     "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this code", "check this code")
+     → load `tools/review/SKILL.md` directly, skip entry menu
    - Next-session handoff signal ("다음 세션 프롬프트", "세션 인계", "handoff prompt", etc.)
      → load `tools/next-session-prompt/SKILL.md` directly, skip entry menu
-   - Generic questions without error artifact ("왜 안돼", "왜 느리지" alone) → do NOT auto-route; treat as general conversation
+   - Generic questions without error artifact ("왜 안돼", "왜 느리지" alone) → do NOT auto-route to troubleshoot; treat as general conversation
    - Otherwise → proceed to `steps/entry.md`
 
 2. Skip the active devlog check for utility tools (test/refactor/troubleshoot/devlog-note/review/handoff).

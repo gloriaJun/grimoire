@@ -1,10 +1,9 @@
 ---
 name: dev-setup
 description: >
-  Project quality tooling setup. Triggered by /dev setup.
+  Sub-tool of /dev skill. Triggered by /dev setup.
   Configures ESLint v9+ flat config, Prettier, TypeScript type-check, and optionally Husky git hooks.
-  Detects existing config before touching anything.
-  Never overwrites without user confirmation.
+  Detects existing config before touching anything. Never overwrites without user confirmation.
 ---
 
 # dev setup — Project Quality Tooling Setup
@@ -29,14 +28,11 @@ You are a project setup specialist. Your principles:
 
 ```mermaid
 flowchart TD
-    A(["dev setup"]) --> B["Step 1: Detect existing config"]
+    A(["setup"]) --> B["Step 1: Detect existing config"]
     B --> C{"All tools\nconfigured?"}
     C -- yes --> D["Report: nothing to do\n(stop here)"]
     C -- partial / none --> E["Step 2: Configure\nESLint / Prettier / tsc"]
-    E --> F{"Active devlog?"}
-    F -- yes --> G["Register lintConfig\nin _state.json"]
-    F -- no --> H["Skip state update"]
-    G & H --> I["Step 3: Husky\n(confirm with user first)"]
+    E --> I["Step 3: Husky\n(confirm with user first)"]
     I --> J{"User confirms?"}
     J -- yes --> K["Configure Husky"]
     J -- no --> L["Skip Husky"]
@@ -58,19 +54,6 @@ If all tools are already configured, print the "nothing to do" message and stop.
 ### Step 2 — Configure
 
 Read `steps/step-2-configure.md` and execute for each tool that is `missing` or `legacy`.
-
-After configuring, assemble `lintConfig` and:
-- If active devlog found (`_state.json` exists in the current task directory): update `artifacts.lintConfig`.
-- Otherwise: hold `lintConfig` in memory for the summary only.
-
-**Active devlog check:**
-```bash
-# Resolve devlogs root from cwd
-# GitHubWork cwd → ~/Documents/GitHubWork/_claude/devlogs/
-# GitHubPrivate cwd → ~/Documents/GitHubPrivate/_claude/devlogs/
-# Then: find most recent task dir matching the current repo name
-# If _state.json found with currentStep not in completedSteps → active devlog exists
-```
 
 ### Step 3 — Husky
 
@@ -96,9 +79,7 @@ of Claude Code. These two mechanisms complement each other:
 
 ---
 
-## lintConfig in _state.json
+## Lint Detection
 
-When an active devlog is present, the configured tooling is recorded as `artifacts.lintConfig`
-so that `build.md`'s Local Verification Checkpoint can use the correct lint command.
-
-See `schemas/state.md` for the full `lintConfig` schema.
+Configured tooling is NOT persisted in `_state.json`. The build step's Local Verification
+Checkpoint detects the lint command on-demand from `package.json` scripts and config files.
