@@ -39,7 +39,8 @@ Load `references/review-protocol.md` and execute the full review workflow.
 
 `currentStep` ← `"design"`, append `"plan"` to `completedSteps`
 `artifacts.prd` ← PRD path
-`reviews.prd` ← `{ mode, fallbackReason, approvedAt }`
+
+Append review approval entry to `history.md` Decision Log (see `schemas/history.md` Review Approval Entries).
 
 Follow update mechanics from `schemas/state.md`.
 

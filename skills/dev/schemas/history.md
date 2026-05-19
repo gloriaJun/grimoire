@@ -91,9 +91,36 @@ _type: <decision|blocker|troubleshooting> · status: <open|resolved>_
 
 | type | When to use |
 |------|-------------|
-| `decision` | Architecture choice, technology selection, non-obvious trade-off |
+| `decision` | Architecture choice, technology selection, non-obvious trade-off; also used for review approvals (PRD/TRD/features) |
 | `blocker` | Unresolved dependency, external decision needed, blocked on information |
-| `troubleshooting` | Bug root cause, error resolution, debugging finding worth preserving |
+| `troubleshooting` | Bug root cause, error resolution, debugging finding worth preserving; also used for stagnation events (tests fail ×2) |
+
+### Review Approval Entries
+
+When a PRD, TRD, or feature breakdown is reviewed and approved, append a Decision Log entry:
+
+```markdown
+### [plan] YYYY-MM-DD — PRD approved
+_type: decision · status: resolved_
+
+Reviewed via <plannotator|text>. Approved by user.
+```
+
+Replace `plan` with the current step (`design` for TRD, `breakdown` for features).
+
+### Stagnation Entries
+
+When a stagnation escape is triggered (tests fail ×2), append a Decision Log entry:
+
+```markdown
+### [build] YYYY-MM-DD — F-XX stagnation: <feature name>
+_type: troubleshooting · status: open_
+
+Tests failed after 2 iterations. Resolution chosen: <option description>.
+<outcome or pending action>
+```
+
+Update `status: resolved` when the stagnation is resolved.
 
 ### Status
 

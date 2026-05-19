@@ -68,7 +68,6 @@ From `_state.json` artifacts:
    | Config, Docker, infrastructure, scaffolding | Skip |
 
    Override when: (a) UI logic is complex enough to benefit from TDD, (b) infra has testable pure logic, (c) TRD specifies a different default.
-   If `artifacts.testConfig` is null, ask the user to supply framework info before proceeding.
 4. Register paths in `_state.json`:
    - `artifacts.features` ← `"features.md"`
    - `artifacts.featureSpecs` ← array of spec filenames
@@ -86,7 +85,8 @@ Load `references/review-protocol.md` and execute the full review workflow.
 `artifacts.features` ← features.md path
 `artifacts.featureSpecs` ← array of spec filenames
 `features` ← array with `status: "pending"` and `testingApproach` from each feature spec
-`reviews.features` ← `{ mode, fallbackReason, approvedAt }`
+
+Append review approval entry to `history.md` Decision Log (see `schemas/history.md` Review Approval Entries).
 
 Follow update mechanics from `schemas/state.md`.
 

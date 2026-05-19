@@ -57,8 +57,10 @@ Load `references/review-protocol.md` and execute the full review workflow.
 
 `currentStep` ← `"wireframe"`, append `"design"` to `completedSteps`
 `artifacts.trd` ← TRD path (or `"skipped"`)
-`artifacts.testConfig` ← extracted from TRD Testing Strategy table (unit and e2e framework, configFile, command); set to `null` fields if TRD was skipped or framework not yet decided
-`reviews.trd` ← `{ mode, fallbackReason, approvedAt }`
+
+Append review approval entry to `history.md` Decision Log (see `schemas/history.md` Review Approval Entries).
+
+Note: test framework info from the TRD Testing Strategy table is detected on-demand at build time — not persisted in `_state.json`.
 
 Follow update mechanics from `schemas/state.md`.
 

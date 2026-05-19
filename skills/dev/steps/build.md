@@ -1,13 +1,34 @@
 # Build: Feature Execution
 
-Execute one feature per session.
+Execute one feature per session. Routes to sub-files for each execution phase.
 
-## Session Start: Feature Selection
+## Flow Diagram
+
+```mermaid
+flowchart TD
+    A(["build"]) --> B["Step 1: Feature Selection"]
+    B --> C["Step 2: Pre-check Testing Approach"]
+    C --> D{"testingApproach"}
+    D -- TDD --> E["Read(flow-tdd.md)"]
+    D -- Test-After --> F["Read(flow-test-after.md)"]
+    D -- Skip --> G["Read(flow-skip.md)"]
+    E & F & G --> H["Read(cross-review.md)"]
+    H --> I["Read(verification.md)"]
+    I --> J["Read(handoff.md)"]
+
+    E -.->|"tests fail ×2"| K["Read(stagnation-escape.md)"]
+    F -.->|"tests fail ×2"| K
+    K -.-> H
+```
+
+---
+
+## Step 1: Feature Selection
 
 1. Read `_state.json` from the devlogs task subdirectory.
 2. Display pending features:
-   - `dependsOn`의 모든 피처가 `"done"`인 피처: 선택 가능
-   - 미완료 의존 피처가 있는 피처: `[blocked: F-XX]`로 표시
+   - Features where all `dependsOn` entries are `"done"`: selectable
+   - Features with incomplete dependencies: shown as `[blocked: F-XX]`
    ```
    Pending features:
    [ ] feature-01-<name>
@@ -19,285 +40,54 @@ Execute one feature per session.
 3. Wait for user selection.
 4. Update `features[i].status` to `"in-progress"` in `_state.json`.
 
-## Implementation
+---
 
-### Pre-check: Testing Approach
+## Step 2: Pre-check — Testing Approach
 
 1. Read `features[i].testingApproach` from `_state.json`.
-2. Read `artifacts.testConfig` for framework and run command.
-   If `testConfig` is null, warn the user and ask for framework details before proceeding.
-3. Proceed to the matching flow (A: TDD, B: Test-After, C: Skip).
+2. Detect test framework on-demand (only needed for TDD and Test-After flows):
+   - Check `vitest.config.*` → vitest (`pnpm test`)
+   - Check `jest.config.*` → jest (`pnpm test`)
+   - Check `package.json` scripts for `test` entry → use that command
+   - Check `playwright.config.*` → playwright e2e (`pnpm e2e`)
+   - Check `cypress.config.*` → cypress e2e
+   - None found and testingApproach is not Skip → ask user for framework details
+3. Proceed to the matching execution flow.
 
 ---
 
-### Flow A: TDD (Red-Green-Refactor)
+## Step 3: Execution Flow
 
-**Step A-0: Write Failing Tests**
+Load the file matching `features[i].testingApproach`:
 
-1. State which feature is being worked on.
-2. Read the feature spec from `artifacts.featureSpecs[index]`.
-3. Invoke `/dev test` with TDD mode context:
-   - Feature spec (acceptance criteria → test case design)
-   - `testConfig` (framework, config file)
-   - Goal: write **failing** tests only — no implementation yet
-4. Run `testConfig.unit.command` to confirm tests fail (expected at this stage).
+| testingApproach | Load file |
+|---|---|
+| `TDD` | `Read("steps/build/flow-tdd.md")` |
+| `Test-After` | `Read("steps/build/flow-test-after.md")` |
+| `Skip` | `Read("steps/build/flow-skip.md")` |
 
-**Step A-1: Feature Execution**
-
-1. Invoke the `feature-executor` agent (model: sonnet) with:
-   - The feature spec content
-   - PRD and TRD paths for context
-   - `testingApproach: "TDD"` — implement only what is needed to pass the failing tests
-   - `testConfig` for framework context
-2. The feature-executor asks the user to choose implementation agent (default: Codex).
-3. Set `features[i].executor` in `_state.json`.
-4. Implementation proceeds based on user choice.
-
-**Step A-2: Test Pass Confirmation**
-
-1. Run `testConfig.unit.command`.
-2. If all tests pass → proceed to Step A-3.
-3. If tests fail → return to feature-executor for fixes (max 2 iterations).
-   If still failing after 2 iterations, show the stagnation escape menu:
-   ```
-   테스트가 2회 시도 후에도 통과되지 않습니다.
-
-   복구 방법을 선택하세요:
-     1. 범위 축소   — non-essential AC 제외 후 재구현
-     2. 실행기 전환 — Claude ↔ Codex 전환
-     3. 피처 분할   — F-Xa(기반) + F-Xb(막힌 부분)으로 분할; F-Xb 연기
-     4. 테스트 연기 — "pending" 마킹 후 /dev complete 전 처리
-     5. 에스컬레이션 — 진단 메모와 함께 사용자에게 위임
-
-   > 번호 입력
-   ```
-   - 옵션 3: features.md + `_state.json`에 F-Xa/F-Xb 추가 후 계속
-   - 옵션 4: `features[i].stagnationResolution: "pending-tests"` 기록, feature spec에 `> ⚠️ 테스트 연기됨` 경고 추가
-
-**Step A-3: Refactor**
-
-Invite the user: "Any refactoring needed before review? (skip to continue)"
-If the user proceeds: apply structural cleanup without changing behavior, then re-run tests.
-
-**Step A-4: Simplify (Pre-Review)**
-
-1. Invoke the `simplify` skill on the changed files.
-2. Wait for simplify to complete — code may be modified.
-3. Proceed to cross-review with the simplified code.
+If the flow encounters stagnation (tests fail ×2): `Read("steps/build/stagnation-escape.md")`
 
 ---
 
-### Flow B: Test-After
+## Step 4: Cross-Review
 
-**Step B-1: Feature Execution**
+When the execution flow signals "Flow complete":
 
-1. State which feature is being worked on.
-2. Read the feature spec from `artifacts.featureSpecs[index]`.
-3. Invoke the `feature-executor` agent (model: sonnet) with:
-   - The feature spec content
-   - PRD and TRD paths for context
-4. The feature-executor asks the user to choose implementation agent (default: Codex).
-5. Set `features[i].executor` in `_state.json`.
-6. Implementation proceeds based on user choice.
-
-**Step B-2: Test Generation**
-
-After implementation is complete:
-1. Invoke `/dev test` with Test-After mode context:
-   - Implemented code as target
-   - `testConfig` (framework, config file)
-2. Run `testConfig.unit.command` to verify tests pass.
-   If tests fail → fix and retry (max 2 iterations).
-   If still failing after 2 iterations, show the stagnation escape menu (same as Flow A-2).
-
-**Step B-3: Simplify (Pre-Review)**
-
-1. Invoke the `simplify` skill on the changed files.
-2. Wait for simplify to complete — code may be modified.
-3. Proceed to cross-review with the simplified code.
+`Read("steps/build/cross-review.md")`
 
 ---
 
-### Flow C: Skip
+## Step 5: Verification
 
-**Step C-1: Feature Execution**
+When cross-review is complete:
 
-1. State which feature is being worked on.
-2. Read the feature spec from `artifacts.featureSpecs[index]`.
-3. Invoke the `feature-executor` agent (model: sonnet) with:
-   - The feature spec content
-   - PRD and TRD paths for context
-4. The feature-executor asks the user to choose implementation agent (default: Codex).
-5. Set `features[i].executor` in `_state.json`.
-
-**Step C-2: Simplify (Pre-Review)**
-
-1. Invoke the `simplify` skill on the changed files.
-2. Wait for simplify to complete — code may be modified.
-3. Proceed to cross-review with the simplified code.
+`Read("steps/build/verification.md")`
 
 ---
 
-## Cross-Review (all flows)
+## Step 6: Session Handoff
 
-After simplify completes, update `features[i].status` to `"review"`.
+When verification is complete:
 
-| Executor | Reviewer | Method |
-|----------|----------|--------|
-| Claude | Codex | Invoke `code-reviewer` agent → delegates to `/codex:review` |
-| Codex | Claude | Invoke `code-reviewer` agent → reviews with Claude |
-
-Set `features[i].reviewer` accordingly.
-
-### Parallel Review (frontend changes exist)
-
-Dispatch `code-reviewer` and `frontend-reviewer` simultaneously (single message, 2 Agent tool calls).
-Apply action markers per `agent-guidelines.md`. Wait for both, then aggregate findings.
-
-### Sequential Review (no frontend changes)
-
-Invoke only `code-reviewer`.
-
-## Review Resolution
-
-1. Present review findings to the user.
-2. If changes requested: fix and re-review (max 2 iterations).
-3. Update `features[i].status` to `"done"`.
-
----
-
-## Local Verification Checkpoint
-
-Run after Review Resolution, for every feature regardless of testingApproach.
-
-### Step 1: testingApproach별 확인
-
-| testingApproach | 확인 항목 |
-|-----------------|-----------|
-| `skip` | 대상 파일 존재 확인 + 가능하면 lint |
-| `test-after` | Flow B-2에서 테스트 통과 재확인 |
-| `tdd` | Flow A-2에서 테스트 통과 재확인 |
-
-`skip` 피처의 lint 확인 — 다음 우선순위로 명령을 결정한다:
-
-1. `artifacts.lintConfig.eslint.command` 있으면 → 해당 명령 사용 (e.g. `pnpm lint`)
-2. nx monorepo 감지 시 (`nx.json` 존재) → `pnpm nx lint <project-name>`
-3. 둘 다 없으면 → lint 확인 skip, 이유 명시 (`/dev setup`으로 lint 설정 권장)
-
-node_modules 미설치로 실행 불가 시: 사유를 명시하고 F-09(build/deploy) 단계로 검증 defer.
-
-### Step 2: 로컬 UI 미리보기 가능 여부 안내
-
-아래 중 하나를 명시적으로 출력한다:
-
-- **미리보기 가능**: 이 feature로 navigable page 또는 visible UI가 생긴 경우
-  ```
-  🖥️  로컬에서 확인 가능합니다:
-  pnpm nx dev <project-name>  →  http://localhost:<port>
-  확인 항목: <spec의 acceptance criteria 중 UI 관련 항목>
-  ```
-- **미리보기 불가**: 타입, 유틸, API client, 상수 등 직접 UI 없는 경우
-  ```
-  ⏭️  로컬 UI 확인: F-XX (<feature-name>) 완료 후 가능합니다.
-  ```
-
-사용자 확인을 기다리지 않고 다음 단계로 진행한다 (미리보기 가능 케이스만 대기).
-
----
-
-## UI Verification (frontend changes only)
-
-### Trigger Condition
-
-Check whether this feature introduced visible UI. Apply **either** heuristic:
-- Changed/added files include at least one non-test `.tsx` file (e.g., `.tsx` but not `.test.tsx`)
-- Feature spec explicitly mentions pages, components, layouts, or UI elements
-
-If neither applies (pure logic, API clients, config, infra) → skip this section entirely.
-
-### Verification Flow
-
-1. Start the dev server if not already running:
-   ```
-   pnpm dev
-   ```
-2. Present a concise checklist derived from the feature spec's **acceptance criteria**:
-   ```
-   🖥️  UI Verification — <feature name>
-   Please check the following in your browser:
-
-   [ ] <criterion 1 — e.g., "/ → /dashboard 자동 리다이렉트">
-   [ ] <criterion 2>
-   ...
-
-   Run: pnpm dev → http://localhost:5173
-   Confirm when done (or describe any issues found).
-   ```
-3. Wait for user response.
-4. **If all good** → proceed to Session Handoff.
-5. **If issues found** → fix, then re-present the checklist (max 1 re-verify iteration).
-   - If still failing after 1 fix: surface to user and ask how to proceed.
-
----
-
-## Session Handoff
-
-### State Update
-
-- `features[i].status` ← `"done"`, `features[i].executor/reviewer` ← from selection
-- If all features done: `currentStep` ← `"complete"`, append `{ "step": "build", "at": "<ISO 8601>" }` to `completedSteps`
-- On first feature completion of this task: set `branch` (via `git branch --show-current`) and `worktreePath` (null unless repo root differs from workspace root)
-
-### Feature Spec Update
-
-- Open the completed feature's spec file (`artifacts.featureSpecs[i]`).
-- Mark all implemented checklist items: `[ ]` → `[x]`.
-- If the actual implementation diverges from the spec (design change, extra commands, different storage strategy, etc.):
-  - Add a `> **구현 변경**:` callout block at the top of the spec explaining the deviation and reason.
-  - Update affected sections (file paths, interfaces, verification steps) to match reality.
-- If implementation matches spec exactly: only update the checklist.
-
-### history.md Update
-
-Schema: `schemas/history.md`
-
-**Step 1 — Regenerate Current Snapshot:**
-
-Rebuild the Current Snapshot section in full from `_state.json` (same as `steps/_handoff.md` step 2 mechanic).
-
-**Step 2 — Append to Decision Log (conditional):**
-
-For each of the following that applies to this feature, append a Decision Log entry:
-
-- Non-obvious architecture or design choice made during implementation → `type: decision · status: resolved`
-- Key files introduced or significantly changed → fold into a `decision` entry as context (do not create a separate "key files" entry)
-- Unresolved blocker or open question → `type: blocker · status: open`
-- Troubleshooting finding worth preserving → `type: troubleshooting · status: resolved`
-
-If none of the above apply (straightforward feature, no surprises): do not append. An empty Decision Log is fine.
-
-Format: `### [build] YYYY-MM-DD — <title>`
-
-### _index.md Update
-
-- Find the row matching the current task directory in `<devlogs-root>/_index.md`
-- If more features pending: update step column to `build (N/M done)`
-- If all done: update step column to `complete`
-- Update frontmatter `updated:` to today's date
-
-### Completion Message
-
-```
-✅ feature-<XX> complete
-
-Remaining: N feature(s) pending
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Next:  /dev build      (more features remain)
-  OR
-Next:  /dev complete   (all features done)
-Start a new session and run `/dev` — it will detect this task automatically.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-Do NOT automatically start the next feature. Stop here.
+`Read("steps/build/handoff.md")`

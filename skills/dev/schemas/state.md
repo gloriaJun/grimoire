@@ -22,56 +22,7 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
     "trd": "string | null",
     "wireframe": "\"skipped\" | { mockup: \"path/to/wireframe-<task>.md\", design: \"url-or-path | null\" } | null",
     "features": "string | null — path to features.md",
-    "featureSpecs": ["feature-01-auth.md", "feature-02-api.md"],
-    "testConfig": {
-      "unit": {
-        "framework": "vitest | jest | pytest | null",
-        "configFile": "string | null — e.g. vitest.config.ts",
-        "command": "string | null — e.g. pnpm test"
-      },
-      "e2e": {
-        "framework": "playwright | cypress | null",
-        "configFile": "string | null — e.g. playwright.config.ts",
-        "command": "string | null — e.g. pnpm e2e"
-      }
-    },
-    "lintConfig": {
-      "eslint": {
-        "version": "v9-flat | legacy | null",
-        "configFile": "string | null — e.g. eslint.config.ts",
-        "command": "string | null — e.g. pnpm lint"
-      },
-      "prettier": {
-        "configFile": "string | null — e.g. prettier.config.ts",
-        "command": "string | null — e.g. pnpm format"
-      },
-      "typecheck": {
-        "configFile": "string | null — e.g. tsconfig.json",
-        "command": "string | null — e.g. pnpm typecheck"
-      },
-      "husky": {
-        "configured": "boolean | null",
-        "hooks": ["pre-commit", "pre-push", "commit-msg"]
-      }
-    }
-  },
-  "codexAvailability": "plugin | cli | unavailable | null",
-  "reviews": {
-    "prd": {
-      "mode": "plannotator | text | skipped | null",
-      "fallbackReason": "plannotator_cli_unavailable | plannotator_launch_failed | null",
-      "approvedAt": "ISO 8601 | null"
-    },
-    "trd": {
-      "mode": "plannotator | text | skipped | null",
-      "fallbackReason": "plannotator_cli_unavailable | plannotator_launch_failed | null",
-      "approvedAt": "ISO 8601 | null"
-    },
-    "features": {
-      "mode": "plannotator | text | skipped | null",
-      "fallbackReason": "plannotator_cli_unavailable | plannotator_launch_failed | null",
-      "approvedAt": "ISO 8601 | null"
-    }
+    "featureSpecs": ["feature-01-auth.md", "feature-02-api.md"]
   },
   "features": [
     {
@@ -82,12 +33,24 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
       "dependsOn": ["02", "03"],
       "executor": "claude | codex | null",
       "reviewer": "claude | codex | null",
-      "frontendReviewer": "claude | null",
-      "stagnationResolution": "pending-tests | null"
+      "frontendReviewer": "claude | null"
     }
-  ],
+  ]
 }
 ```
+
+## Removed Fields (detect-on-demand)
+
+The following fields were removed from `_state.json` to reduce schema complexity.
+They are now detected fresh at each invocation rather than persisted:
+
+| Removed field | Replacement |
+|---|---|
+| `artifacts.testConfig` | Detected at build step: check `vitest.config.*`, `jest.config.*`, `package.json` scripts |
+| `artifacts.lintConfig` | Detected at verification: check `eslint.config.*`, `package.json` scripts, nx.json |
+| `codexAvailability` | Detected at first cross-review invocation per session |
+| `reviews.prd/trd/features` | Review approvals logged in `history.md` Decision Log as `type: decision` entries |
+| `features[].stagnationResolution` | Stagnation events logged in `history.md` Decision Log as `type: troubleshooting · status: open` |
 
 ## Storage Path Convention
 
@@ -137,14 +100,13 @@ The general mechanics — persist to disk, update `completedSteps`, resolve path
 - Exception: PRD/TRD stored in project `docs/` use absolute paths
 - The orchestrator resolves paths from this registry — never from hardcoded filenames
 
-### Codex Availability Cache
-- `codexAvailability` starts as `null` (unchecked)
-- Values: `"plugin"` (codex-plugin-cc available), `"cli"` (CLI only), `"unavailable"` (neither)
-- Set once at first Stage 4 review invocation; reused for all subsequent reviews in the session
-- Reset to `null` if the session environment changes (e.g., plugin reinstalled)
+### Codex Availability
+
+Detected fresh at first cross-review invocation each session. Not persisted in `_state.json`.
 
 ### Feature Tracking
 - `features` array populated at breakdown step
 - Status transitions: `pending` → `in-progress` → `review` → `done`
 - One feature per session (build step session-per-feature pattern)
 - `executor` and `reviewer` set when user chooses at build step
+- Stagnation events are NOT tracked in state — logged in `history.md` Decision Log instead
