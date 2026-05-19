@@ -4,7 +4,7 @@ description: >
   Unified development workflow skill. Triggered by /dev or sub-commands:
   /dev idea, /dev plan, /dev design, /dev breakdown, /dev build, /dev complete,
   /dev test, /dev refactor, /dev review, /dev troubleshoot,
-  /dev retro, /dev til, /dev help, /dev status.
+  /dev retro, /dev til, /dev help, /dev status, /dev handoff.
   Also triggers on: code refactoring requests ("리팩토링 해줘", "코드 정리해줘",
   "클린 아키텍처 적용해줘", "중복 코드 정리해줘", "타입 추가해줘", "구드 냄새 제거해줘",
   "성능 개선해줘", "refactor this", "clean up this code"),
@@ -14,6 +14,13 @@ description: >
   error logs, stack traces, Sentry alerts, GitHub Actions failure output).
   Performance issues trigger only when accompanied by log/metric artifacts
   ("느리다", "타임아웃", "latency" + log or trace data).
+  Devlog write/note ("devlogs에 정리해줘", "devlog에 기록해줘", "오늘 작업 기록해줘",
+  "작업 내용 정리해줘", "이거 기록해줘", "devlog에 남겨줘", "작업 노트 써줘").
+  Session resume/status ("작업 이어하자", "이어서 진행하자", "작업 현황 보여줘", "devlog 상태 보여줘").
+  Code review/modification ("이 부분 검토해줘", "이 코드 리뷰해줘", "이 코드 봐줘",
+  "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this", "check this code").
+  Next-session handoff ("다음 세션 프롬프트 생성해줘", "세션 인계 프롬프트",
+  "이어서 할 프롬프트 만들어줘", "다음 작업 프롬프트", "handoff prompt").
   Manages devlogs for cross-session state persistence.
   Manual planning steps (idea/plan/design/breakdown/build/complete) require explicit invocation.
 ---
@@ -60,7 +67,7 @@ stateDiagram-v2
     [*] --> Router: /dev [sub-command]
 
     Router --> ActiveCheck: no sub-command
-    Router --> DirectTool: refactor / troubleshoot / retro / til / review triggers
+    Router --> DirectTool: refactor / troubleshoot / retro / til / review / devlog-note / handoff triggers
     Router --> StepFile: explicit sub-command
 
     ActiveCheck --> ResumeTask: active devlog found
@@ -87,6 +94,8 @@ stateDiagram-v2
         til_tool: tools/til
         review_tool: tools/review
         setup_tool: tools/setup
+        devlog_note_tool: tools/devlog-note
+        handoff_tool: tools/next-session-prompt
     }
 
     StepFile --> Handoff: step complete
@@ -112,6 +121,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `build` | `steps/build.md` | Feature implementation (1 feature/session) |
 | `complete` | `steps/complete.md` | Wrap-up, insight, summary |
 | `import` | `steps/entry.md` (Import Flow) | existing artifacts → bootstrap devlog |
+| `handoff` | `Read("tools/next-session-prompt/SKILL.md")` | Generate next-session resume prompt |
 
 ### Utility Tools (devlog optional)
 
@@ -120,10 +130,11 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `test` | `Read("tools/test/SKILL.md")` |
 | `refactor`, "리팩토링 해줘", "코드 정리해줘", etc. | `Read("tools/refactor/SKILL.md")` |
 | `troubleshoot`, error logs, stack traces, "에러 고쳐줘", etc. | `Read("tools/troubleshoot/SKILL.md")` |
-| `review` | `Read("tools/review/SKILL.md")` |
+| `review`, "이 코드 리뷰해줘", "이 부분 검토해줘", "코드 봐줘", "review this", "check this code", etc. | `Read("tools/review/SKILL.md")` |
 | `retro` | `Read("tools/retro/SKILL.md")` |
 | `til` | `Read("tools/til/SKILL.md")` |
 | `setup` | `Read("tools/setup/SKILL.md")` |
+| `devlog-note`, "devlogs에 기록/정리해줘", "오늘 작업 기록해줘", "작업 노트 써줘", etc. | `Read("tools/devlog-note/SKILL.md")` |
 | `status` | `steps/status.md` | scan devlogs root → print task status summary |
 | `help` | inline | print available sub-commands |
 
@@ -152,6 +163,8 @@ Utility tools (devlog optional):
   retro         retrospective → vault note
   til           TIL note → vault + devlog cleanup
   setup         configure lint, prettier, type-check, and husky
+  devlog-note   write a note to the active devlog
+  handoff       generate next-session resume prompt
   status        show all devlog task statuses
 
   help          show this message
@@ -161,17 +174,36 @@ Utility tools (devlog optional):
 
 ## Natural Language Auto-routing
 
+**Trigger acknowledgement:** At the start of every invocation (natural language or explicit sub-command), output on the first line:
+```
+> /dev → {tool-or-step}  [trigger: {explicit|natural-language: "<trigger phrase>"}]
+```
+Examples:
+- `/dev build` 명시 호출: `> /dev → build  [trigger: explicit]`
+- "에러 고쳐줘" 자동: `> /dev → troubleshoot  [trigger: natural-language: "에러 고쳐줘"]`
+- "devlog에 기록해줘" 자동: `> /dev → devlog-note  [trigger: natural-language: "devlog에 기록해줘"]`
+
 When triggered by natural language (not an explicit `/dev` command):
 
-1. Analyze the trigger:
+1. Analyze the trigger (in order):
    - Refactoring keywords → load `tools/refactor/SKILL.md` directly, skip entry menu
    - Error/debug signal (error keyword + action verb, stack trace, Sentry/log artifact,
      or performance keywords **with** log/metric artifact) → load `tools/troubleshoot/SKILL.md` directly, skip entry menu
+   - Devlog write/note signal ("devlogs에 기록/정리/남겨줘", "작업 노트", "오늘 작업 기록", etc.)
+     → load `tools/devlog-note/SKILL.md` directly, skip entry menu
+   - Session resume/status signal:
+     - "작업 현황 보여줘", "devlog 상태 보여줘" → load `steps/status.md`
+     - "작업 이어하자", "이어서 진행하자" → proceed to `steps/entry.md` (resume flow)
+   - Code review/modification signal ("이 코드 리뷰/검토해줘", "이 코드 봐줘",
+     "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this code", "check this code")
+     → load `tools/review/SKILL.md` directly, skip entry menu
+   - Next-session handoff signal ("다음 세션 프롬프트", "세션 인계", "handoff prompt", etc.)
+     → load `tools/next-session-prompt/SKILL.md` directly, skip entry menu
    - Generic questions without error artifact ("왜 안돼", "왜 느리지" alone) → do NOT auto-route to troubleshoot; treat as general conversation
    - Otherwise → proceed to `steps/entry.md`
 
-2. Skip the active devlog check for utility tools (test/refactor/troubleshoot).
-   They operate on the current working files, not on a tracked devlog task.
+2. Skip the active devlog check for utility tools (test/refactor/troubleshoot/devlog-note/review/handoff).
+   They operate on the current working files or active devlog, not on the full entry flow.
 
 ---
 
@@ -220,7 +252,30 @@ When a sub-command is given AND `_state.json` exists in a matching task dir:
 4. Announce: "Resuming **<taskName>** at step `<currentStep>`"
 5. Load the step file for `currentStep`
 
-When `_state.json` does not exist: treat as a new task at the given entry point.
+When no active task context exists in the current session, run a repo-matched task search:
+
+1. **Pass 1** — filter devlogs by current repo name (same logic as entry.md Active Task Check):
+   - List folder names under the devlogs root; filter by repo name substring
+   - Read `_state.json` for matched folders; identify active tasks (`currentStep NOT IN completedSteps`)
+   - If active tasks found → show selection table
+
+2. **Pass 2** — triggered only when Pass 1 finds no folder matches:
+   - List all devlog folders; show to the user for cross-repo selection
+
+3. **Selection table format:**
+   ```
+   현재 레포(<repo>) devlogs:
+
+     # | Task                               | Step       | Features  | Branch
+   ----+------------------------------------+------------+-----------+--------
+     1 | 2026-05-19-grimoire-some-task      | build      | 3/5 done  | feat/X
+     2 | 2026-05-10-grimoire-other-task     | breakdown  | —         | main
+
+   > 번호 선택 / n 새 태스크
+   ```
+
+4. On selection: load that task's `_state.json` → apply migration if needed → proceed with the given sub-command
+5. If user selects `n` (new), or no tasks exist at all: proceed as new task at the given entry point
 
 ---
 

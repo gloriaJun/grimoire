@@ -264,12 +264,19 @@ Schema: `schemas/next-session.md`
 
 If the file does not exist yet, create it with the frontmatter and section headers.
 
+- **Update "재개 현황"** (first section — always refresh on every feature completion):
+  ```
+  ## 재개 현황
+  - 레포: <repo-name>
+  - 브랜치: <branch from _state.json>
+  - Devlog: <task-dir path>
+  - 진행: <done-count>/<total-count> features 완료
+  - 다음 피처: <name of next pending feature, or "모두 완료" if done>
+  ```
 - Update "구현 결정사항 & 아키텍처 노트": append any non-obvious design decisions or tradeoffs from this feature.
 - Update "현재 코드베이스 주요 파일": add or update rows for files introduced or significantly changed by this feature.
 - Update "블로커 / 다음 세션 전 확인사항": add any known blockers or open questions; remove resolved items.
 - Update frontmatter `updated:` to today's date.
-
-Do NOT include feature completion tables — those are tracked in `_state.json.features[]`.
 
 ### _index.md Update
 

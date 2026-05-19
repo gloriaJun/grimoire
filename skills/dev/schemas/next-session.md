@@ -14,6 +14,13 @@ updated: YYYY-MM-DD
 
 # Next Session — <taskName>
 
+## 재개 현황
+- 레포: <repo-name>
+- 브랜치: <branch>
+- Devlog: <task-dir path>
+- 진행: <N>/<total> features 완료
+- 다음 피처: <next pending feature name, or "모두 완료">
+
 ## 세션 재개 방법
 `/dev build` 실행 (피처 상태는 _state.json에서 자동 복구됨)
 
@@ -39,8 +46,10 @@ cd <worktreePath>
 
 - `updated:` 는 피처 완료 시마다 갱신한다 (오늘 날짜).
 - `branch` / `worktreePath` 는 frontmatter에 두지 않는다 → `_state.json`에서 관리.
+- **"재개 현황"** 섹션은 **항상 존재**하고, 피처 완료 시마다 최신값으로 덮어쓴다.
+  `/dev handoff` 도구가 이 섹션을 단독으로 읽어 재개 프롬프트를 생성한다.
 - 완료된/잔여 Feature 테이블은 작성하지 않는다 → `_state.json.features[]`가 정식 출처.
-- 섹션은 필요한 것만 포함한다 (빈 섹션은 생략).
+- 섹션은 필요한 것만 포함한다 (빈 섹션은 생략). 단, "재개 현황"은 예외로 항상 포함.
 
 ## When to Create
 
@@ -55,3 +64,4 @@ build.md의 Session Handoff에서 첫 피처 완료 시 생성한다.
 | `branch:` frontmatter | `_state.json.branch`로 이관 |
 | `worktree:` frontmatter | `_state.json.worktreePath`로 이관 |
 | `repo:` frontmatter | `_state.json.taskName`에서 유추 가능 |
+| Feature 진행률 | "재개 현황" 섹션에 텍스트로 요약 — 테이블 형태 불필요 |
