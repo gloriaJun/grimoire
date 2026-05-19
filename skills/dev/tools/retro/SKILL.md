@@ -120,13 +120,12 @@ After writing the file, fill the `related:` field:
 ## State Update (lifecycle mode only)
 
 1. Update `_state.json`:
-   - `currentStep` → 7, append 6 to `completedSteps`
+   - `currentStep` ← `"retro"`, append `{ "step": "complete", "at": "<ISO 8601>" }` to `completedSteps`
    - `artifacts.retro` ← `04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md`
-   - Append to `history`: `{ "step": 6, "action": "retro saved", "timestamp": "ISO 8601" }`
 
 2. Update `_index.md`:
    - Find the row matching the task directory in `<devlogs-root>/_index.md`
-   - Update step column to `Step 7 (retro)`
+   - Update step column to `retro`
    - Update frontmatter `updated:` to today's date
 
 ---

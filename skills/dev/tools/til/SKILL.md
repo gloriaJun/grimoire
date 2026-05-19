@@ -31,8 +31,8 @@ Prefer tasks whose `taskName` matches: `basename $(git rev-parse --show-toplevel
 If multiple candidates: list them and ask user to choose.
 
 **Lifecycle mode** (candidate task found):
-1. Read `_state.json`: extract `taskName`, `history`, `artifacts.retro`
-2. If `currentStep < 7`: warn "retro step not yet done" — do not block
+1. Read `_state.json`: extract `taskName`, `artifacts.retro`; read `history.md` if it exists
+2. If `currentStep < "complete"`: warn "retro step not yet done" — do not block
 3. Ask: "Write process notes for **<taskName>**? (y/n)"
    - `n` → stop. Show: "Skipped. Run `/dev wiki` anytime to write it later."
    - `y` → proceed
@@ -43,8 +43,9 @@ If multiple candidates: list them and ask user to choose.
 
 ## Context
 
-**Lifecycle mode** — from `_state.json`:
-- `taskName`, `history`, `artifacts.retro` (for cross-linking)
+**Lifecycle mode** — from `_state.json` and `history.md`:
+- `taskName`, `artifacts.retro` (for cross-linking)
+- From `history.md` Decision Log: `status: open` entries → `follow_up` candidates; `status: resolved` entries → TIL archiving candidates
 
 **Standalone mode** — ask user:
 - Task name
@@ -118,9 +119,29 @@ After writing the file, fill `related:` and `Resources`:
    - Files in `10_Knowledge` → add to `Resources` section as `[[path/to/file]] — <summary from frontmatter>`
 3. If no matches → leave fields as-is.
 
-### Step 2: Devlog Cleanup (lifecycle mode only)
+### Step 2: Decision Log Review (lifecycle mode only, if history.md exists)
 
-After process note is saved:
+After process note is saved, review `history.md` Decision Log:
+
+1. Identify entries by status:
+   - `status: open` → already surfaced as `follow_up` in TIL note. No action needed here.
+   - `status: resolved` with clear TIL value → candidates for archiving
+   - Entries without clear TIL value → leave in place
+
+2. If archive candidates exist, ask:
+   ```
+   Decision Log에 아카이브 가능한 항목이 있습니다:
+   - [build] 2026-05-19 — F-01: httpOnly cookie 채택 (resolved)
+   - [troubleshooting] 2026-05-20 — CORS preflight 오류 해결 (resolved)
+
+   이 항목들을 archived/history-YYYY-MM-DD.md로 이동할까요? (y/n)
+   ```
+   - `y`: move matched entries to `<task-dir>/archived/history-<date>.md`; remove them from Decision Log in `history.md`; regenerate Current Snapshot
+   - `n`: leave Decision Log as-is
+
+### Step 3: Devlog Cleanup (lifecycle mode only)
+
+After Decision Log review:
 
 1. Show contents of the task directory for review.
 2. Ask (Single Choice):
@@ -147,9 +168,8 @@ After process note is saved:
 
 ## State Update (lifecycle mode only, if not deleting)
 
-- `currentStep` → 8, append 7 and 8 to `completedSteps`
+- `currentStep` ← `"til"`, append `{ "step": "retro", "at": "<ISO 8601>" }` and `{ "step": "til", "at": "<ISO 8601>" }` to `completedSteps`
 - `artifacts.wiki` ← `04_Notes/<scope>/YYYY-MM-DD-<task-name>/til.md`
-- Append to `history`: `{ "step": 7, "action": "wiki saved + devlog cleaned", "timestamp": "ISO 8601" }`
 
 ---
 

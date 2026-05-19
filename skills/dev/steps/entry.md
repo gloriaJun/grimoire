@@ -19,7 +19,7 @@ If an artifact context was detected by the argument pre-processor (URL, file pat
    - URL ending in known design tool domain → `wireframe.design`
    - `.md` / `.pdf` path → ask "PRD, TRD, wireframe, or other?"
    - Unrecognized → ask explicitly which field
-4. Update `_state.json` with the artifact value and append to `history`.
+4. Update `_state.json` with the artifact value.
 5. Confirm: "✅ {field} 등록 완료 → 현재 단계: {currentStep}. 계속 진행할까요? (Y/n)"
    - Y: load the step file for `currentStep`
    - n: stop
@@ -77,16 +77,19 @@ Before showing the entry menu, check for an existing task:
    ```
 
 6. On resume: load `_state.json`, apply migration if `currentStep` is a number (see SKILL.md Session Restoration), verify artifact paths.
-   - If `currentStep` is `"build"` and `next-session.md` exists in the task directory:
-     - Read it and display a context block before loading the step file:
+   - If `currentStep` is `"build"` and `history.md` exists in the task directory:
+     - Read `history.md` and display a context block before loading the step file:
+       - **Current Snapshot section**: extract branch, progress (N/M features), next feature
+       - **Decision Log section**: filter entries where `status: open` → these are active blockers
        ```
        Resuming **<taskName>** at step build
 
-       Branch: <branch from _state.json>
+       Branch: <branch from Current Snapshot>
        Worktree: <worktreePath from _state.json, or "(main repo)" if null>
+       Progress: <N>/<total> features done · Next: <next feature>
 
-       📝 구현 결정사항: <"구현 결정사항 & 아키텍처 노트" section content, or "(없음)">
-       ⚠️ 블로커: <"블로커 / 다음 세션 전 확인사항" section content, or "(없음)">
+       📝 최근 결정사항: <last 1-2 Decision Log entries, or "(없음)">
+       ⚠️ 블로커: <open blocker entries from Decision Log, or "(없음)">
        ```
    - Otherwise: display the standard resume confirmation and load the step file.
 
@@ -132,14 +135,15 @@ After entry point is confirmed:
    - `taskName`: confirmed name
    - `currentStep`: entry point step name (e.g., `"idea"`, `"plan"`)
    - `entryPoint`: selected entry
-   - `completedSteps`: `["entry"]`
+   - `completedSteps`: `[{ "step": "entry", "at": "<ISO 8601>" }]`
    - All other fields at defaults
-4. Update `_index.md`:
+4. Create `history.md` using the initial template in `schemas/history.md`.
+5. Update `_index.md`:
    - Read `<devlogs-root>/_index.md`
    - Append row under `## Active Tasks` table:
      `` | `YYYY-MM-DD-<repo>-<task-name>/` | <task-name> | Step N (<step-name>) | in progress | ``
    - Update frontmatter `updated:` to today's date
-5. Load the step file for the selected entry point
+6. Load the step file for the selected entry point
 
 ## Import Flow
 

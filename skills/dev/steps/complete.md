@@ -50,7 +50,7 @@ When all features are done.
 
 ### State Update
 
-`currentStep` ← `"complete"`, append `"complete"` to `completedSteps`. Append to `history`.
+`currentStep` ← `"complete"`, append `{ "step": "complete", "at": "<ISO 8601>" }` to `completedSteps`.
 
 Follow update mechanics from `schemas/state.md`.
 

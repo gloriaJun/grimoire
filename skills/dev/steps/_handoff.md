@@ -8,7 +8,17 @@ Build and complete handle their own handoff inline.
 Update `_state.json` per the values declared in the step file's "State Update" section.
 Follow `schemas/state.md` update mechanics.
 
-## 2. Update `_index.md`
+## 2. Update `history.md` Current Snapshot
+
+Read `schemas/history.md` for the Current Snapshot format.
+
+Regenerate the entire block between the two comment markers in `history.md`:
+- `<!-- AUTO-GENERATED ... -->` to `<!-- END AUTO-GENERATED ... -->`
+- Rebuild from the newly persisted `_state.json` values
+
+If `history.md` does not exist yet (legacy task), create it using the initial template in `schemas/history.md`.
+
+## 3. Update `_index.md`
 
 - Read `<devlogs-root>/_index.md`
 - Find the row matching the current task directory name
@@ -32,7 +42,7 @@ Valid `currentStep` values:
 | `"retro"` | retro |
 | `"til"` | til |
 
-## 3. Show Completion Message
+## 4. Show Completion Message
 
 The next sub-command is declared in the step file's "Next sub-command:" line.
 
@@ -47,6 +57,6 @@ Start a new session and run `/dev` — it will detect this task and resume autom
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-## 4. Do Not Continue
+## 5. Do Not Continue
 
 After showing the handoff message, stop. Do not proceed to the next step in the same session unless the user explicitly asks.

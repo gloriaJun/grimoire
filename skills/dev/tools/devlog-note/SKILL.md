@@ -59,8 +59,9 @@ Classify the content (can be multiple):
 
 | Category | Indicators | Write to |
 |----------|-----------|----------|
-| `decision` | 아키텍처 결정, 설계 이유, 트레이드오프 선택 | `next-session.md` → 구현 결정사항 섹션 |
-| `blocker` | 블로커, 막힌 이슈, 확인 필요 사항 | `next-session.md` → 블로커 섹션 |
+| `decision` | 아키텍처 결정, 설계 이유, 트레이드오프 선택 | `history.md` → Decision Log |
+| `blocker` | 블로커, 막힌 이슈, 확인 필요 사항 | `history.md` → Decision Log |
+| `troubleshooting` | 버그 원인, 오류 해결, 디버깅 발견 | `history.md` → Decision Log |
 | `progress` | 진행 상황 업데이트, 완료 항목 | `notes.md` |
 | `note` | 일반 메모, 아이디어, 참고 사항 | `notes.md` |
 
@@ -70,30 +71,19 @@ If ambiguous, default to `note`.
 
 ## Step 4: Write
 
-### Always: append to `_state.json.history`
+### For `decision`, `blocker`, `troubleshooting`: append to `history.md` Decision Log
 
-```json
-{
-  "step": "<currentStep from _state.json>",
-  "action": "manual-note",
-  "content": "<first 100 chars of the note>",
-  "timestamp": "<ISO8601>"
-}
+If `history.md` does not exist in the task directory, create it following `schemas/history.md` initial template.
+
+Append a Decision Log entry in this format:
+```
+### [<currentStep>] YYYY-MM-DD — <title derived from content>
+_type: <decision|blocker|troubleshooting> · status: <open (blocker) or resolved (decision/troubleshooting)>_
+
+<content>
 ```
 
-### For `decision` and `blocker`: update `next-session.md`
-
-If `next-session.md` does not exist in the task directory, create it following `schemas/next-session.md`.
-
-- `decision` → append a bullet to "구현 결정사항 & 아키텍처 노트" section:
-  ```
-  - [manual] <content>
-  ```
-- `blocker` → append a bullet to "블로커 / 다음 세션 전 확인사항" section:
-  ```
-  - [manual] <content>
-  ```
-- Update `updated:` frontmatter to today's date.
+Then regenerate `history.md` Current Snapshot from `_state.json` (open blockers list will auto-update).
 
 ### For `progress` and `note`: append to `notes.md`
 
@@ -120,5 +110,5 @@ Output a single confirmation line:
 ```
 ✅ 기록 완료
    태스크: <task-dir>
-   저장: <file(s) written, e.g. "notes.md" or "next-session.md (결정사항)">
+   저장: <file(s) written, e.g. "notes.md" or "history.md (결정사항)">
 ```

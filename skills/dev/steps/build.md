@@ -245,8 +245,7 @@ If neither applies (pure logic, API clients, config, infra) → skip this sectio
 ### State Update
 
 - `features[i].status` ← `"done"`, `features[i].executor/reviewer` ← from selection
-- If all features done: `currentStep` ← `"complete"`, append `"build"` to `completedSteps`
-- Append to `history`
+- If all features done: `currentStep` ← `"complete"`, append `{ "step": "build", "at": "<ISO 8601>" }` to `completedSteps`
 - On first feature completion of this task: set `branch` (via `git branch --show-current`) and `worktreePath` (null unless repo root differs from workspace root)
 
 ### Feature Spec Update
@@ -258,25 +257,26 @@ If neither applies (pure logic, API clients, config, infra) → skip this sectio
   - Update affected sections (file paths, interfaces, verification steps) to match reality.
 - If implementation matches spec exactly: only update the checklist.
 
-### next-session.md Update
+### history.md Update
 
-Schema: `schemas/next-session.md`
+Schema: `schemas/history.md`
 
-If the file does not exist yet, create it with the frontmatter and section headers.
+**Step 1 — Regenerate Current Snapshot:**
 
-- **Update "재개 현황"** (first section — always refresh on every feature completion):
-  ```
-  ## 재개 현황
-  - 레포: <repo-name>
-  - 브랜치: <branch from _state.json>
-  - Devlog: <task-dir path>
-  - 진행: <done-count>/<total-count> features 완료
-  - 다음 피처: <name of next pending feature, or "모두 완료" if done>
-  ```
-- Update "구현 결정사항 & 아키텍처 노트": append any non-obvious design decisions or tradeoffs from this feature.
-- Update "현재 코드베이스 주요 파일": add or update rows for files introduced or significantly changed by this feature.
-- Update "블로커 / 다음 세션 전 확인사항": add any known blockers or open questions; remove resolved items.
-- Update frontmatter `updated:` to today's date.
+Rebuild the Current Snapshot section in full from `_state.json` (same as `steps/_handoff.md` step 2 mechanic).
+
+**Step 2 — Append to Decision Log (conditional):**
+
+For each of the following that applies to this feature, append a Decision Log entry:
+
+- Non-obvious architecture or design choice made during implementation → `type: decision · status: resolved`
+- Key files introduced or significantly changed → fold into a `decision` entry as context (do not create a separate "key files" entry)
+- Unresolved blocker or open question → `type: blocker · status: open`
+- Troubleshooting finding worth preserving → `type: troubleshooting · status: resolved`
+
+If none of the above apply (straightforward feature, no surprises): do not append. An empty Decision Log is fine.
+
+Format: `### [build] YYYY-MM-DD — <title>`
 
 ### _index.md Update
 

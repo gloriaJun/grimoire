@@ -244,13 +244,14 @@ basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
 When a sub-command is given AND `_state.json` exists in a matching task dir:
 
 1. Read `_state.json`
-2. **Migration** (legacy number → step name): if `currentStep` is a number, convert and save:
-   - `0` → `"entry"`, `1` → `"idea"`, `2` → `"plan"`, `3` → `"design"`,
-     `4` → `"breakdown"`, `5` → `"build"`, `6` → `"complete"`, `7` → `"retro"`, `8` → `"til"`
+2. **Migration** (apply both if needed, write once):
+   - If `currentStep` is a number → convert to step name: `0→"entry"`, `1→"idea"`, `2→"plan"`, `3→"design"`, `4→"breakdown"`, `5→"build"`, `6→"complete"`, `7→"retro"`, `8→"til"`
+   - If `completedSteps` contains plain strings (legacy) → convert to `{ step, at: null }` objects
    - Write updated `_state.json` before proceeding
-3. Verify all `artifacts` paths exist on disk
-4. Announce: "Resuming **<taskName>** at step `<currentStep>`"
-5. Load the step file for `currentStep`
+3. If `history.md` does not exist (legacy task): create it using the initial template in `schemas/history.md`, then regenerate Current Snapshot from current `_state.json`
+4. Verify all `artifacts` paths exist on disk
+5. Announce: "Resuming **<taskName>** at step `<currentStep>`"
+6. Load the step file for `currentStep`
 
 When no active task context exists in the current session, run a repo-matched task search:
 
@@ -304,7 +305,8 @@ See `schemas/state.md` for the full schema and update rules.
 Key rules:
 - Update `currentStep` BEFORE loading the next step file
 - Register artifact paths as soon as files are created
-- Append to `history` at every state transition
+- Append `{ step, at }` to `completedSteps` after each step completes
+- Regenerate `history.md` Current Snapshot after every `_state.json` update
 - idea/plan/design/breakdown end with `steps/_handoff.md`; build/complete handle handoff inline
 
 ---

@@ -4,7 +4,7 @@ Generate a self-contained prompt to paste at the start of the next session.
 Triggered by: `/dev handoff`, "다음 세션 프롬프트 생성해줘", "세션 인계 프롬프트",
 "이어서 할 프롬프트 만들어줘", "다음 작업 프롬프트", "handoff prompt", etc.
 
-**Single source of truth**: reads only `next-session.md`.
+**Single source of truth**: reads `history.md` (Current Snapshot + Decision Log).
 Does NOT modify any files (read-only operation).
 
 ---
@@ -23,7 +23,7 @@ Does NOT modify any files (read-only operation).
 
 3. Pass 1 — filter devlog folders by repo name substring:
    - Read `_state.json` for matched folders to identify active tasks
-   - Active: `currentStep NOT IN completedSteps`
+   - Active: `currentStep NOT IN completedSteps[].step`
 
 4. Match results:
    - **1 active task found**: auto-select
@@ -38,22 +38,21 @@ Does NOT modify any files (read-only operation).
 
 ---
 
-## Step 2: Read `next-session.md`
+## Step 2: Read `history.md`
 
-Check if `next-session.md` exists in the selected task directory:
+Check if `history.md` exists in the selected task directory:
 
-- **Exists**: read and extract all sections
+- **Exists**: read and extract both sections
 - **Does not exist**: inform the user and stop
   ```
-  ⚠️  next-session.md가 아직 없습니다.
-  /dev handoff는 build step이 처음 실행된 후 (첫 피처 완료 시) 사용할 수 있습니다.
-  먼저 /dev build 를 실행하세요.
+  ⚠️  history.md가 아직 없습니다.
+  /dev handoff는 첫 번째 step이 완료된 후 사용할 수 있습니다.
+  먼저 /dev build 등 workflow step을 실행하세요.
   ```
 
-Extract from `next-session.md`:
-- **재개 현황** section: 레포, 브랜치, Devlog 경로, 진행률, 다음 피처
-- **구현 결정사항 & 아키텍처 노트** section (if present)
-- **블로커 / 다음 세션 전 확인사항** section (if present)
+Extract from `history.md`:
+- **Current Snapshot section** (between the two comment markers): task name, branch, step, progress, next feature
+- **Decision Log section**: filter entries where `status: open` → active blockers; last 1-2 `status: resolved` entries → recent decisions
 
 ---
 
@@ -64,24 +63,24 @@ Assemble and output the following as a fenced code block (`\`\`\``):
 ```
 /dev build 이어서 진행해줘.
 
-레포: <repo>  |  브랜치: <branch>  |  Devlog: <task-dir>
+레포: <task from Current Snapshot>  |  브랜치: <branch>  |  Devlog: <devlog path>
 현재 단계: build — <N>/<total> features 완료
 다음 피처: <next pending feature name>
-[아직 없으면 생략]
+[다음 피처 없으면 생략 — 모두 완료 상태]
 ```
 
-If **구현 결정사항** section has content:
+If recent Decision Log entries (status: resolved) exist:
 ```
 
-주요 결정사항:
-<bullet list from section>
+최근 결정사항:
+<bullet list: title + one-line summary>
 ```
 
-If **블로커** section has content:
+If open blocker entries exist:
 ```
 
 블로커:
-<bullet list from section>
+<bullet list: title + content summary>
 ```
 
 After the code block, add on a separate line:

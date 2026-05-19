@@ -10,7 +10,10 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
   "taskName": "string — kebab-case task identifier",
   "currentStep": "string — step name: entry | idea | plan | design | wireframe | breakdown | build | complete | retro | til",
   "entryPoint": "idea | plan | design | wireframe | breakdown | build | direct",
-  "completedSteps": ["entry", "idea"],
+  "completedSteps": [
+    { "step": "entry", "at": "ISO 8601" },
+    { "step": "idea", "at": "ISO 8601" }
+  ],
   "branch": "string | null — current working branch (set at build step start)",
   "worktreePath": "string | null — absolute worktree path; null if working in main repo",
   "artifacts": {
@@ -83,13 +86,6 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
       "stagnationResolution": "pending-tests | null"
     }
   ],
-  "history": [
-    {
-      "step": "string — step name at time of action (e.g., \"idea\", \"build\")",
-      "action": "string — what happened",
-      "timestamp": "ISO 8601"
-    }
-  ]
 }
 ```
 
@@ -107,7 +103,7 @@ Task directory: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
 ### Step File Convention
 
 Step files declare only the unique transition values (target `currentStep`, artifact paths to register).
-The general mechanics — persist to disk, append to `history`, resolve paths — apply from the rules below.
+The general mechanics — persist to disk, update `completedSteps`, resolve paths — apply from the rules below.
 
 ### Creation
 - Created at entry point selection with initial values
@@ -115,13 +111,14 @@ The general mechanics — persist to disk, append to `history`, resolve paths �
 - All `artifacts` fields default to `null`
 - All `reviews` fields default to `null`
 - `branch` and `worktreePath` default to `null`
+- `history.md` is created alongside `_state.json` at this same time (see `schemas/history.md`)
 
 ### Updates
 - Update `currentStep` BEFORE loading the next step file
-- Append to `completedSteps` AFTER user confirms step completion
+- Append `{ "step": "<name>", "at": "<ISO 8601>" }` to `completedSteps` AFTER user confirms step completion
 - Register artifact paths as soon as files are created
-- Append to `history` at every state transition
 - Set `branch` and `worktreePath` at build step start (detect via `git branch --show-current` and `git rev-parse --show-toplevel`; set `worktreePath` only when the repo root differs from the workspace root)
+- After every `_state.json` update: regenerate `history.md` Current Snapshot from the new state (see `schemas/history.md`)
 
 ### Session Restoration
 1. Read `_state.json` from the task directory
@@ -129,22 +126,16 @@ The general mechanics — persist to disk, append to `history`, resolve paths �
    - `0` → `"entry"`, `1` → `"idea"`, `2` → `"plan"`, `3` → `"design"`,
      `4` → `"breakdown"`, `5` → `"build"`, `6` → `"complete"`, `7` → `"retro"`, `8` → `"til"`
    - Write the converted string back to `_state.json` immediately
-3. Set `currentStep` (string) as the active step
-4. Verify all artifact paths in `artifacts` still exist on disk
-5. If an artifact is missing, warn the user and block progression
-6. Load the step file for `currentStep`
+3. **Migration (completedSteps)**: if `completedSteps` contains plain strings (legacy format), convert to `{ step, at }` objects; set `at` to `null` for migrated entries
+4. Set `currentStep` (string) as the active step
+5. Verify all artifact paths in `artifacts` still exist on disk
+6. If an artifact is missing, warn the user and block progression
+7. Load the step file for `currentStep`
 
 ### Artifact Registry
 - Paths are **relative to the task subdirectory** unless prefixed with `/`
 - Exception: PRD/TRD stored in project `docs/` use absolute paths
 - The orchestrator resolves paths from this registry — never from hardcoded filenames
-
-### History Step Field
-
-- `step` must be the **step name** at the time the action occurred
-- Valid values: `"entry"`, `"idea"`, `"plan"`, `"design"`, `"wireframe"`, `"breakdown"`, `"build"`, `"complete"`, `"retro"`, `"til"`
-- Do NOT use numbers or arbitrary values
-- Example: all features built during build step should record `"step": "build"`
 
 ### Codex Availability Cache
 - `codexAvailability` starts as `null` (unchecked)
