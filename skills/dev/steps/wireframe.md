@@ -46,7 +46,10 @@ Read both artifacts and extract:
 
 ### 2. Generate HTML Mockup (Primary Artifact)
 
-Write an interactive HTML file to `/tmp/<task-name>-mockup.html`:
+Write an interactive HTML file to `<devlogs-task-dir>/wireframe.html`:
+- devlogs task dir: `~/Documents/<GitHubWork|GitHubPrivate>/_claude/devlogs/YYYY-MM-DD-<repo>-<task>/`
+- Resolve the actual path from `_state.json` storage path (same directory as `_state.json`)
+- File name is always `wireframe.html` — version is tracked via badge only, never via filename
 
 - **Screens**: each screen in its own section, navigable via sidebar or top tabs
 - **Scenario cases**: for each screen, include toggle buttons derived from PRD requirements
@@ -55,7 +58,7 @@ Write an interactive HTML file to `/tmp/<task-name>-mockup.html`:
 - **Version badge**: display `v1` badge in a header/footer area that does not overlap the design canvas. On each revision, update only the badge (v1 → v2 → ...) — do NOT create a new file.
 - Provide the local preview URL:
   ```
-  file:///private/tmp/<task-name>-mockup.html
+  file://<devlogs-task-dir>/wireframe.html
   ```
 
 HTML structure guidance:
@@ -71,7 +74,7 @@ HTML structure guidance:
 
 ### 3. User Review
 
-The user opens `file:///private/tmp/<task-name>-mockup.html` in the browser to review scenario cases.
+The user opens `file://<devlogs-task-dir>/wireframe.html` in the browser to review scenario cases.
 
 On feedback:
 - Update the same file (no new file)
@@ -83,13 +86,13 @@ Repeat until the user approves.
 ### 4. Register Artifacts
 
 Register in `_state.json`:
-- `artifacts.wireframe.mockup` ← `/tmp/<task-name>-mockup.html` (path stays the same across versions)
+- `artifacts.wireframe.mockup` ← `wireframe.html` (relative path from devlogs task dir; stays the same across versions)
 - `artifacts.wireframe.design` ← user-provided URL/path if supplied, otherwise `null`
 
 ## State Update
 
 `currentStep` ← `"breakdown"`, append `"wireframe"` to `completedSteps`
-`artifacts.wireframe.mockup` ← `/tmp/<task-name>-mockup.html` (or `null` if skipped)
+`artifacts.wireframe.mockup` ← `wireframe.html` (relative to devlogs task dir; or `null` if skipped)
 `artifacts.wireframe.design` ← URL/path (user-provided, or `null`)
 
 If skipped entirely: `artifacts.wireframe` ← `"skipped"`

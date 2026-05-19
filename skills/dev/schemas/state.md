@@ -20,7 +20,7 @@ Stored in the devlog task subdirectory: `_claude/devlogs/<task-dir>/_state.json`
     "brainstorm": "string | null — relative path from task dir",
     "prd": "string | null",
     "trd": "string | null",
-    "wireframe": "\"skipped\" | { mockup: \"path/to/wireframe-<task>.md\", design: \"url-or-path | null\" } | null",
+    "wireframe": "\"skipped\" | { mockup: \"wireframe.html\", design: \"url-or-path | null\" } | null",
     "features": "string | null — path to features.md",
     "featureSpecs": ["feature-01-auth.md", "feature-02-api.md"]
   },
@@ -60,6 +60,9 @@ They are now detected fresh at each invocation rather than persisted:
 | GitHubPrivate | `~/Documents/GitHubPrivate/_claude/devlogs/` |
 
 Task directory: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
+
+> **wireframe.html**: 와이어프레임은 `/tmp/`가 아닌 devlogs task dir에 저장된다.
+> `artifacts.wireframe.mockup` 값은 `wireframe.html` (task dir 기준 상대 경로).
 
 ## Rules
 

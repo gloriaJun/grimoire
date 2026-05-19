@@ -8,7 +8,11 @@ Execute one feature per session. Routes to sub-files for each execution phase.
 flowchart TD
     A(["build"]) --> B["Step 1: Feature Selection"]
     B --> C["Step 2: Pre-check Testing Approach"]
-    C --> D{"testingApproach"}
+    C --> W{"wireframe exists\n+ UI feature?"}
+    W -- Yes --> WR["Step 2.5: UI/UX Wireframe Pre-check\n(review → update → approve)"]
+    WR --> D
+    W -- No/Skip --> D
+    D{"testingApproach"}
     D -- TDD --> E["Read(flow-tdd.md)"]
     D -- Test-After --> F["Read(flow-test-after.md)"]
     D -- Skip --> G["Read(flow-skip.md)"]
@@ -53,6 +57,33 @@ flowchart TD
    - Check `cypress.config.*` → cypress e2e
    - None found and testingApproach is not Skip → ask user for framework details
 3. Proceed to the matching execution flow.
+
+---
+
+## Step 2.5: UI/UX Wireframe Pre-check
+
+Skip this step entirely if **either** is true:
+- `artifacts.wireframe` is `"skipped"` or `null`
+- The selected feature spec contains no UI changes (pure logic, API clients, config, infra)
+
+If both conditions are met (wireframe exists AND feature has UI changes):
+
+1. Display the wireframe reference:
+   ```
+   🖥️  와이어프레임: file://<devlogs-task-dir>/wireframe.html
+   관련 화면: <feature spec에서 언급된 화면/컴포넌트 목록>
+   ```
+2. Ask the user:
+   ```
+   이 기능 구현 전 와이어프레임에서 UI/UX 업데이트할 내용이 있나요?
+   (있으면 변경사항 설명 / 없으면 skip)
+   ```
+3. **If update is needed:**
+   - Modify `wireframe.html` in the devlogs task directory directly
+   - Increment the version badge (v1 → v2 → ...)
+   - Re-provide the same `file://` URL
+   - Wait for user approval — repeat until approved
+4. **If skip or approved** → proceed to Step 3
 
 ---
 
