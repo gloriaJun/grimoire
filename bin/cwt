@@ -18,7 +18,7 @@ fi
 # In sourced mode this would modify the user's shell options.
 [[ "$_CWT_SOURCED" != "true" ]] && set -euo pipefail
 
-VERSION="0.3.0"
+VERSION="0.4.0"
 GWT_SUBDIR=".claude/worktrees"
 
 _git_root() {
@@ -79,6 +79,27 @@ _fzf_pick_worktree() {
     --with-nth=1 \
     --preview='git -C {2} log --oneline --color=always -15' \
     --preview-window='right:50%') || return 1
+
+  echo "$selected" | awk -F'|' '{print $2}'
+}
+
+# Multi-select fzf selector. Outputs one /full/path per line on stdout.
+# Returns non-zero if user cancels or no worktrees exist.
+_fzf_pick_worktrees() {
+  local root="$1"
+  local prompt="${2:-Select worktrees}"
+  local lines
+  lines=$(_worktree_fzf_lines "$root") || { echo "No worktrees found." >&2; return 1; }
+
+  local selected
+  selected=$(echo "$lines" | fzf \
+    --multi \
+    --prompt="$prompt > " \
+    --delimiter='|' \
+    --with-nth=1 \
+    --preview='git -C {2} log --oneline --color=always -15' \
+    --preview-window='right:50%' \
+    --header='TAB: toggle  •  ENTER: confirm  •  ESC: cancel') || return 1
 
   echo "$selected" | awk -F'|' '{print $2}'
 }
@@ -194,6 +215,17 @@ cmd_list() {
   fi
 }
 
+_do_remove() {
+  local root="$1" path="$2"
+  local name; name=$(basename "$path")
+  if git -C "$root" worktree remove --force "$path" 2>/dev/null; then
+    printf "  ✓  %s\n" "$name"
+  else
+    printf "  ✗  %s  (failed)\n" "$name" >&2
+    return 1
+  fi
+}
+
 cmd_rm() {
   local root; root=$(_git_root) || return 1
   local wt_dir="$root/$GWT_SUBDIR"
@@ -203,11 +235,14 @@ cmd_rm() {
     return 0
   fi
 
-  local target_path target_name
+  local -a target_paths=()
 
   if _has_fzf; then
-    target_path=$(_fzf_pick_worktree "$root" "Remove worktree") || { echo "Cancelled."; return 0; }
-    target_name=$(basename "$target_path")
+    local selected
+    selected=$(_fzf_pick_worktrees "$root" "Remove worktree(s)") || { echo "Cancelled."; return 0; }
+    while IFS= read -r path; do
+      [[ -n "$path" ]] && target_paths+=("$path")
+    done <<< "$selected"
   else
     local -a names=()
     local -a paths=()
@@ -222,7 +257,7 @@ cmd_rm() {
       return 0
     fi
 
-    echo "Select worktree to remove:"
+    echo "Select worktree(s) to remove (space or comma separated, 0 to cancel):"
     for i in "${!names[@]}"; do
       local branch; branch=$(git -C "${paths[$i]}" branch --show-current 2>/dev/null || echo "(detached)")
       local dirty=""
@@ -233,44 +268,80 @@ cmd_rm() {
     done
     echo "  0) cancel"
 
-    local choice
-    read -r -p "Choice: " choice
+    local input
+    read -r -p "Choice(s): " input
 
-    if [[ "$choice" == "0" ]] || [[ -z "$choice" ]]; then
+    if [[ -z "$input" || "$input" == "0" ]]; then
       echo "Cancelled."
       return 0
     fi
 
-    if ! [[ "$choice" =~ ^[0-9]+$ ]]; then
-      echo "Invalid choice." >&2
-      return 1
-    fi
-
-    local idx=$((choice - 1))
-    if [[ $idx -lt 0 ]] || [[ $idx -ge ${#names[@]} ]]; then
-      echo "Invalid choice." >&2
-      return 1
-    fi
-
-    target_path="${paths[$idx]}"
-    target_name="${names[$idx]}"
+    local -a choices=()
+    IFS=', ' read -ra choices <<< "$input"
+    for choice in "${choices[@]}"; do
+      [[ -z "$choice" || "$choice" == "0" ]] && continue
+      if ! [[ "$choice" =~ ^[0-9]+$ ]]; then
+        echo "Invalid choice: $choice" >&2
+        return 1
+      fi
+      local idx=$((choice - 1))
+      if [[ $idx -lt 0 || $idx -ge ${#names[@]} ]]; then
+        echo "Invalid choice: $choice" >&2
+        return 1
+      fi
+      target_paths+=("${paths[$idx]}")
+    done
   fi
 
-  if ! git -C "$target_path" diff --quiet 2>/dev/null || ! git -C "$target_path" diff --cached --quiet 2>/dev/null; then
-    echo ""
-    echo "⚠  '$target_name' has uncommitted changes:"
-    git -C "$target_path" status --short
-    echo ""
-    local confirm
-    read -r -p "Remove anyway? [y/N] " confirm
-    if [[ "$confirm" != "y" ]] && [[ "$confirm" != "Y" ]]; then
-      echo "Cancelled."
-      return 0
-    fi
+  if [[ ${#target_paths[@]} -eq 0 ]]; then
+    echo "No worktrees selected."
+    return 0
   fi
 
-  git -C "$root" worktree remove --force "$target_path"
-  echo "Removed worktree: $target_name"
+  # Check dirty state for all selected — prompt serially before any deletion starts
+  local -a confirmed_paths=()
+  for target_path in "${target_paths[@]}"; do
+    local target_name; target_name=$(basename "$target_path")
+    if ! git -C "$target_path" diff --quiet 2>/dev/null || ! git -C "$target_path" diff --cached --quiet 2>/dev/null; then
+      echo ""
+      echo "⚠  '$target_name' has uncommitted changes:"
+      git -C "$target_path" status --short
+      echo ""
+      local confirm
+      read -r -p "Remove '$target_name' anyway? [y/N] " confirm
+      if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+        echo "  Skipped: $target_name"
+        continue
+      fi
+    fi
+    confirmed_paths+=("$target_path")
+  done
+
+  if [[ ${#confirmed_paths[@]} -eq 0 ]]; then
+    echo "Nothing to remove."
+    return 0
+  fi
+
+  echo ""
+  if [[ ${#confirmed_paths[@]} -eq 1 ]]; then
+    _do_remove "$root" "${confirmed_paths[0]}"
+  else
+    echo "Removing ${#confirmed_paths[@]} worktrees..."
+    local -a pids=()
+    for target_path in "${confirmed_paths[@]}"; do
+      _do_remove "$root" "$target_path" &
+      pids+=($!)
+    done
+
+    local failed=0
+    for pid in "${pids[@]}"; do
+      wait "$pid" || ((failed++))
+    done
+
+    echo ""
+    echo "Done: $((${#confirmed_paths[@]} - failed))/${#confirmed_paths[@]} removed"
+    [[ $failed -gt 0 ]] && return 1
+  fi
 }
 
 cmd_go() {
@@ -331,7 +402,7 @@ _help() {
   echo "  list                        Browse worktrees interactively with fzf"
   echo "  go [name]                   Print worktree path (fzf if omitted)"
   echo "  exec <name> <cmd> [args]    Run command inside a worktree"
-  echo "  rm                          Select and remove a worktree (fzf + uncommit check)"
+  echo "  rm                          Select and remove worktree(s) (multi-select, parallel, uncommit check)"
   echo ""
   echo "Options:"
   echo "  -v, --version               Show version"
