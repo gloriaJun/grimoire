@@ -22,6 +22,7 @@
 ## Hook Exceptions (Intentional Autonomous Behaviors)
 The following hooks are intentional exceptions to the "no autonomous modifications" principle, pre-approved by the user:
 - SessionStart: `codex login` — initialize Codex CLI session (async, only when OPENAI_CODEX_API_KEY is set)
+- SessionStart: `memory-obsidian-link.sh` — auto-create Obsidian symlink for project memory directory (async)
 - ExitPlanMode: `plannotator` — display plan review UI (managed by plannotator plugin via PermissionRequest hook; do not add a duplicate hook in settings.json)
 
 ## Recommended Model
@@ -49,3 +50,25 @@ The following hooks are intentional exceptions to the "no autonomous modificatio
 - When writing technical or user-facing documents (guides, wikis, READMEs, drafts) → load `@instructions/references/doc-writing.md`
 
 @RTK.md
+
+## Memory Format
+
+Override the system default memory frontmatter. Use this Obsidian-compatible format for all memory files:
+
+```yaml
+---
+created: YYYY-MM-DD
+updated: YYYY-MM-DD     # include only when content changes
+type: memory/feedback   # memory/user | memory/feedback | memory/project | memory/reference
+tags:
+  - claude-memory
+  - feedback            # single tag matching the type (user/feedback/project/reference)
+---
+# Title matching the filename slug
+
+...body content...
+```
+
+- **File naming**: kebab-case slug (e.g. `feedback-devlogs.md`). No date prefix — use frontmatter `created` for date tracking.
+- **Body structure**: Lead with the rule/fact, then **Why:** and **How to apply:** lines for feedback/project types.
+- **MEMORY.md index pointer format**: unchanged — `- [Title](file.md) — one-line hook`
