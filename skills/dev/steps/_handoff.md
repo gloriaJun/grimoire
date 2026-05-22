@@ -1,12 +1,20 @@
 # Session Handoff
 
-Follow these steps at the end of idea, plan, design, and breakdown.
+Follow these steps at the end of idea, plan, and design.
 Build and complete handle their own handoff inline.
 
 ## 1. Persist State
 
-Update `_state.json` per the values declared in the step file's "State Update" section.
-Follow `schemas/state.md` update mechanics.
+Update the memory file per the values declared in the step file's "State Update" section.
+Follow `schemas/memory.md` update mechanics:
+- frontmatter `current-step` ← new step name
+- frontmatter `updated` ← today's date
+- `## Completed Steps`: mark completed step as `[x] <step> — YYYY-MM-DD`
+- `## Artifacts`: add any newly created artifact paths
+- `## Features` table: update if features were added (design step)
+
+Update MEMORY.md pointer for the current task:
+- Change the step display in the `## Active Dev Tasks` entry
 
 ## 2. Update `history.md` Current Snapshot
 
@@ -14,7 +22,7 @@ Read `schemas/history.md` for the Current Snapshot format.
 
 Regenerate the entire block between the two comment markers in `history.md`:
 - `<!-- AUTO-GENERATED ... -->` to `<!-- END AUTO-GENERATED ... -->`
-- Rebuild from the newly persisted `_state.json` values
+- Rebuild from the memory file values (current-step, artifacts, features, branch)
 
 If `history.md` does not exist yet (legacy task), create it using the initial template in `schemas/history.md`.
 
@@ -22,21 +30,17 @@ If `history.md` does not exist yet (legacy task), create it using the initial te
 
 - Read `<devlogs-root>/_index.md`
 - Find the row matching the current task directory name
-- Update the "current step" column to `Step N (<next-step-name>)`
+- Update the "current step" column to the new step name
 - Update frontmatter `updated:` to today's date
 - If the row is not found: append a new row as fallback
 
-Step column format: write `currentStep` value directly (e.g., `wireframe`, `breakdown`).
+Valid `current-step` values:
 
-Valid `currentStep` values:
-
-| currentStep | Display in _index.md |
+| current-step | Display in _index.md |
 |-------------|---------------------|
 | `"idea"` | idea |
 | `"plan"` | plan |
 | `"design"` | design |
-| `"wireframe"` | wireframe |
-| `"breakdown"` | breakdown |
 | `"build"` | build |
 | `"complete"` | complete |
 | `"retro"` | retro |

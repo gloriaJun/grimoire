@@ -244,4 +244,5 @@ After completing configuration, assemble the `lintConfig` object:
 
 - Set `null` for any tool that was skipped or already existed (use existing values for `command`).
 - `husky` starts as `null`; Step 3 fills it in.
-- If an active devlog is present, write this to `_state.json.artifacts.lintConfig`.
+- If an active dev task is present (memory file exists for current repo), add to memory file `## Artifacts`:
+  `lintConfig: <inline JSON or reference>`

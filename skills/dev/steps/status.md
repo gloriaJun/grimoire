@@ -1,12 +1,24 @@
-# Status: Devlog Summary
+# Status: Task Summary
 
-Print the status of all tasks in the current devlogs root. Runs without a devlog.
+Print the status of all tasks. Runs without an active devlog.
 
 ## Process
 
-### 1. Detect Devlog Root
+### 1. Primary — Memory-based scan
 
-Apply Devlog Path Detection rules from main SKILL.md:
+MEMORY.md is already in context at session start.
+
+Parse both sections:
+- `## Active Dev Tasks` — tasks in progress
+- `## Completed Dev Tasks` — finished tasks
+
+For each listed memory file: read frontmatter (`repo`, `current-step`, `task-name`, `created`).
+
+### 2. Fallback — Legacy `_state.json` scan
+
+Triggered only when MEMORY.md has no entries or when `--all` flag is given.
+
+Detect devlog root from `cwd`:
 
 | cwd contains | devlogs root |
 |---|---|
@@ -14,53 +26,30 @@ Apply Devlog Path Detection rules from main SKILL.md:
 | `GitHubPrivate` | `~/Documents/GitHubPrivate/_claude/devlogs/` |
 | neither | ask the user |
 
-### 2. Scan _state.json
+Find all `_state.json` files. Extract: `taskName`, `currentStep`, `completedSteps`, last `history` entry timestamp.
 
-Find all `_state.json` files under the devlogs root.
-
-Extract from each:
-- `taskName`
-- `currentStep`
-- `completedSteps`
-- `timestamp` of the last `history` entry (most recent activity)
-
-### 3. Classify Active / Done
-
+Classify:
 - **active**: `currentStep NOT IN completedSteps`
 - **done**: `currentStep IN completedSteps`
 
-### 4. Step Name Mapping
-
-| currentStep | step name |
-|-------------|-----------|
-| 0 | entry |
-| 1 | idea |
-| 2 | plan |
-| 3 | design |
-| 4 | breakdown |
-| 5 | build |
-| 6 | complete |
-| 7 | retro |
-| 8 | til |
-
-### 5. Output
+### 3. Output
 
 ```
-Active devlogs (<workspace>):
+Active tasks:
 
-  <task-name>   step <N> (<step-name>)   <YYYY-MM-DD>
+  <task-name>   <current-step>   <repo>   <YYYY-MM-DD>
   ...
 
 Done:
-  <task-name>   step <N> (<step-name>)   <YYYY-MM-DD>
+  <task-name>   complete   <repo>   <YYYY-MM-DD>
   ...
 
-No devlogs found.
+No tasks found.
 ```
 
 Rules:
-- Print active tasks first; done tasks below
-- Omit the Done section if no done tasks exist
-- Timestamp: extract `YYYY-MM-DD` from the last `history` entry
-- If no timestamp, use the date prefix from the directory name
-- Task name: use `taskName` field; if absent, strip the date prefix from the directory name
+- Active tasks first; done tasks below
+- Omit the Done section if no done tasks
+- Date: `created` frontmatter from memory file, or date prefix from directory name (legacy)
+- Task name: `task-name` frontmatter, or `taskName` from `_state.json` (legacy)
+- Filter by current repo when `--repo` flag or natural language "이 레포" is used

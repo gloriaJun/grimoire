@@ -2,19 +2,23 @@
 
 ## State Update
 
-- `features[i].status` ← `"done"`, `features[i].executor/reviewer` ← from selection
-- If all features done: `currentStep` ← `"complete"`, append `{ "step": "build", "at": "<ISO 8601>" }` to `completedSteps`
-- On first feature completion of this task: set `branch` (via `git branch --show-current`) and `worktreePath`
-  (null unless repo root differs from workspace root)
+**Memory file:**
+- `## Features` table: update completed feature row
+  - Status → ✅ done
+  - Executor → selected executor (claude | codex)
+  - Testing → confirmed approach from mini-design
+- frontmatter `updated` ← today's date
+- If all features done: frontmatter `current-step` ← `"complete"`, append `- [x] build — YYYY-MM-DD` to `## Completed Steps`
 
-## Feature Spec Update
+**Build Context** (on first feature completion of this task):
+- `## Build Context - Branch` ← `git branch --show-current`
+- `## Build Context - Worktree` ← `git rev-parse --show-toplevel` (set only when repo root differs from workspace root; otherwise "(main repo)")
 
-- Open the completed feature's spec file (`artifacts.featureSpecs[i]`).
-- Mark all implemented checklist items: `[ ]` → `[x]`.
-- If the actual implementation diverges from the spec (design change, extra commands, different storage strategy, etc.):
-  - Add a `> **구현 변경**:` callout block at the top explaining the deviation and reason.
-  - Update affected sections (file paths, interfaces, verification steps) to match reality.
-- If implementation matches spec exactly: only update the checklist.
+**architecture.md:**
+- `## Features` checklist: mark completed feature `- [ ] F-NN` → `- [x] F-NN`
+
+**MEMORY.md pointer:**
+- Update step display: `build (<N>/<M> features)` or `complete` if all done
 
 ## history.md Update
 
@@ -22,7 +26,7 @@ Schema: `schemas/history.md`
 
 **Step 1 — Regenerate Current Snapshot:**
 
-Rebuild the Current Snapshot section in full from `_state.json` (same mechanic as `steps/_handoff.md` step 2).
+Rebuild the Current Snapshot section in full from the memory file (same mechanic as `steps/_handoff.md` step 2).
 
 **Step 2 — Append to Decision Log (conditional):**
 
@@ -47,7 +51,7 @@ Format: `### [build] YYYY-MM-DD — <title>`
 ## Completion Message
 
 ```
-✅ feature-<XX> complete
+✅ F-<NN> <feature-name> complete
 
 Remaining: N feature(s) pending
 

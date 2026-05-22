@@ -138,7 +138,7 @@ After configuring, update `lintConfig.husky`:
 
 List only the hooks the user actually selected.
 
-If active devlog is present, write updated `lintConfig` to `_state.json`.
+If an active dev task is present (memory file exists for current repo), update `lintConfig` entry in memory file `## Artifacts`.
 
 ---
 

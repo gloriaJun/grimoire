@@ -1,7 +1,7 @@
 # Review Protocol
 
 Standard review workflow for planning artifacts: PRD, TRD, and feature breakdown.
-Loaded inline by plan.md, design.md, and breakdown.md at review time.
+Loaded inline by plan.md and design.md at review time.
 
 The calling step file specifies the **artifact** and **Codex focus**.
 
@@ -28,11 +28,12 @@ Evaluate checklist items matching the artifact type.
 [ ] External dependencies have fallback or "none" stated
 ```
 
-**Feature Breakdown:**
+**Architecture (architecture.md):**
 ```
-[ ] Testing Approach section present for every feature
-[ ] At least one AC present for every feature
-[ ] Dependent features ordered after their prerequisites
+[ ] Tech Stack section exists (TODO items explicitly marked)
+[ ] Features checklist exists (minimum 1 feature)
+[ ] UI project: Screen List + Navigation Flow present
+[ ] Open Questions section exists (may be empty)
 ```
 
 Unchecked items → fix inline immediately, then proceed to Stage 0.5.
@@ -58,8 +59,7 @@ Surfaces gaps in decisions one question at a time. (y/n)
 1. Read artifact contents.
 2. Determine question focus by artifact type:
    - **PRD**: problem definition specificity, missing AC coverage, ambiguous non-goal boundaries, MVP scope rationale
-   - **TRD**: rationale for technology choices, missing edge cases, external dependency risks, testing strategy fit
-   - **Feature Breakdown**: dependency completeness, session sizing rationale, missing features
+   - **Architecture**: rationale for technology choices, missing edge cases, TODO items that should be resolved, testing strategy fit, feature dependency completeness
 3. Extract a list of decision points and assumptions (internal only — not shown to user).
 4. Ask one question at a time:
    - If answerable from the codebase → search via Explore and cite findings in the recommended answer.
@@ -118,23 +118,25 @@ Run automatically after user approval. No additional prompt needed.
 
 ### Pre-Check: Codex Availability Cache
 
+`codexAvailability` is a **session-local variable** — detected once per session, never stored in the memory file.
+
 Before attempting any invocation method:
 
-1. Read `_state.json` → check `codexAvailability` field.
-2. If the field is already set, skip straight to the matching step:
+1. Check session-local `codexAvailability` variable.
+2. If already set this session, skip straight to the matching step:
    - `"plugin"` → go directly to method 1
    - `"cli"` → go directly to method 2
    - `"unavailable"` → go directly to method 3 (code-reviewer fallback)
-3. If the field is `null` (first review of this session):
+3. If not yet detected (first review of this session):
    a. Check plugin availability: attempt a no-op `/codex:rescue` call or verify it appears in the active skill list.
    b. If plugin unavailable, check CLI: run `which codex` via Bash.
-   c. Record result in `_state.json.codexAvailability` (`"plugin"` | `"cli"` | `"unavailable"`).
+   c. Cache result as session-local `codexAvailability` (`"plugin"` | `"cli"` | `"unavailable"`).
    d. Proceed with the confirmed method.
 
 **Invocation priority (try in order; skip steps already ruled out by cache):**
 1. `codex-plugin-cc`: `/codex:rescue "<codex-focus>: <artifact-path>"`
 2. Codex CLI: `codex exec -c model_reasoning_effort="low" --read <artifact-path> "<codex-focus>"`
-3. `code-reviewer` agent (model: sonnet) — if Codex unavailable; record fallback reason in `_state.json` history.
+3. `code-reviewer` agent (model: sonnet) — if Codex unavailable.
 
 ### Large Artifact Optimization (>500 lines)
 

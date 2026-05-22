@@ -42,7 +42,7 @@ Gather from the current conversation:
 - Repeated patterns or workflows
 - Problems encountered and how they were resolved
 
-When invoked from g-task-process: also consider `_state.json`, PRD, TRD, and feature breakdown artifacts.
+When invoked from `/dev complete`: also consider the memory file, PRD, architecture.md, and history.md artifacts.
 When invoked standalone (`/g-insight`): rely on conversation context only — no task artifacts may exist.
 
 ### 2. Analyze Patterns

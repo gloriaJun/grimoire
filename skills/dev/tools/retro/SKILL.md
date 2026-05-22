@@ -14,26 +14,25 @@ Works with or without a devlog.
 
 ## Entry Check
 
-**Resolve devlogs root** from cwd:
+**Resolve current repo name:**
+```bash
+basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
+```
 
-| cwd contains | devlogs root |
-|---|---|
-| `GitHubWork` | `~/Documents/GitHubWork/_claude/devlogs/` |
-| `GitHubPrivate` | `~/Documents/GitHubPrivate/_claude/devlogs/` |
-| neither | ask the user |
+**Scan for candidate tasks** from MEMORY.md `## Active Dev Tasks` and `## Completed Dev Tasks`:
+- Post-complete, retro not started: memory file `current-step == "complete"` AND `retro` NOT in Completed Steps
+- Retro in progress: memory file `current-step == "retro"` AND `retro` NOT checked
 
-**Scan for candidate tasks** (either condition qualifies):
-- Post-complete, retro not started: `currentStep == 6 AND 6 IN completedSteps`
-- Retro in progress: `currentStep == 7 AND 7 NOT IN completedSteps`
+Filter by current repo (`repo` frontmatter). If multiple candidates: list them and ask user to choose.
 
-Prefer tasks whose `taskName` matches: `basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)`
-
-If multiple candidates: list them and ask user to choose.
+**Fallback**: if MEMORY.md has no entries, resolve devlogs root from cwd and scan `_state.json` files (legacy):
+- `GitHubWork` cwd → `~/Documents/GitHubWork/_claude/devlogs/`
+- `GitHubPrivate` cwd → `~/Documents/GitHubPrivate/_claude/devlogs/`
 
 **Lifecycle mode** (candidate task found):
-1. Read `_state.json`: extract `taskName`, `history`, `artifacts`
-2. If `currentStep < 6`: warn "complete step not yet done" — do not block
-3. Ask: "Write a retrospective for **<taskName>**? (y/n)"
+1. Read memory file: extract `task-name`, `devlog-path`, `## Artifacts`; read `history.md` from devlog if it exists
+2. If `current-step` is not `"complete"`: warn "complete step not yet done" — do not block
+3. Ask: "Write a retrospective for **<task-name>**? (y/n)"
    - `n` → stop. Show: "Skipped. Run `/dev retro` anytime to write it later."
    - `y` → proceed
 
@@ -43,8 +42,9 @@ If multiple candidates: list them and ask user to choose.
 
 ## Context
 
-**Lifecycle mode** — from `_state.json`:
-- `taskName`, `history` entries, `artifacts` list
+**Lifecycle mode** — from memory file and devlog:
+- `task-name`, `devlog-path`, `## Artifacts` from memory file
+- `history.md` Decision Log from devlog task directory (if exists)
 
 **Standalone mode** — ask user:
 - Task name
@@ -131,9 +131,12 @@ After writing the file, fill the `related:` field:
 
 ## State Update (lifecycle mode only)
 
-1. Update `_state.json`:
-   - `currentStep` ← `"retro"`, append `{ "step": "complete", "at": "<ISO 8601>" }` to `completedSteps`
-   - `artifacts.retro` ← `04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md`
+1. Update memory file:
+   - frontmatter `current-step` ← `"retro"`
+   - frontmatter `updated` ← today
+   - `## Completed Steps`: append `- [x] retro — YYYY-MM-DD`
+   - `## Artifacts`: add `retro: 04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md`
+   - Update MEMORY.md pointer step display
 
 2. Update `_index.md`:
    - Find the row matching the task directory in `<devlogs-root>/_index.md`

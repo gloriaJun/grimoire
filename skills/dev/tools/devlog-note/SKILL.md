@@ -10,31 +10,28 @@ Triggered by: `/dev devlog-note`, "devlogs에 기록/정리해줘", "오늘 작�
 
 Resolve which devlog task to write to.
 
-1. Run Devlog Path Detection (from SKILL.md):
-   - `cwd` contains `GitHubWork` → `~/Documents/GitHubWork/_claude/devlogs/`
-   - `cwd` contains `GitHubPrivate` → `~/Documents/GitHubPrivate/_claude/devlogs/`
-   - Neither → ask the user
-
-2. Resolve current repo name:
+1. Resolve current repo name:
    ```bash
    basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
    ```
 
-3. Pass 1 — filter folders by repo name substring:
-   - Find active tasks (`currentStep NOT IN completedSteps` in `_state.json`)
+2. Read MEMORY.md `## Active Dev Tasks` (already in context).
+   For each listed memory file: read frontmatter `repo` to filter by current repo.
 
-4. Match results:
-   - **1 active task found**: auto-select, announce: "📝 <task-dir> 에 기록합니다"
+3. Match results:
+   - **1 active task found**: auto-select, announce: "📝 <task-name> 에 기록합니다"
    - **Multiple active tasks**: show selection menu
      ```
      기록할 태스크를 선택하세요:
-       1. 2026-05-19-<repo>-task-a   (build — feature-03 진행 중)
-       2. 2026-05-10-<repo>-task-b   (breakdown)
+       1. <task-name>   (build — F-03 진행 중)
+       2. <task-name>   (design)
      > Enter number
      ```
-   - **0 active tasks found**: "현재 레포의 active devlog가 없습니다. 새 태스크를 시작하시겠습니까? (Y/n)"
+   - **0 active tasks found**: "현재 레포의 active 태스크가 없습니다. 새 태스크를 시작하시겠습니까? (Y/n)"
      - Y → proceed to `steps/entry.md`
      - n → stop
+
+   **Fallback**: if MEMORY.md has no entries, scan devlog folder for `_state.json` (legacy — see `schemas/state.md`).
 
 ---
 
@@ -77,13 +74,13 @@ If `history.md` does not exist in the task directory, create it following `schem
 
 Append a Decision Log entry in this format:
 ```
-### [<currentStep>] YYYY-MM-DD — <title derived from content>
+### [<current-step from memory file>] YYYY-MM-DD — <title derived from content>
 _type: <decision|blocker|troubleshooting> · status: <open (blocker) or resolved (decision/troubleshooting)>_
 
 <content>
 ```
 
-Then regenerate `history.md` Current Snapshot from `_state.json` (open blockers list will auto-update).
+Then regenerate `history.md` Current Snapshot from the memory file (open blockers list will auto-update).
 
 ### For `progress` and `note`: append to `notes.md`
 

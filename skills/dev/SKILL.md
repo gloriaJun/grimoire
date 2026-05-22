@@ -2,7 +2,7 @@
 name: dev
 description: >
   Unified development workflow skill. Triggered by /dev or sub-commands:
-  /dev idea, /dev plan, /dev design, /dev breakdown, /dev build, /dev complete,
+  /dev idea, /dev plan, /dev design, /dev build, /dev complete,
   /dev test, /dev refactor, /dev review, /dev troubleshoot,
   /dev retro, /dev til, /dev help, /dev status, /dev handoff.
   Also triggers on: code refactoring requests ("리팩토링 해줘", "코드 정리해줘",
@@ -21,14 +21,14 @@ description: >
   "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this", "check this code").
   Next-session handoff ("다음 세션 프롬프트 생성해줘", "세션 인계 프롬프트",
   "이어서 할 프롬프트 만들어줘", "다음 작업 프롬프트", "handoff prompt").
-  Manages devlogs for cross-session state persistence.
-  Manual planning steps (idea/plan/design/breakdown/build/complete) require explicit invocation.
+  Manages task state via Claude Code memory files for cross-session persistence.
+  Manual planning steps (idea/plan/design/build/complete) require explicit invocation.
 ---
 
 # dev — Unified Development Workflow
 
 Single entry point for the full development lifecycle: ideation → planning → implementation → documentation.
-Each sub-command maps to a step file. State persists across sessions via `_state.json` in devlogs.
+Each sub-command maps to a step file. State persists across sessions via memory files (`schemas/memory.md`).
 
 ---
 
@@ -36,9 +36,9 @@ Each sub-command maps to a step file. State persists across sessions via `_state
 
 Claude acts as a **technical project manager** in this workflow:
 
-- **Planning phases** (idea → breakdown): drives artifact creation to a level of detail sufficient for single-session implementation without back-and-forth. Asks for clarification rather than assuming.
-- **Build phase**: delegates implementation to feature-executor or Codex; owns state tracking and cross-session continuity.
-- **Quality bar**: each planning artifact (PRD/TRD/breakdown) must be self-contained enough that a developer with no prior context could implement from it.
+- **Planning phases** (idea → design): drives artifact creation to a level of detail sufficient for single-session feature implementation. Asks for clarification rather than assuming.
+- **Build phase**: produces mini-design per feature, delegates implementation to feature-executor or Codex; owns state tracking and cross-session continuity.
+- **Quality bar**: PRD and architecture.md must be self-contained enough that a developer with no prior context could implement from them.
 
 ---
 
@@ -79,10 +79,7 @@ stateDiagram-v2
     state "Step Files" as StepFile {
         idea --> plan
         plan --> design
-        design --> wireframe
-        wireframe --> breakdown : optional
-        wireframe --> breakdown : skipped
-        breakdown --> build
+        design --> build
         build --> complete
     }
 
@@ -112,13 +109,11 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 
 | Sub-command | Step file | Description |
 |-------------|-----------|-------------|
-| *(none)* | `steps/entry.md` | Active devlog check → resume or entry menu |
+| *(none)* | `steps/entry.md` | Active task check → resume or entry menu |
 | `idea` | `steps/idea.md` | Ideation → brainstorm.md |
 | `plan` | `steps/plan.md` | Requirements → PRD |
-| `design` | `steps/design.md` | Architecture → TRD |
-| `wireframe` | `steps/wireframe.md` | UI design → HTML mockup (local preview, `/tmp/`) |
-| `breakdown` | `steps/breakdown.md` | Feature decomposition → features.md |
-| `build` | `steps/build.md` | Feature implementation (1 feature/session) |
+| `design` | `steps/design.md` | Architecture → architecture.md + wireframe |
+| `build` | `steps/build.md` | Feature implementation (mini-design + 1 feature/session) |
 | `complete` | `steps/complete.md` | Wrap-up, insight, summary |
 | `import` | `steps/entry.md` (Import Flow) | existing artifacts → bootstrap devlog |
 | `handoff` | `Read("tools/next-session-prompt/SKILL.md")` | Generate next-session resume prompt |
@@ -145,13 +140,11 @@ When `/dev help` is invoked, print the following directly (no file load):
 ```
 /dev — Development workflow commands
 
-Planning lifecycle (devlog-tracked):
+Planning lifecycle (memory-tracked):
   idea          vague concept → brainstorm.md
   plan          requirements → PRD
-  design        PRD → TRD
-  wireframe     TRD → HTML mockup (local preview, scenario cases)
-  breakdown     TRD/wireframe → feature breakdown
-  build         implement features (1 feature/session)
+  design        PRD → architecture.md + wireframe (UI projects)
+  build         implement features (mini-design + 1 feature/session)
   complete      wrap-up + summary
   import        existing artifacts → bootstrap devlog
 
@@ -241,42 +234,28 @@ basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
 
 ## Session Restoration
 
-When a sub-command is given AND `_state.json` exists in a matching task dir:
+MEMORY.md is auto-loaded at session start. When a sub-command is given:
 
-1. Read `_state.json`
-2. **Migration** (apply both if needed, write once):
-   - If `currentStep` is a number → convert to step name: `0→"entry"`, `1→"idea"`, `2→"plan"`, `3→"design"`, `4→"breakdown"`, `5→"build"`, `6→"complete"`, `7→"retro"`, `8→"til"`
-   - If `completedSteps` contains plain strings (legacy) → convert to `{ step, at: null }` objects
-   - Write updated `_state.json` before proceeding
-3. If `history.md` does not exist (legacy task): create it using the initial template in `schemas/history.md`, then regenerate Current Snapshot from current `_state.json`
-4. Verify all `artifacts` paths exist on disk
-5. Announce: "Resuming **<taskName>** at step `<currentStep>`"
-6. Load the step file for `currentStep`
+1. Check MEMORY.md `## Active Dev Tasks` for the current repo.
+2. If matching memory file found: read it, verify artifact paths, announce "Resuming **<task-name>** at step `<current-step>`", load the step file.
+3. Apply step name migration if needed (see `schemas/state.md` Legacy Step Name Migration):
+   - `"wireframe"` or `"breakdown"` → `"build"`
 
-When no active task context exists in the current session, run a repo-matched task search:
+**Fallback** (no memory file found): scan devlog folder for `_state.json` (legacy):
+1. Filter devlogs by current repo name; read `_state.json` for matched folders.
+2. If active legacy tasks found: offer migration to memory file → proceed.
 
-1. **Pass 1** — filter devlogs by current repo name (same logic as entry.md Active Task Check):
-   - List folder names under the devlogs root; filter by repo name substring
-   - Read `_state.json` for matched folders; identify active tasks (`currentStep NOT IN completedSteps`)
-   - If active tasks found → show selection table
+**Selection table format (multiple tasks):**
+```
+현재 레포(<repo>) tasks:
 
-2. **Pass 2** — triggered only when Pass 1 finds no folder matches:
-   - List all devlog folders; show to the user for cross-repo selection
+  # | Task                          | Step    | Features  | Branch
+----+-------------------------------+---------+-----------+--------
+  1 | some-task                     | build   | 3/5 done  | feat/X
+  2 | other-task                    | design  | —         | main
 
-3. **Selection table format:**
-   ```
-   현재 레포(<repo>) devlogs:
-
-     # | Task                               | Step       | Features  | Branch
-   ----+------------------------------------+------------+-----------+--------
-     1 | 2026-05-19-grimoire-some-task      | build      | 3/5 done  | feat/X
-     2 | 2026-05-10-grimoire-other-task     | breakdown  | —         | main
-
-   > 번호 선택 / n 새 태스크
-   ```
-
-4. On selection: load that task's `_state.json` → apply migration if needed → proceed with the given sub-command
-5. If user selects `n` (new), or no tasks exist at all: proceed as new task at the given entry point
+> 번호 선택 / n 새 태스크
+```
 
 ---
 
@@ -288,10 +267,8 @@ When no active task context exists in the current session, run a repo-matched ta
 | `"idea"` | steps/idea.md | none |
 | `"plan"` | steps/plan.md | `artifacts.brainstorm` OR user input |
 | `"design"` | steps/design.md | `artifacts.prd` exists |
-| `"wireframe"` | steps/wireframe.md | `artifacts.trd` exists (may be `"skipped"`) |
-| `"breakdown"` | steps/breakdown.md | `artifacts.prd` exists (trd, wireframe optional) |
-| `"build"` | steps/build.md | `artifacts.features` exists |
-| `"complete"` | steps/complete.md | all `features[].status == "done"` |
+| `"build"` | steps/build.md | `artifacts.architecture` exists |
+| `"complete"` | steps/complete.md | all features in memory file Features table have status `✅ done` |
 
 Verify pre-conditions before loading. If not met, warn and block.
 
@@ -299,15 +276,15 @@ Verify pre-conditions before loading. If not met, warn and block.
 
 ## State Management
 
-All state persists in `_state.json` within the task subdirectory.
-See `schemas/state.md` for the full schema and update rules.
+All state persists in a memory file (`{YYYY-MM-DD}-project-{task-name}.md`) under the project's Claude memory directory.
+See `schemas/memory.md` for the full schema and update rules.
 
 Key rules:
-- Update `currentStep` BEFORE loading the next step file
-- Register artifact paths as soon as files are created
-- Append `{ step, at }` to `completedSteps` after each step completes
-- Regenerate `history.md` Current Snapshot after every `_state.json` update
-- idea/plan/design/breakdown end with `steps/_handoff.md`; build/complete handle handoff inline
+- Update `current-step` in the memory file frontmatter BEFORE loading the next step file
+- Register artifact paths in the `## Artifacts` section as soon as files are created
+- Append `- [x] {step} — YYYY-MM-DD` to `## Completed Steps` after each step completes
+- Regenerate `history.md` Current Snapshot after every memory file update
+- idea/plan/design end with `steps/_handoff.md`; build/complete handle handoff inline
 
 ---
 
@@ -317,8 +294,7 @@ Key rules:
 |----------|-----------|-----------|
 | brainstorm.md | User confirmation | — |
 | PRD | Plannotator + User | Codex |
-| TRD / architecture | Plannotator + User | Codex |
-| Feature breakdown | Plannotator + User | Codex |
+| architecture.md | Plannotator + User | Codex |
 | Code (Claude impl.) | Codex (`/codex:review`) | frontend-reviewer (if applicable) |
 | Code (Codex impl.) | Claude (`code-reviewer` agent) | frontend-reviewer (if applicable) |
 

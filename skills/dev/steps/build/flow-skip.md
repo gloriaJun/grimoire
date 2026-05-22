@@ -3,12 +3,12 @@
 ## Step C-1: Feature Execution
 
 1. State which feature is being worked on.
-2. Read the feature spec from `artifacts.featureSpecs[index]`.
+2. Use the mini-design context for this feature (from `build.md` Step 1.5).
 3. Invoke the `feature-executor` agent (model: sonnet) with:
-   - The feature spec content
-   - PRD and TRD paths for context
+   - The mini-design content (scope, AC, technical approach)
+   - PRD and architecture.md paths for context
 4. The feature-executor asks the user to choose implementation agent (default: Codex).
-5. Set `features[i].executor` in `_state.json`.
+5. Update Executor column in memory file `## Features` table.
 
 ## Step C-2: Simplify (Pre-Review)
 

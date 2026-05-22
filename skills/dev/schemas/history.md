@@ -11,7 +11,7 @@ Stored in the devlog task subdirectory alongside `_state.json`.
 
 ```markdown
 <!-- ═══════════════════════════════════════════════════════════
-     AUTO-GENERATED from _state.json — DO NOT EDIT THIS SECTION
+     AUTO-GENERATED from memory file — DO NOT EDIT THIS SECTION
      Regenerated on every step transition and feature completion
      ═══════════════════════════════════════════════════════════ -->
 
@@ -34,7 +34,7 @@ Stored in the devlog task subdirectory alongside `_state.json`.
 
 ## Current Snapshot Format
 
-Regenerate this section in full from `_state.json` on every step transition and feature completion.
+Regenerate this section in full from the memory file on every step transition and feature completion.
 Replace the entire block between the two comment markers.
 
 ```markdown
@@ -58,8 +58,8 @@ _Updated: YYYY-MM-DD_
 | F-01 | <name> | ✅ done | claude |
 | F-02 | <name> | ⏳ pending | — |
 
-<Artifacts line — only include non-null artifact paths>
-**Artifacts**: [PRD](<prd-path>) · [TRD](<trd-path>) · [features.md](<features-path>)
+<Artifacts line — only include artifact paths present in memory file ## Artifacts>
+**Artifacts**: [PRD](<prd-path>) · [Architecture](<architecture-path>) · [Wireframe](<wireframe-path>)
 
 <Open blockers — only include if Decision Log has entries with status: open>
 **Open blockers**: <titles of open Decision Log entries, comma-separated>
@@ -70,7 +70,7 @@ _Updated: YYYY-MM-DD_
 - The comment markers (`<!-- AUTO-GENERATED ... -->` and `<!-- END AUTO-GENERATED ... -->`) must be preserved exactly — they are parsing anchors.
 - Replace the entire block between markers on each update; never do partial updates.
 - Omit empty sections (progress line, feature table, artifacts line, open blockers) when they have no content.
-- Branch shows `"—"` if `_state.json.branch` is null.
+- Branch shows `"—"` if memory file `## Build Context` has no branch set.
 - Feature status icons: `✅ done`, `🔄 in-progress`, `👀 review`, `⏳ pending`.
 - Executor shows `"—"` if not yet assigned.
 
@@ -106,7 +106,7 @@ _type: decision · status: resolved_
 Reviewed via <plannotator|text>. Approved by user.
 ```
 
-Replace `plan` with the current step (`design` for TRD, `breakdown` for features).
+Replace `plan` with the current step (`design` for architecture review).
 
 ### Stagnation Entries
 
@@ -139,12 +139,12 @@ Update `status: resolved` when the stagnation is resolved.
 
 ## When to Create
 
-Created at task initialization (New Task Initialization in `steps/entry.md`).
+Created at task initialization alongside the memory file (New Task Initialization in `steps/entry.md`).
 Create with the comment markers and empty sections only — no content until first step completes.
 
 ```markdown
 <!-- ═══════════════════════════════════════════════════════════
-     AUTO-GENERATED from _state.json — DO NOT EDIT THIS SECTION
+     AUTO-GENERATED from memory file — DO NOT EDIT THIS SECTION
      Regenerated on every step transition and feature completion
      ═══════════════════════════════════════════════════════════ -->
 

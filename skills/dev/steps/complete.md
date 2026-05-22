@@ -26,13 +26,14 @@ When all features are done.
 
    **Wonder — 무엇이 불확실한 채로 남았나?**
    - PRD의 미해결 항목 최대 3개 추출 (Open Questions 섹션 또는 TBD 표기 항목)
-   - `features[i].stagnationResolution` 이벤트 목록 (구현 가정/우회 지점)
-   - TRD 가정 중 빌드에서 검증되지 않은 항목
+   - architecture.md `## Open Questions` 중 미해결 항목
+   - `history.md` Decision Log의 `status: open` 항목 (stagnation, blocker)
+   - architecture.md 가정 중 빌드에서 검증되지 않은 항목
 
    **Reflect — 다음에는 무엇을 바꿔야 하나?**
-   - 피처 사이징(breakdown)이 실제 구현 공수와 맞았는가?
-   - feature spec AC 중 테스트 불가능한 항목이 있었는가?
-   - 빌드 중 발견됐지만 spec에 없던 요구사항이 있었는가?
+   - 피처 사이징이 실제 구현 공수와 맞았는가?
+   - mini-design AC 중 테스트 불가능한 항목이 있었는가?
+   - 빌드 중 발견됐지만 mini-design에 없던 요구사항이 있었는가?
 
    결과를 태스크 요약의 끝에 `## Retrospective Notes` 섹션으로 추가.
    이 출력을 Step 4 insight 디스패치 컨텍스트에 포함.
@@ -50,9 +51,15 @@ When all features are done.
 
 ### State Update
 
-`currentStep` ← `"complete"`, append `{ "step": "complete", "at": "<ISO 8601>" }` to `completedSteps`.
+Memory file:
+- frontmatter `current-step` ← `"complete"`
+- frontmatter `updated` ← today
+- `## Completed Steps`: append `- [x] complete — YYYY-MM-DD`
 
-Follow update mechanics from `schemas/state.md`.
+MEMORY.md:
+- Move pointer from `## Active Dev Tasks` to `## Completed Dev Tasks`
+
+Follow update mechanics from `schemas/memory.md`.
 
 ### _index.md Update
 

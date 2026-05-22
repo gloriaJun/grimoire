@@ -81,5 +81,5 @@ Present findings grouped by severity:
 ## Next Steps
 
 After presenting findings:
-1. If no active devlog: session ends here after user acknowledges.
-2. If called from within a devlog task: return to `build.md` flow (Step C: Review Resolution).
+1. If no active dev task: session ends here after user acknowledges.
+2. If called from within a build step: return to `build.md` flow (Step C: Review Resolution).

@@ -11,30 +11,26 @@ Does NOT modify any files (read-only operation).
 
 ## Step 1: Task Resolution
 
-1. Run Devlog Path Detection (from SKILL.md):
-   - `cwd` contains `GitHubWork` → `~/Documents/GitHubWork/_claude/devlogs/`
-   - `cwd` contains `GitHubPrivate` → `~/Documents/GitHubPrivate/_claude/devlogs/`
-   - Neither → ask the user
-
-2. Resolve current repo name:
+1. Resolve current repo name:
    ```bash
    basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
    ```
 
-3. Pass 1 — filter devlog folders by repo name substring:
-   - Read `_state.json` for matched folders to identify active tasks
-   - Active: `currentStep NOT IN completedSteps[].step`
+2. Read MEMORY.md `## Active Dev Tasks` (already in context).
+   For each listed memory file: read frontmatter `repo` to filter by current repo.
 
-4. Match results:
+3. Match results:
    - **1 active task found**: auto-select
    - **Multiple active tasks**: show selection menu
      ```
      핸드오프 프롬프트를 생성할 태스크를 선택하세요:
-       1. 2026-05-19-<repo>-task-a   (build — 3/5 done)
-       2. 2026-05-10-<repo>-task-b   (breakdown)
+       1. <task-name>   (build — 3/5 done)
+       2. <task-name>   (design)
      > Enter number
      ```
-   - **0 active tasks**: "현재 레포의 active devlog가 없습니다" → stop
+   - **0 active tasks**: "현재 레포의 active 태스크가 없습니다" → stop
+
+   **Fallback**: if MEMORY.md has no entries, scan devlog folder for `_state.json` (legacy — see `schemas/state.md`).
 
 ---
 

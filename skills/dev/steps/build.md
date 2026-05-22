@@ -7,7 +7,8 @@ Execute one feature per session. Routes to sub-files for each execution phase.
 ```mermaid
 flowchart TD
     A(["build"]) --> B["Step 1: Feature Selection"]
-    B --> C["Step 2: Pre-check Testing Approach"]
+    B --> M["Step 1.5: Mini-Design\n(scope · AC · wireframe · approach · testing)"]
+    M --> C["Step 2: Confirm Testing Approach"]
     C --> W{"wireframe exists\n+ UI feature?"}
     W -- Yes --> WR["Step 2.5: UI/UX Wireframe Pre-check\n(review → update → approve)"]
     WR --> D
@@ -29,26 +30,72 @@ flowchart TD
 
 ## Step 1: Feature Selection
 
-1. Read `_state.json` from the devlogs task subdirectory.
-2. Display pending features:
-   - Features where all `dependsOn` entries are `"done"`: selectable
+1. Read the memory file for this task.
+2. Read `architecture.md` `## Features` checklist from the devlog task directory.
+3. Display pending features:
+   - Features with `⏳ pending` status where all `<!-- depends: F-XX -->` entries are done: selectable
    - Features with incomplete dependencies: shown as `[blocked: F-XX]`
    ```
    Pending features:
-   [ ] feature-01-<name>
-   [ ] feature-02-<name>        [blocked: F-01]
+   [ ] F-01: <name>
+   [ ] F-02: <name>        [blocked: F-01]
    ...
 
    Which feature would you like to work on? (enter number or name)
    ```
-3. Wait for user selection.
-4. Update `features[i].status` to `"in-progress"` in `_state.json`.
+4. Wait for user selection.
+5. Update the selected feature row in:
+   - Memory file `## Features` table: Status → 🔄 in-progress
+   - `architecture.md` `## Features`: `- [ ]` → `- [~]` (in-progress marker, optional)
 
 ---
 
-## Step 2: Pre-check — Testing Approach
+## Step 1.5: Mini-Design
 
-1. Read `features[i].testingApproach` from `_state.json`.
+Before any implementation, define the feature concretely.
+Performed inline by the orchestrator — no agent delegation.
+
+```
+## Mini-Design: F-<NN> <feature-name>
+
+### Scope
+- Files / components to create or modify
+- Public interfaces (props, function signatures, API endpoints)
+
+### Requirements (Acceptance Criteria)
+- [ ] AC-1: <testable criterion>
+- [ ] AC-2: ...
+
+### Wireframe (UI feature only)
+- Reference: file://<devlogs-task-dir>/wireframe.html → <screen name>
+- Interaction details and state variations for this feature
+- Any delta from the overall wireframe (new elements, layout changes)
+
+### Technical Approach
+- Implementation strategy
+- Patterns / libraries to use
+- Edge cases and error handling
+
+### Testing
+- Strategy: TDD | Test-After | Skip
+- Reason: <why this approach>
+- Test scope: unit only | unit + e2e | e2e only
+```
+
+After generating the mini-design:
+> "Mini-design 확인. 계속할까요? (Y / 수정사항 입력)"
+
+- Y → proceed to Step 2
+- User provides changes → update mini-design, re-confirm
+
+The mini-design lives in the conversation context only.
+If the user asks to persist it, append to `<devlogs-task-dir>/notes.md`.
+
+---
+
+## Step 2: Confirm Testing Approach
+
+1. Use `testingApproach` from the mini-design (`### Testing` section).
 2. Detect test framework on-demand (only needed for TDD and Test-After flows):
    - Check `vitest.config.*` → vitest (`pnpm test`)
    - Check `jest.config.*` → jest (`pnpm test`)
@@ -63,15 +110,15 @@ flowchart TD
 ## Step 2.5: UI/UX Wireframe Pre-check
 
 Skip this step entirely if **either** is true:
-- `artifacts.wireframe` is `"skipped"` or `null`
-- The selected feature spec contains no UI changes (pure logic, API clients, config, infra)
+- `artifacts.wireframe` in memory file is `"skipped"` or absent
+- Mini-design `### Wireframe` section is empty (pure logic, API clients, config, infra)
 
 If both conditions are met (wireframe exists AND feature has UI changes):
 
 1. Display the wireframe reference:
    ```
    🖥️  와이어프레임: file://<devlogs-task-dir>/wireframe.html
-   관련 화면: <feature spec에서 언급된 화면/컴포넌트 목록>
+   관련 화면: <screen name from mini-design ### Wireframe>
    ```
 2. Ask the user:
    ```
@@ -89,7 +136,7 @@ If both conditions are met (wireframe exists AND feature has UI changes):
 
 ## Step 3: Execution Flow
 
-Load the file matching `features[i].testingApproach`:
+Load the file matching the mini-design `testingApproach`:
 
 | testingApproach | Load file |
 |---|---|

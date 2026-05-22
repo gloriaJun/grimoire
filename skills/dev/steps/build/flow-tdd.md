@@ -3,9 +3,9 @@
 ## Step A-0: Write Failing Tests
 
 1. State which feature is being worked on.
-2. Read the feature spec from `artifacts.featureSpecs[index]`.
+2. Use the mini-design context for this feature (from `build.md` Step 1.5).
 3. Invoke `/dev test` with TDD mode context:
-   - Feature spec (acceptance criteria → test case design)
+   - Mini-design acceptance criteria → test case design
    - `testConfig` (framework, config file)
    - Goal: write **failing** tests only — no implementation yet
 4. Run `testConfig.unit.command` to confirm tests fail (expected at this stage).
@@ -13,12 +13,12 @@
 ## Step A-1: Feature Execution
 
 1. Invoke the `feature-executor` agent (model: sonnet) with:
-   - The feature spec content
-   - PRD and TRD paths for context
+   - The mini-design content (scope, AC, technical approach)
+   - PRD and architecture.md paths for context
    - `testingApproach: "TDD"` — implement only what is needed to pass the failing tests
    - `testConfig` for framework context
 2. The feature-executor asks the user to choose implementation agent (default: Codex).
-3. Set `features[i].executor` in `_state.json`.
+3. Update Executor column in memory file `## Features` table.
 4. Implementation proceeds based on user choice.
 
 ## Step A-2: Test Pass Confirmation
