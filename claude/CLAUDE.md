@@ -79,6 +79,6 @@ tags:
 ...body content...
 ```
 
-- **File naming**: kebab-case slug (e.g. `feedback-devlogs.md`). No date prefix — use frontmatter `created` for date tracking.
+- **File naming**: `YYYY-MM-DD-<slug>.md` — date prefix uses the `created` date (stable, never changes on update). e.g. `2026-05-19-feedback-devlogs.md`
 - **Body structure**: Lead with the rule/fact, then **Why:** and **How to apply:** lines for feedback/project types.
 - **MEMORY.md index pointer format**: unchanged — `- [Title](file.md) — one-line hook`
