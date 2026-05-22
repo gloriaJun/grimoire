@@ -23,7 +23,17 @@
 The following hooks are intentional exceptions to the "no autonomous modifications" principle, pre-approved by the user:
 - SessionStart: `codex login` — initialize Codex CLI session (async, only when OPENAI_CODEX_API_KEY is set)
 - SessionStart: `memory-obsidian-link.sh` — auto-create Obsidian symlink for project memory directory (async)
+- UserPromptSubmit: `session-name-check.sh` — inject session naming instruction if session has no name yet
 - ExitPlanMode: `plannotator` — display plan review UI (managed by plannotator plugin via PermissionRequest hook; do not add a duplicate hook in settings.json)
+
+## Session Start Protocol
+
+`UserPromptSubmit` hook(`session-name-check.sh`)이 세션 이름 미설정 메시지를 주입하면:
+1. 사용자의 요청을 처리하기 전에 세션 이름을 먼저 물어볼 것
+2. 이름 수신 후 Bash 도구로 저장:
+   `mkdir -p ~/.claude/session-names && echo '<name>' > ~/.claude/session-names/<session_id>`
+3. 'skip' 또는 '없음' 응답 시: `echo 'unnamed' > ~/.claude/session-names/<session_id>`
+4. 저장 완료 후 원래 요청을 처리할 것
 
 ## Recommended Model
 - Default CLI model: **Sonnet** (cost-efficient orchestrator)
