@@ -99,3 +99,8 @@ Agents run in isolated context windows. They do NOT inherit the parent's context
 When a task is completed in this repository, always ask the user whether to:
 1. Commit and push the changes
 2. Verify `$HOME` symlinks reflect the latest state (run `setup.sh` if needed)
+
+**setup.sh가 필요한 경우 (반드시 실행):**
+- `hooks/` 에 새 스크립트를 추가했을 때 — 심링크를 만들지 않으면 hook이 실행되지 않음
+- `agents/`, `skills/` 에 새 파일/디렉토리를 추가했을 때
+- 새 머신에서 처음 설정할 때
