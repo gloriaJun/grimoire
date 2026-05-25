@@ -40,8 +40,11 @@ flowchart TD
     M -- "Skip" --> O["Step 4: Prevention Tests"]
     N --> O
     O --> P{"Need broader coverage?"}
-    P -- "No" --> Q(["Complete"])
+    P -- "No" --> Q{"Save to vault?\n(error/debug mode)"}
     P -- "Yes" --> R["Suggest /g-test-writer"]
+    R --> Q
+    Q -- "y" --> S["Load til/SKILL.md standalone"] --> T(["Complete"])
+    Q -- "n" --> T
 ```
 
 ---

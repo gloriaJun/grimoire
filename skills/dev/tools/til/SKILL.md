@@ -14,27 +14,26 @@ Works with or without a devlog. Final step of the dev lifecycle.
 
 ## Entry Check
 
-**Resolve devlogs root** from cwd:
+**Resolve current repo name:**
+```bash
+basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
+```
 
-| cwd contains | devlogs root |
-|---|---|
-| `GitHubWork` | `~/Documents/GitHubWork/_claude/devlogs/` |
-| `GitHubPrivate` | `~/Documents/GitHubPrivate/_claude/devlogs/` |
-| neither | ask the user |
+**Scan for candidate tasks** from MEMORY.md:
+- Retro done, TIL not started: memory file `current-step == "retro"` AND `til` NOT in Completed Steps
+- TIL in progress: memory file `current-step == "til"` AND `til` NOT checked
 
-**Scan for candidate tasks** (either condition qualifies):
-- Retro done, wiki not started: `currentStep == 7 AND 7 NOT IN completedSteps`
-- Wiki in progress: `currentStep == 8 AND 8 NOT IN completedSteps`
+Filter by current repo. If multiple candidates: list them and ask user to choose.
 
-Prefer tasks whose `taskName` matches: `basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)`
-
-If multiple candidates: list them and ask user to choose.
+**Fallback**: if MEMORY.md has no entries, resolve devlogs root from cwd and scan `_state.json` files (legacy):
+- `GitHubWork` cwd → `~/Documents/GitHubWork/_claude/devlogs/`
+- `GitHubPrivate` cwd → `~/Documents/GitHubPrivate/_claude/devlogs/`
 
 **Lifecycle mode** (candidate task found):
-1. Read `_state.json`: extract `taskName`, `artifacts.retro`; read `history.md` if it exists
-2. If `currentStep < "complete"`: warn "retro step not yet done" — do not block
-3. Ask: "Write process notes for **<taskName>**? (y/n)"
-   - `n` → stop. Show: "Skipped. Run `/dev wiki` anytime to write it later."
+1. Read memory file: extract `task-name`, `devlog-path`, `## Artifacts` (for `retro` path); read `history.md` from devlog if it exists
+2. If `current-step` is not `"retro"` or later: warn "retro step not yet done" — do not block
+3. Ask: "Write process notes for **<task-name>**? (y/n)"
+   - `n` → stop. Show: "Skipped. Run `/dev til` anytime to write it later."
    - `y` → proceed
 
 **Standalone mode** (no candidate task found): proceed directly without asking.
@@ -43,9 +42,9 @@ If multiple candidates: list them and ask user to choose.
 
 ## Context
 
-**Lifecycle mode** — from `_state.json` and `history.md`:
-- `taskName`, `artifacts.retro` (for cross-linking)
-- From `history.md` Decision Log: `status: open` entries → `follow_up` candidates; `status: resolved` entries → TIL archiving candidates
+**Lifecycle mode** — from memory file and devlog:
+- `task-name`, devlog `## Artifacts - retro` path (for cross-linking)
+- From `history.md` Decision Log (if exists): `status: open` entries → `follow_up` candidates; `status: resolved` entries → TIL archiving candidates
 
 **Standalone mode** — ask user:
 - Task name
@@ -64,7 +63,20 @@ Write `til.md` directly to the task folder:
    - Create the task folder if it doesn't exist.
 2. Gather context:
    - **task-name**: from devlog `taskName` or user input
-   - **scope**: `work` (default; confirm if ambiguous)
+   - **scope**: resolve from cwd (same as retro):
+     | cwd contains | scope |
+     |---|---|
+     | `GitHubWork` | `work` |
+     | `GitHubPrivate` | `life` |
+     | neither | ask the user |
+   - **audience**: ask user (standalone and lifecycle both):
+     ```
+     이 TIL의 용도를 선택하세요:
+     1. 개인 메모 (기본) — 내가 나중에 참고
+     2. 팀 공유 — 팀원이 읽을 기술 문서
+     ```
+     - Select `1` (or Enter): `audience: personal`
+     - Select `2`: `audience: team`
    - **retro-path**: `artifacts.retro` or user-provided (for `related` field)
 3. Write `til.md` using this template:
 
@@ -73,6 +85,7 @@ Write `til.md` directly to the task folder:
 date: YYYY-MM-DD
 task: <task-name>
 scope: <scope>
+audience: personal
 tags: []
 keywords: []
 summary: "<한 줄 요약>"
@@ -111,6 +124,12 @@ Field guidance:
 - `Troubleshooting` > `Remaining Questions`: 해결은 됐지만 왜 작동했는지 명확하지 않은 부분. 비워도 되지만 있으면 반드시 `follow_up` 필드와 연결한다.
 - `Resources` entries: each link must include a one-line description of why it's useful
 - `Task Links`: PR, ticket links — no description needed
+
+**Share mode (`audience: team`) overrides:**
+- `Context > Goal`: 배경 지식 없는 독자가 이해할 수 있도록 상세 작성 (Every Page is Page One 원칙 강화; personal의 한 문장 → 2–3 문장)
+- `What I Learned`: "X 상황에서 Y 방법을 쓴다" 형태에 더해 "왜 X 상황이 생기는지" 배경 설명 추가
+- `Troubleshooting > Root Cause`: `Unknown` 표기 금지 — 확인된 사실만 기재 (불명확하면 해당 섹션 삭제)
+- `Resources`: 독자 학습용 자료 필수 (personal에서는 optional)
 
 After writing the file, fill `related:` and `Resources`:
 
@@ -172,8 +191,15 @@ After Decision Log review:
 
 ## State Update (lifecycle mode only, if not deleting)
 
-- `currentStep` ← `"til"`, append `{ "step": "retro", "at": "<ISO 8601>" }` and `{ "step": "til", "at": "<ISO 8601>" }` to `completedSteps`
-- `artifacts.wiki` ← `04_Notes/<scope>/YYYY-MM-DD-<task-name>/til.md`
+Update memory file:
+- frontmatter `current-step` ← `"til"`
+- frontmatter `updated` ← today
+- `## Completed Steps`: append `- [x] til — YYYY-MM-DD`
+- `## Artifacts`: add `til: 04_Notes/<scope>/YYYY-MM-DD-<task-name>/til.md`
+
+If devlog was deleted or archived:
+- Remove pointer from MEMORY.md `## Active Dev Tasks` (or `## Completed Dev Tasks`)
+- Memory file itself is kept (historical record)
 
 ---
 
