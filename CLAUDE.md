@@ -37,6 +37,9 @@ skills/          # Claude Code skills, symlinked to ~/.claude/skills/
   insight/       # Post-task improvement suggestions for grimoire
   pre-commit-check/  # Auto self-review before commit
   work-plan-close/   # Close completed work-plan: archive docs, delete artifacts, update _index.md
+ccstatusline/    # ccstatusline widget config, symlinked to ~/.config/ccstatusline/
+  settings.json        # Status bar widget layout
+  worktree-widget.sh   # Custom widget: detects active git worktree from cwd
 templates/       # Settings templates (no secrets, reference only)
 plugins.json     # Plugin marketplace manifest (reference only)
 setup.sh         # Symlink setup script

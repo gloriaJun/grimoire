@@ -236,6 +236,16 @@ for f in "$HARNESS_DIR"/hooks/*; do
     safe_link "$f" "$CLAUDE_HOME/hooks/$fname"
 done
 
+# --- 2b. ccstatusline: config files ---
+echo ""
+echo "--- ccstatusline: config files ---"
+CCSTATUSLINE_HOME="$HOME/.config/ccstatusline"
+mkdir -p "$CCSTATUSLINE_HOME" 2>/dev/null || true
+for f in "$HARNESS_DIR"/ccstatusline/*; do
+    [ -f "$f" ] || continue
+    safe_link "$f" "$CCSTATUSLINE_HOME/$(basename "$f")"
+done
+
 # --- 3. Claude Code: skills ---
 echo ""
 echo "--- Claude Code: skills ---"
