@@ -93,7 +93,9 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "mise exec 'npm:@owloops/claude-powerline@1.26.0' -- claude-powerline --style=powerline --theme=tokyo-night"
+    "command": "mise exec 'npm:ccstatusline@latest' -- ccstatusline",
+    "padding": 0,
+    "refreshInterval": 10
   },
   "enabledPlugins": {
     "plannotator@plannotator": true,
