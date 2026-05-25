@@ -50,17 +50,31 @@ Format: `### [build] YYYY-MM-DD — <title>`
 
 ## Completion Message
 
+**When features remain:**
+
 ```
 ✅ F-<NN> <feature-name> complete
 
 Remaining: N feature(s) pending
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Next:  /dev build      (more features remain)
-  OR
-Next:  /dev complete   (all features done)
-Start a new session and run `/dev` — it will detect this task automatically.
+Next: /dev build — N more feature(s) remain
+Start a new session and run `/dev` to resume automatically.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+**When this was the last feature (all features ✅ done):**
+
+```
+✅ F-<NN> <feature-name> complete — 모든 피처 완료!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+모든 피처가 완료되었습니다.
+/dev complete 로 태스크를 마무리하시겠습니까? (Y/n)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+If Y: load `steps/complete.md` and continue.
+If n: stop. Remind that `/dev complete` should be run before closing the task.
 
 Do NOT automatically start the next feature. Stop here.

@@ -4,7 +4,7 @@ description: >
   Unified development workflow skill. Triggered by /dev or sub-commands:
   /dev idea, /dev plan, /dev design, /dev build, /dev complete,
   /dev test, /dev refactor, /dev review, /dev troubleshoot,
-  /dev retro, /dev til, /dev help, /dev status, /dev handoff.
+  /dev retro, /dev til, /dev help, /dev status.
   Also triggers on: code refactoring requests ("리팩토링 해줘", "코드 정리해줘",
   "클린 아키텍처 적용해줘", "중복 코드 정리해줘", "타입 추가해줘", "코드 냄새 제거해줘",
   "성능 개선해줘", "refactor this", "clean up this code"),
@@ -19,8 +19,6 @@ description: >
   Session resume/status ("작업 이어하자", "이어서 진행하자", "작업 현황 보여줘", "devlog 상태 보여줘").
   Code review/modification ("이 부분 검토해줘", "이 코드 리뷰해줘", "이 코드 봐줘",
   "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this", "check this code").
-  Next-session handoff ("다음 세션 프롬프트 생성해줘", "세션 인계 프롬프트",
-  "이어서 할 프롬프트 만들어줘", "다음 작업 프롬프트", "handoff prompt").
   Manages task state via Claude Code memory files for cross-session persistence.
   Manual planning steps (idea/plan/design/build/complete) require explicit invocation.
 ---
@@ -67,7 +65,7 @@ stateDiagram-v2
     [*] --> Router: /dev [sub-command]
 
     Router --> ActiveCheck: no sub-command
-    Router --> DirectTool: refactor / troubleshoot / retro / til / review / devlog-note / handoff triggers
+    Router --> DirectTool: refactor / troubleshoot / retro / til / review / devlog-note triggers
     Router --> StepFile: explicit sub-command
 
     ActiveCheck --> ResumeTask: active devlog found
@@ -92,7 +90,6 @@ stateDiagram-v2
         review_tool: tools/review
         setup_tool: tools/setup
         devlog_note_tool: tools/devlog-note
-        handoff_tool: tools/next-session-prompt
     }
 
     StepFile --> Handoff: step complete
@@ -116,7 +113,6 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `build` | `steps/build.md` | Feature implementation (mini-design + 1 feature/session) |
 | `complete` | `steps/complete.md` | Wrap-up, insight, summary |
 | `import` | `steps/entry.md` (Import Flow) | existing artifacts → bootstrap devlog |
-| `handoff` | `Read("tools/next-session-prompt/SKILL.md")` | Generate next-session resume prompt |
 
 ### Utility Tools (devlog optional)
 
@@ -157,7 +153,6 @@ Utility tools (devlog optional):
   til           TIL note → vault + devlog cleanup
   setup         configure lint, prettier, type-check, and husky
   devlog-note   write a note to the active devlog
-  handoff       generate next-session resume prompt
   status        show all devlog task statuses
 
   help          show this message
@@ -190,12 +185,10 @@ When triggered by natural language (not an explicit `/dev` command):
    - Code review/modification signal ("이 코드 리뷰/검토해줘", "이 코드 봐줘",
      "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this code", "check this code")
      → load `tools/review/SKILL.md` directly, skip entry menu
-   - Next-session handoff signal ("다음 세션 프롬프트", "세션 인계", "handoff prompt", etc.)
-     → load `tools/next-session-prompt/SKILL.md` directly, skip entry menu
    - Generic questions without error artifact ("왜 안돼", "왜 느리지" alone) → do NOT auto-route to troubleshoot; treat as general conversation
    - Otherwise → proceed to `steps/entry.md`
 
-2. Skip the active devlog check for utility tools (test/refactor/troubleshoot/devlog-note/review/handoff).
+2. Skip the active devlog check for utility tools (test/refactor/troubleshoot/devlog-note/review).
    They operate on the current working files or active devlog, not on the full entry flow.
 
 ---
@@ -238,7 +231,7 @@ MEMORY.md is auto-loaded at session start. When a sub-command is given:
 
 1. Check MEMORY.md `## Active Dev Tasks` for the current repo.
 2. If matching memory file found: read it, verify artifact paths, announce "Resuming **<task-name>** at step `<current-step>`", load the step file.
-3. Apply step name migration if needed (see `schemas/state.md` Legacy Step Name Migration):
+3. Apply step name migration if needed:
    - `"wireframe"` or `"breakdown"` → `"build"`
 
 **Fallback** (no memory file found): scan devlog folder for `_state.json` (legacy):
@@ -276,27 +269,13 @@ Verify pre-conditions before loading. If not met, warn and block.
 
 ## State Management
 
-All state persists in a memory file (`{YYYY-MM-DD}-project-{task-name}.md`) under the project's Claude memory directory.
-See `schemas/memory.md` for the full schema and update rules.
-
-Key rules:
-- Update `current-step` in the memory file frontmatter BEFORE loading the next step file
-- Register artifact paths in the `## Artifacts` section as soon as files are created
-- Append `- [x] {step} — YYYY-MM-DD` to `## Completed Steps` after each step completes
-- Regenerate `history.md` Current Snapshot after every memory file update
-- idea/plan/design end with `steps/_handoff.md`; build/complete handle handoff inline
+See `schemas/memory.md` for schema, update rules, and session restoration logic.
 
 ---
 
 ## Cross-Agent Review Protocol
 
-| Artifact | 1st Review | 2nd Review |
-|----------|-----------|-----------|
-| brainstorm.md | User confirmation | — |
-| PRD | Plannotator + User | Codex |
-| architecture.md | Plannotator + User | Codex |
-| Code (Claude impl.) | Codex (`/codex:review`) | frontend-reviewer (if applicable) |
-| Code (Codex impl.) | Claude (`code-reviewer` agent) | frontend-reviewer (if applicable) |
+See `references/review-protocol.md`.
 
 ---
 

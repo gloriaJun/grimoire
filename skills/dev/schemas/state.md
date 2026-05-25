@@ -2,6 +2,9 @@
 
 > **Deprecated.** New tasks use memory files (`schemas/memory.md`).
 > This file is kept as a migration reference for existing devlogs that still use `_state.json`.
+>
+> **Safe to delete when:** all `_state.json` devlogs are migrated or completed.
+> Currently active: `2026-04-22-fe-marketplace-sentry-alert-setup` (step 2, F-03/F-04 pending).
 
 ## Migration
 

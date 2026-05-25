@@ -25,10 +25,12 @@ agents/          # Custom agent definitions, symlinked to ~/.claude/agents/
 codex/           # Codex CLI settings
   rules/         # Shell command approval rules, symlinked to ~/.codex/rules/
 skills/          # Claude Code skills, symlinked to ~/.claude/skills/
-  dev/           # Unified development workflow (/dev idea|plan|design|build|complete|retro|wiki|test|refactor|troubleshoot|review)
+  dev/           # Unified development workflow (/dev idea|plan|design|build|complete|test|refactor|troubleshoot|review|retro|til|setup|devlog-note|handoff|status|help)
     steps/       # Planning lifecycle step files
-    tools/       # Inline tools: refactor/, troubleshoot/, test/
-    schemas/     # State schema
+    tools/       # Utility tools: refactor/, troubleshoot/, test/, review/, retro/, til/, devlog-note/, setup/
+    schemas/     # State schema (memory.md, history.md)
+    references/  # review-protocol.md
+    shared/      # vault-context.md (shared across tools)
   my-claude-audit/
   sync-config/   # Link shared config to project .claude/
   cleanup/       # Diagnose and clean up sessions, logs, caches
