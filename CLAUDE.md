@@ -63,6 +63,16 @@ description: >
 ---
 ```
 
+### Naming Convention
+
+The `name:` field in SKILL.md frontmatter determines the slash command — folder names do not need to match.
+
+| Scope | `name:` prefix | Example |
+|-------|----------------|---------|
+| Global (grimoire-wide) | `g-` | `g-cleanup`, `g-my-claude-audit` |
+| Project-local | `l-` | `l-pr` |
+| No prefix | workspace-specific or paired with project CLAUDE.md | `dev` |
+
 ### Authoring Convention
 
 For skill authoring rules (orchestrator pattern, mermaid diagrams, script extraction),
@@ -98,6 +108,24 @@ Agents run in isolated context windows. They do NOT inherit the parent's context
 - **Token estimation:** `chars / 4`. Context window assumed at 200,000 tokens.
 - **HTML reports** are written to `/tmp/` and opened in the browser. Do not delete them.
 - **No secrets in repo.** `settings.json` and `config.toml` stay local. Templates in `templates/` for reference.
+
+## Workspace Structure
+
+Each workspace maintains a shared config directory outside of individual repos:
+
+```
+~/Documents/GitHubWork/
+  _claude/config/       # team shared settings (settings.local.json)
+  _claude/work-plan/    # active task documents
+
+~/Documents/GitHubPrivate/
+  _claude/config/       # personal shared settings (optional)
+  _claude/work-plan/    # task documents
+```
+
+- `_claude/config/settings.local.json` → symlinked per project via `sync-config` skill
+- `_claude/work-plan/` → work-plan path discovery reads from here (see `instructions/references/work-plan.md`)
+- Company/team plugins go in `settings.local.json` (not global `settings.json`)
 
 ## Post-Task Workflow
 

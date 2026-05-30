@@ -316,6 +316,16 @@ When a skill is created, modified, or deleted, always ask the user whether to:
 1. Commit and push the changes
 2. Run `setup.sh` (or equivalent) to sync symlinks to `$HOME`
 
+## External Skill Integration
+
+When integrating an external skill (e.g., from a plugin marketplace), use the **wrapping pattern**:
+
+- Create a local SKILL.md that delegates to the external skill's entrypoint
+- Do NOT fork the external repo — maintain it as a plugin dependency
+- The wrapper owns the trigger description and any local overrides
+
+Reason: forks diverge silently; wrappers let upstream update independently.
+
 ## Skill Review & skill-creator Integration
 
 When creating or modifying a skill, load and follow `@instructions/references/skill-review.md`
