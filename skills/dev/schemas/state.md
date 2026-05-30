@@ -10,8 +10,8 @@
 
 When `entry.md` detects a devlog with `_state.json` but no matching memory file:
 1. Display: "⚠️ Legacy task detected. Migrate to memory file? (Y/n)"
-2. On Y: create `~/.claude/projects/<project-id>/memory/YYYY-MM-DD-project-<task-name>.md` from the mapping below
-3. Add MEMORY.md pointer under `## Active Dev Tasks`
+2. On Y: create `~/.claude/projects/<project-id>/memory/YYYY-MM-DD-<task-name>/state.md` from the mapping below
+3. Add MEMORY.md pointer: `- [<task-name>](YYYY-MM-DD-<task-name>/state.md) — <repo> / <step>` under `## Active Dev Tasks`
 4. Continue using the memory file going forward (`_state.json` left in place but no longer updated)
 
 ## Field Mapping (_state.json → memory file)

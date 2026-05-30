@@ -1,28 +1,27 @@
 # Memory File Schema
 
 Task state file that tracks `/dev` workflow progress across sessions.
-Stored in the Claude Code project memory directory.
+Stored in the Claude Code project memory directory as a task subdirectory.
 
 **Replaces**: `_state.json` (see `schemas/state.md` for legacy reference)
 
-## File Naming
+## File Location
 
 ```
-{YYYY-MM-DD}-project-{task-name}.md
+~/.claude/projects/<project-id>/memory/YYYY-MM-DD-<task-name>/state.md
 ```
 
-Example: `2026-05-22-project-auth-refactor.md`
+- Task directory: `YYYY-MM-DD-<task-name>/` — date prefix is the task creation date
+- State file: `state.md` inside the task directory
+- All artifacts (history.md, PRD, brainstorm, architecture, etc.) are stored in the same task directory
 
-- Date prefix: task creation date (ISO 8601, dashes)
-- Slug: kebab-case task identifier matching the devlog folder name
+Example: `~/.claude/projects/-Users-al03155147-Documents-GitHubPrivate-my-assistant-hub/memory/2026-05-30-lesly-app-design/state.md`
 
-## Storage Path
+### Project-ID Derivation
 
-```
-~/.claude/projects/<project-id>/memory/{YYYY-MM-DD}-project-{task-name}.md
-```
-
-The project-id is the filesystem path encoded (e.g., `-Users-al03155147-Documents-GitHubPrivate-grimoire`).
+Encode the absolute repo path by removing the home prefix and replacing `/` with `-`:
+- Repo path: `/Users/al03155147/Documents/GitHubPrivate/my-assistant-hub`
+- Project-ID: `-Users-al03155147-Documents-GitHubPrivate-my-assistant-hub`
 
 ## Frontmatter
 
@@ -32,7 +31,7 @@ created: YYYY-MM-DD
 updated: YYYY-MM-DD
 type: memory/project
 task-name: kebab-case-name
-devlog-path: ~/Documents/GitHubPrivate/_claude/devlogs/YYYY-MM-DD-<repo>-<task>/
+task-dir: ~/.claude/projects/<project-id>/memory/YYYY-MM-DD-<task-name>/
 repo: <repo-name>
 current-step: idea | plan | design | build | complete
 entry-point: idea | plan | design | build
@@ -46,7 +45,7 @@ tags:
 | Field | Description |
 |---|---|
 | `task-name` | kebab-case task identifier |
-| `devlog-path` | absolute path to the devlog task directory (artifacts stored here) |
+| `task-dir` | absolute path to the task directory (all artifacts stored here) |
 | `repo` | repository name (used for MEMORY.md repo filtering) |
 | `current-step` | active step name |
 | `entry-point` | step where this task was initialized |
@@ -54,7 +53,7 @@ tags:
 ## Body Structure
 
 ```markdown
-# project-<task-name>
+# <task-name>
 
 **Why:** `/dev` workflow task state tracking.
 **How to apply:** Auto-recognized via MEMORY.md at session start. Used as state source when `/dev` is invoked.
@@ -103,18 +102,18 @@ Add to `## Active Dev Tasks` section when task is created:
 ```markdown
 ## Active Dev Tasks
 
-- [project-<name>](YYYY-MM-DD-project-<name>.md) — <repo> / <step> (<N>/<M> features)
+- [<task-name>](YYYY-MM-DD-<task-name>/state.md) — <repo> / <step> (<N>/<M> features)
 ```
 
 Move to `## Completed Dev Tasks` section when `/dev complete` is called.
 
 ## Creation Rules
 
-- Created at entry point selection (replaces `_state.json` creation)
+- Created at entry point selection
 - `current-step` frontmatter set to the entry point step name
 - All `## Artifacts` entries default to absent (omit until created)
 - `## Build Context` filled at build step start
-- `history.md` is created in the devlog task directory at the same time
+- `history.md` is created in the task directory at the same time
 
 ## Update Rules
 
@@ -128,11 +127,12 @@ Move to `## Completed Dev Tasks` section when `/dev complete` is called.
 
 1. MEMORY.md is auto-loaded at session start — `## Active Dev Tasks` is already in context
 2. Match entries by `repo` frontmatter field against current repo name
-3. Read the matched memory file to restore full state
+3. Read the matched `state.md` to restore full state
 4. Verify artifact paths in `## Artifacts` still exist on disk; warn if missing
 5. Load the step file for `current-step`
 
-**Fallback**: if no memory file found, scan devlog folder for `_state.json` (legacy) — see `schemas/state.md`
+**Fallback**: if no MEMORY.md entry found, scan `<memory-root>` for `YYYY-MM-DD-*/state.md` not yet indexed.
+**Legacy fallback**: scan devlog folder for `_state.json` — see `schemas/state.md`
 
 ## Feature Tracking
 
@@ -142,6 +142,11 @@ Move to `## Completed Dev Tasks` section when `/dev complete` is called.
 - `executor` and `testing` columns filled when user chooses at build step
 - Dependency notation in architecture.md: `<!-- depends: F-01 -->`
 - Stagnation events logged in `history.md` Decision Log, not here
+
+## Plan File Storage
+
+During an active dev task session, if the user requests "계획 저장" or similar:
+- Save as `<task-dir>/plan.md` (NOT to `~/.claude/plans/`)
 
 ## Removed Fields (detect-on-demand)
 
@@ -155,15 +160,12 @@ Same as `_state.json` removed fields — these are never stored in the memory fi
 | review approvals | Logged in `history.md` Decision Log as `type: decision` entries |
 | stagnation resolutions | Logged in `history.md` Decision Log as `type: troubleshooting` entries |
 
-## Storage Path Convention
+## _index.md
 
-| Workspace | devlogs root |
-|-----------|-------------|
-| GitHubWork | `~/Documents/GitHubWork/_claude/devlogs/` |
-| GitHubPrivate | `~/Documents/GitHubPrivate/_claude/devlogs/` |
+Task registry file stored at `<memory-root>/_index.md`:
 
-Task directory: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
-Memory file: `~/.claude/projects/<project-id>/memory/YYYY-MM-DD-project-<task-name>.md`
+```
+~/.claude/projects/<project-id>/memory/_index.md
+```
 
-> Artifacts (PRD, architecture.md, wireframe.html, history.md, notes.md) are stored in the devlog task directory.
-> The memory file is state-only — no artifact content.
+Tracks all tasks for this project. Append a row on task creation; update status on step transitions.

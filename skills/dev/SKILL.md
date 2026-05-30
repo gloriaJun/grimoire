@@ -68,8 +68,8 @@ stateDiagram-v2
     Router --> DirectTool: refactor / troubleshoot / retro / til / review / devlog-note triggers
     Router --> StepFile: explicit sub-command
 
-    ActiveCheck --> ResumeTask: active devlog found
-    ActiveCheck --> EntryMenu: no active devlog
+    ActiveCheck --> ResumeTask: active task found
+    ActiveCheck --> EntryMenu: no active task
     EntryMenu --> StepFile
 
     ResumeTask --> StepFile
@@ -102,7 +102,7 @@ stateDiagram-v2
 
 Parse the first word after `/dev`. Load ONLY the matching file.
 
-### Planning Lifecycle (devlog-tracked)
+### Planning Lifecycle (memory-tracked)
 
 | Sub-command | Step file | Description |
 |-------------|-----------|-------------|
@@ -114,7 +114,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `complete` | `steps/complete.md` | Wrap-up, insight, summary |
 | `import` | `steps/entry.md` (Import Flow) | existing artifacts → bootstrap devlog |
 
-### Utility Tools (devlog optional)
+### Utility Tools (task optional)
 
 | Sub-command / Natural language trigger | Tool file |
 |----------------------------------------|-----------|
@@ -126,7 +126,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `til` | `Read("tools/til/SKILL.md")` |
 | `setup` | `Read("tools/setup/SKILL.md")` |
 | `devlog-note`, "devlogs에 기록/정리해줘", "오늘 작업 기록해줘", "작업 노트 써줘", etc. | `Read("tools/devlog-note/SKILL.md")` |
-| `status` | `steps/status.md` | scan devlogs root → print task status summary |
+| `status` | `steps/status.md` | scan memory root → print task status summary |
 | `help` | inline | print available sub-commands |
 
 ### help Output Format
@@ -198,27 +198,26 @@ When triggered by natural language (not an explicit `/dev` command):
 When this skill is *referenced* rather than directly invoked — e.g., "'/dev' 스킬에 맞춰 정리해줘", "devlog 형식으로 저장해줘", "이 내용을 /dev 경로에 기록해줘" — from plan mode, general conversation, or another skill:
 
 1. **Read this skill file first.** Never act on memory of the format.
-2. **Resolve the devlog path** using the Devlog Path Detection rules below.
-3. **Create actual files** at `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`. Do not reformat content inline — create the directory and individual artifact files.
+2. **Resolve the task directory** using the Task Directory Detection rules below.
+3. **Create actual files** inside `<task-dir>/`. Do not reformat content inline — create the directory and individual artifact files.
 4. When the user has completed artifacts, use the **Import Flow** in `steps/entry.md`.
 
-> **Plan mode exception**: if write operations are currently blocked, record the target devlog path and artifact file list in the plan file. Create the actual files after ExitPlanMode.
+> **Plan mode exception**: if write operations are currently blocked, record the target task directory and artifact file list in the plan file. Create the actual files after ExitPlanMode.
 
 ---
 
-## Devlog Path Detection
+## Task Directory Detection
 
-Resolve the devlogs root from `cwd`:
+All task artifacts live inside the Claude Code project memory directory:
 
-| cwd contains | devlogs root |
-|---|---|
-| `GitHubWork` | `~/Documents/GitHubWork/_claude/devlogs/` |
-| `GitHubPrivate` | `~/Documents/GitHubPrivate/_claude/devlogs/` |
-| neither | ask the user |
+```
+~/.claude/projects/<project-id>/memory/YYYY-MM-DD-<task-name>/
+```
 
-Task directory: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
+**Project-ID derivation**: absolute repo path with `/` replaced by `-` (leading `~` removed):
+- `/Users/al03155147/Documents/GitHubPrivate/my-assistant-hub` → `-Users-al03155147-Documents-GitHubPrivate-my-assistant-hub`
 
-**Current repo name** (used to match devlog tasks to the active project):
+**Current repo name** (used to match memory entries to the active project):
 ```bash
 basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
 ```
@@ -234,9 +233,10 @@ MEMORY.md is auto-loaded at session start. When a sub-command is given:
 3. Apply step name migration if needed:
    - `"wireframe"` or `"breakdown"` → `"build"`
 
-**Fallback** (no memory file found): scan devlog folder for `_state.json` (legacy):
-1. Filter devlogs by current repo name; read `_state.json` for matched folders.
-2. If active legacy tasks found: offer migration to memory file → proceed.
+**Fallback** (no MEMORY.md entry found):
+1. Scan `<memory-root>` for `YYYY-MM-DD-*/state.md` not yet indexed in MEMORY.md; filter by `repo` frontmatter.
+2. If matches: re-add pointer to MEMORY.md and proceed.
+3. If still none: scan devlog folder for `_state.json` (legacy); filter by repo name; offer migration to memory file → proceed.
 
 **Selection table format (multiple tasks):**
 ```

@@ -157,7 +157,7 @@ _Updated: YYYY-MM-DD_
 | **Task** | <taskName> |
 | **Step** | <currentStep> |
 | **Branch** | — |
-| **Devlog** | <devlogs-root>/<task-dir>/ |
+| **Task Dir** | <task-dir>/ |
 
 <!-- ═══════════════════════════════════════════════════════════
      END AUTO-GENERATED — append Decision Log entries below

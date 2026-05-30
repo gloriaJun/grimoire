@@ -28,7 +28,7 @@ If `history.md` does not exist yet (legacy task), create it using the initial te
 
 ## 3. Update `_index.md`
 
-- Read `<devlogs-root>/_index.md`
+- Read `<memory-root>/_index.md`
 - Find the row matching the current task directory name
 - Update the "current step" column to the new step name
 - Update frontmatter `updated:` to today's date

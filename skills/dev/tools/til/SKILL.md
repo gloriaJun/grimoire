@@ -30,7 +30,7 @@ Filter by current repo. If multiple candidates: list them and ask user to choose
 - `GitHubPrivate` cwd → `~/Documents/GitHubPrivate/_claude/devlogs/`
 
 **Lifecycle mode** (candidate task found):
-1. Read memory file: extract `task-name`, `devlog-path`, `## Artifacts` (for `retro` path); read `history.md` from devlog if it exists
+1. Read memory file: extract `task-name`, `task-dir`, `## Artifacts` (for `retro` path); read `history.md` from task directory if it exists
 2. If `current-step` is not `"retro"` or later: warn "retro step not yet done" — do not block
 3. Ask: "Write process notes for **<task-name>**? (y/n)"
    - `n` → stop. Show: "Skipped. Run `/dev til` anytime to write it later."
@@ -182,7 +182,7 @@ After Decision Log review:
 3. Execute the chosen action. Delete only after explicit confirmation.
 
 4. Update `_index.md`:
-   - Find the row matching the task directory in `<devlogs-root>/_index.md`
+   - Find the row matching the task directory in `<memory-root>/_index.md`
    - If deleted or archived → remove the row entirely
    - If kept → update step column to `Step 8 (wiki — done)`
    - Update frontmatter `updated:` to today's date

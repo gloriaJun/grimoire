@@ -30,7 +30,7 @@ Filter by current repo (`repo` frontmatter). If multiple candidates: list them a
 - `GitHubPrivate` cwd → `~/Documents/GitHubPrivate/_claude/devlogs/`
 
 **Lifecycle mode** (candidate task found):
-1. Read memory file: extract `task-name`, `devlog-path`, `## Artifacts`; read `history.md` from devlog if it exists
+1. Read memory file: extract `task-name`, `task-dir`, `## Artifacts`; read `history.md` from task directory if it exists
 2. If `current-step` is not `"complete"`: warn "complete step not yet done" — do not block
 3. Ask: "Write a retrospective for **<task-name>**? (y/n)"
    - `n` → stop. Show: "Skipped. Run `/dev retro` anytime to write it later."
@@ -43,8 +43,8 @@ Filter by current repo (`repo` frontmatter). If multiple candidates: list them a
 ## Context
 
 **Lifecycle mode** — from memory file and devlog:
-- `task-name`, `devlog-path`, `## Artifacts` from memory file
-- `history.md` Decision Log from devlog task directory (if exists)
+- `task-name`, `task-dir`, `## Artifacts` from memory file
+- `history.md` Decision Log from task directory (if exists)
 
 **Standalone mode** — ask user:
 - Task name
@@ -60,8 +60,8 @@ Write `retrospect.md` directly to the task folder:
    - `~/Documents/obsidian-vault/04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md`
    - Create the task folder if it doesn't exist.
 2. Gather context:
-   - **task-name**: from devlog `taskName` or user input
-   - **scope**: resolve from cwd (mirrors devlogs root resolution):
+   - **task-name**: from memory file `task-name` or user input
+   - **scope**: resolve from cwd:
      | cwd contains | scope |
      |---|---|
      | `GitHubWork` | `work` |
@@ -139,7 +139,7 @@ After writing the file, fill the `related:` field:
    - Update MEMORY.md pointer step display
 
 2. Update `_index.md`:
-   - Find the row matching the task directory in `<devlogs-root>/_index.md`
+   - Find the row matching the task directory in `<memory-root>/_index.md`
    - Update step column to `retro`
    - Update frontmatter `updated:` to today's date
 

@@ -30,9 +30,9 @@ The agent will:
 
 ### 3. Register Artifact
 
-Save `brainstorm.md` to the devlog task directory:
+Save `brainstorm.md` to the task directory:
 ```
-<devlogs-root>/<task-dir>/brainstorm.md
+<task-dir>/brainstorm.md
 ```
 
 Register in `_state.json`:

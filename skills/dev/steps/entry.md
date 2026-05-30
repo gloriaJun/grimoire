@@ -43,12 +43,16 @@ No devlog folder scanning required — read from memory.
    - If matches found → go to step 4 (resume menu)
    - If no matches → go to step 3
 
-3. **Fallback — legacy `_state.json` scan**:
-   - Detect workspace from `cwd`:
-     - Path contains `GitHubWork` → `~/Documents/GitHubWork/_claude/devlogs/`
-     - Path contains `GitHubPrivate` → `~/Documents/GitHubPrivate/_claude/devlogs/`
-     - Neither → ask the user
-   - List folder names under devlogs root. Filter by repo name substring.
+3. **Fallback — orphaned task directory scan**:
+   - Scan `<memory-root>` for `YYYY-MM-DD-*/state.md` not yet listed in MEMORY.md.
+   - Filter by `repo` frontmatter field in each `state.md`.
+   - If matches found → treat as active tasks → go to step 4.
+   - If no matches → fall back to legacy `_state.json` scan:
+     - Detect workspace from `cwd`:
+       - Path contains `GitHubWork` → `~/Documents/GitHubWork/_claude/devlogs/`
+       - Path contains `GitHubPrivate` → `~/Documents/GitHubPrivate/_claude/devlogs/`
+       - Neither → ask the user
+     - List folder names under devlogs root. Filter by repo name substring.
    - If matches: read `_state.json` for matched folders only.
      - Active: `currentStep NOT IN completedSteps`
    - If active legacy tasks found: display migration prompt:
@@ -83,7 +87,7 @@ No devlog folder scanning required — read from memory.
 
 5. On resume: read the memory file (or legacy `_state.json`), apply step name migration if needed (see `schemas/state.md` Legacy Step Name Migration), verify artifact paths in `## Artifacts`.
    - If an artifact path is missing: warn the user and ask whether to skip or re-register.
-   - If `current-step` is `"build"` and `history.md` exists in the devlog task directory:
+   - If `current-step` is `"build"` and `history.md` exists in the task directory:
      - Read `history.md` and display context block:
        ```
        Resuming **<taskName>** at step build
@@ -119,7 +123,7 @@ Select your starting point:
 | Choice | Starts at | Pre-condition |
 |--------|-----------|---------------|
 | idea   | `steps/idea.md`   | none |
-| plan   | `steps/plan.md`   | none (creates new devlog + memory file) |
+| plan   | `steps/plan.md`   | none (creates new task directory + memory file) |
 | design | `steps/design.md` | PRD exists |
 | build  | `steps/build.md`  | architecture.md exists |
 | resume | prompts for task  | memory file or `_state.json` exists |
@@ -130,21 +134,25 @@ Select your starting point:
 After entry point is confirmed:
 
 1. Ask for task name (kebab-case, e.g., `one-auth-refactor`)
-2. Create task directory: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
-3. Create memory file `~/.claude/projects/<project-id>/memory/YYYY-MM-DD-project-<task-name>.md`:
-   - frontmatter: `task-name`, `devlog-path`, `repo`, `current-step` = entry point, `entry-point`, `created` = today
+2. Determine task directory:
+   - project-id: absolute repo path with `/` replaced by `-` (leading `~` removed), e.g. `/Users/al03155147/Documents/GitHubPrivate/my-assistant-hub` → `-Users-al03155147-Documents-GitHubPrivate-my-assistant-hub`
+   - memory-root: `~/.claude/projects/<project-id>/memory/`
+   - task-dir: `<memory-root>/YYYY-MM-DD-<task-name>/`
+   - Create `<task-dir>` (mkdir).
+3. Create `<task-dir>/state.md`:
+   - frontmatter: `task-name`, `task-dir`, `repo`, `current-step` = entry point, `entry-point`, `created` = today
    - `## Current Step`: entry point name + " — started"
    - `## Completed Steps`: `- [x] entry — YYYY-MM-DD`; remaining steps unchecked
    - `## Build Context`, `## Artifacts`, `## Features`, `## Open Blockers`: empty/placeholder
 4. Add MEMORY.md pointer under `## Active Dev Tasks`:
    ```
-   - [project-<task-name>](YYYY-MM-DD-project-<task-name>.md) — <repo> / <step> (0/? features)
+   - [<task-name>](YYYY-MM-DD-<task-name>/state.md) — <repo> / <step> (0/? features)
    ```
-5. Create `history.md` in the devlog task directory using the initial template in `schemas/history.md`.
+5. Create `<task-dir>/history.md` using the initial template in `schemas/history.md`.
 6. Update `_index.md`:
-   - Read `<devlogs-root>/_index.md`
+   - Read `<memory-root>/_index.md`
    - Append row under `## Active Tasks`:
-     `` | `YYYY-MM-DD-<repo>-<task-name>/` | <task-name> | <step-name> | in progress | ``
+     `` | `YYYY-MM-DD-<task-name>/` | <task-name> | <step-name> | in progress | ``
    - Update frontmatter `updated:` to today's date
 7. Load the step file for the selected entry point.
 
@@ -153,9 +161,9 @@ After entry point is confirmed:
 Triggered by `/dev import` or entry menu option 6.
 Use when the user already has completed artifacts (PRD, architecture.md, plan files, or inline content).
 
-1. **Resolve devlog root** (same as Active Task Check step 3).
+1. **Determine task directory** (same project-id derivation as New Task Initialization step 2).
 2. **Ask for task name** (kebab-case).
-3. **Create task directory**: `<devlogs-root>/YYYY-MM-DD-<repo>-<task-name>/`
+3. **Create task directory**: `<memory-root>/YYYY-MM-DD-<task-name>/`
 4. **Collect artifacts**: for each slot, ask for source or "skip":
 
    | Slot | Memory file key | File to create |
@@ -184,13 +192,16 @@ Use when the user already has completed artifacts (PRD, architecture.md, plan fi
    - `## Artifacts`: populated from collected artifacts
    - `## Features`: populate from architecture.md `## Features` checklist if available, else empty
 
-7. **Add MEMORY.md pointer** under `## Active Dev Tasks`.
+7. **Add MEMORY.md pointer** under `## Active Dev Tasks`:
+   ```
+   - [<task-name>](YYYY-MM-DD-<task-name>/state.md) — <repo> / <step> (0/? features)
+   ```
 
 8. **Update `_index.md`** (same as New Task Initialization step 6).
 
 9. Confirm:
    ```
-   ✅ Devlog 초기화 완료
+   ✅ 태스크 초기화 완료
    경로: <task-dir>
    현재 단계: <current-step>
 

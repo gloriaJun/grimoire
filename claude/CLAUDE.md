@@ -72,3 +72,17 @@ tags:
 - **File naming**: `YYYY-MM-DD-<slug>.md` — date prefix uses the `created` date (stable, never changes on update). e.g. `2026-05-19-feedback-devlogs.md`
 - **Body structure**: Lead with the rule/fact, then **Why:** and **How to apply:** lines for feedback/project types.
 - **MEMORY.md index pointer format**: unchanged — `- [Title](file.md) — one-line hook`
+
+## Memory Routing
+
+`memory/project` 타입 저장 전, MEMORY.md의 `## Active Dev Tasks` 섹션을 확인한다:
+
+| 조건 | 저장 위치 |
+|------|-----------|
+| 현재 세션과 관련된 활성 dev 태스크 존재 | `<task-dir>/YYYY-MM-DD-<slug>.md` |
+| 활성 태스크 없음 또는 현재 세션과 무관 | memory root flat 저장 (기존 동작) |
+| `memory/user`, `memory/feedback`, `memory/reference` 타입 | 항상 memory root flat 저장 |
+
+`<task-dir>`은 MEMORY.md 포인터 경로에서 파생: `[<task>](YYYY-MM-DD-<task>/state.md)` → task-dir = `~/.claude/projects/<project-id>/memory/YYYY-MM-DD-<task>/`
+
+MEMORY.md는 항상 컨텍스트에 로드되어 있으므로 추가 파일 읽기 없이 라우팅 결정 가능.

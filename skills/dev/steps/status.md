@@ -1,6 +1,6 @@
 # Status: Task Summary
 
-Print the status of all tasks. Runs without an active devlog.
+Print the status of all tasks. Runs without an active task.
 
 ## Process
 
@@ -12,11 +12,17 @@ Parse both sections:
 - `## Active Dev Tasks` — tasks in progress
 - `## Completed Dev Tasks` — finished tasks
 
-For each listed memory file: read frontmatter (`repo`, `current-step`, `task-name`, `created`).
+For each listed pointer: read frontmatter (`repo`, `current-step`, `task-name`, `created`) from the referenced `state.md`.
 
-### 2. Fallback — Legacy `_state.json` scan
+### 2. Fallback — Orphaned task directory scan
 
-Triggered only when MEMORY.md has no entries or when `--all` flag is given.
+Triggered when MEMORY.md has no entries or `--all` flag is given.
+
+Scan `<memory-root>` (= `~/.claude/projects/<project-id>/memory/`) for `YYYY-MM-DD-*/state.md` not listed in MEMORY.md. Add found entries to output and re-register in MEMORY.md.
+
+### 3. Legacy fallback — `_state.json` scan
+
+Triggered when steps 1–2 yield no results or `--all` flag is given.
 
 Detect devlog root from `cwd`:
 

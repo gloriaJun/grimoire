@@ -63,7 +63,7 @@ Follow update mechanics from `schemas/memory.md`.
 
 ### _index.md Update
 
-- Find the row matching the current task directory in `<devlogs-root>/_index.md`
+- Find the row matching the current task directory in `<memory-root>/_index.md`
 - Update step column to `complete`
 - Update frontmatter `updated:` to today's date
 
