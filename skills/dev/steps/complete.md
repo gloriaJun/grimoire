@@ -1,80 +1,126 @@
-# Complete: Task Wrap-up
+# Complete: 작업 마무리
 
-When all features are done.
+모든 기능이 끝났을 때 실행한다. 흩어진 작업 기록을 **하나의 `<task>-log.md`로 압축**하고,
+과정 파일(state·history·brainstorm)을 정리한다. PRD·architecture는 참고 문서로 남긴다.
 
 ## Process
 
-1. Final update of PRD and TRD to reflect any changes made during execution.
-2. If documents were saved in the task subdirectory (temporary):
-   - Ask (follow Single Choice pattern):
-     ```
-     Temporary files found in the task subdirectory.
+### 1. 참고 문서 최신화
 
-     What to do with them?
-     1. Delete
-     2. Keep
-     3. Move to another location
+PRD와 architecture.md를 빌드 중 바뀐 내용에 맞춰 마지막으로 손본다 (이 둘은 보존 대상이므로 최신 상태로 둔다).
 
-     > Enter number or free text
-     ```
-   - Delete only after explicit confirmation.
-3. Present summary:
-   - What was built
-   - Files changed
-   - Follow-up items
-3.5 Wonder & Reflect (inline pass 1회 — 위임 없음, 사용자 입력 불요):
+### 2. `<task>-log.md` 생성
 
-   **Wonder — 무엇이 불확실한 채로 남았나?**
-   - PRD의 미해결 항목 최대 3개 추출 (Open Questions 섹션 또는 TBD 표기 항목)
-   - architecture.md `## Open Questions` 중 미해결 항목
-   - `history.md` Decision Log의 `status: open` 항목 (stagnation, blocker)
-   - architecture.md 가정 중 빌드에서 검증되지 않은 항목
+작업 폴더에 `<task-name>-log.md`를 만든다. 아래 고정 포맷을 따른다:
 
-   **Reflect — 다음에는 무엇을 바꿔야 하나?**
-   - 피처 사이징이 실제 구현 공수와 맞았는가?
-   - mini-design AC 중 테스트 불가능한 항목이 있었는가?
-   - 빌드 중 발견됐지만 mini-design에 없던 요구사항이 있었는가?
+```markdown
+---
+created: <state.md의 created>
+completed: YYYY-MM-DD
+type: memory/project
+task-name: <task-name>
+repo: <repo>
+status: completed
+tags:
+  - claude-memory
+  - project
+  - dev-workflow
+---
 
-   결과를 태스크 요약의 끝에 `## Retrospective Notes` 섹션으로 추가.
-   이 출력을 Step 4 insight 디스패치 컨텍스트에 포함.
+# <task-name> 작업 로그
 
-4. Dispatch **insight** as a subagent (isolated context, avoids session-end context bloat):
-   - Load `~/.claude/skills/insight/SKILL.md` via Read tool
-   - Dispatch via `Agent(subagent_type: "Explore")` with:
-     - Insight skill instructions as the prompt base
-     - Task context: `taskName`, summary of what was built, key decisions, artifact paths
-     - Agent reads grimoire files independently
+## 한 줄 요약
+<무엇을 만들었고 결과가 어땠는지 한 문장>
+
+## 결과
+- 구현한 것: <## Features 표의 기능 목록 + 상태>
+- 변경된 주요 파일: <핵심 파일 몇 개>
+- 커밋 / PR: <해시·링크 (있으면)>
+
+## 과정에서 고민한 것
+<history.md 결정·블로커 기록에서 추린 결정·트러블슈팅 + 아직 남은 의문>
+- PRD/architecture의 미해결 항목(Open Questions·TBD) 최대 3개
+- 결정·블로커 기록 중 status: open 항목
+- 빌드에서 검증되지 않은 가정
+
+## 배운 것
+<다음 작업에 도움이 될 점 — 위임 없이 인라인으로 정리>
+- 기능 크기 추정이 실제 공수와 맞았는가
+- mini-design 합격 기준(AC) 중 테스트하기 어려웠던 항목
+- 빌드 중 새로 드러났지만 mini-design에 없던 요구사항
+- 다음에는 무엇을 바꿀까
+
+## 참고 문서
+- PRD-<task>.md
+- architecture.md
+- wireframe.html  (있으면)
+```
+
+> `## 과정에서 고민한 것`은 기존 history.md의 결정·블로커 기록을, `## 배운 것`은 기존
+> "Wonder & Reflect" 회고를 흡수한 자리다. 따로 단계를 두지 않고 여기서 한 번에 정리한다.
+
+### 3. 과정 파일 정리
+
+`<task>-log.md`를 다 쓴 뒤, 더 이상 필요 없는 과정 파일을 정리한다. **삭제 전 1회 확인**:
+
+```
+작업 기록을 <task>-log.md 하나로 합쳤습니다.
+아래 과정 파일을 삭제할까요? (PRD·architecture·wireframe은 보존합니다)
+
+  - state.md
+  - history.md
+  - brainstorm.md
+
+> Y 삭제 / n 보존
+```
+
+- Y: 위 3개 삭제. PRD·architecture·wireframe·`<task>-log.md`는 남긴다.
+- n: 그대로 두고 다음 단계 진행.
+
+작업 폴더에 위 외의 임시 파일이 더 있으면 같은 확인 절차로 삭제 여부를 묻는다.
+
+### 4. 요약 보고
+
+화면에 간단히 보고한다:
+- 만든 것 (기능 목록)
+- 바뀐 파일
+- 후속으로 할 일 (있으면)
+
+### 5. insight (선택)
+
+grimoire 설정 개선 제안을 받고 싶을 때만 실행한다. 회고와 목적이 다르다(작업 회고가 아니라
+도구·지침 개선 제안). 건너뛰어도 된다.
+
+- 실행 시: `~/.claude/skills/insight/SKILL.md`를 Read로 로드
+- `Agent(subagent_type: "Explore")`로 디스패치 — 프롬프트에 insight 지침 + 작업 컨텍스트
+  (`task-name`, 만든 것 요약, 핵심 결정, 산출물 경로) 전달. 에이전트는 grimoire 파일을 직접 읽는다.
 
 ---
 
 ## Session Handoff
 
-### State Update
-
-Memory file:
-- frontmatter `current-step` ← `"complete"`
-- frontmatter `updated` ← today
-- `## Completed Steps`: append `- [x] complete — YYYY-MM-DD`
+### 상태 갱신
 
 MEMORY.md:
-- Move pointer from `## Active Dev Tasks` to `## Completed Dev Tasks`
+- 포인터를 `## Active Dev Tasks` → `## Completed Dev Tasks`로 이동
+- 포인터 대상을 `state.md`가 아닌 `<task>-log.md`로 변경:
+  ```
+  - [<task-name>](YYYY-MM-DD-<task-name>/<task-name>-log.md) — <repo> / 완료 YYYY-MM-DD
+  ```
 
-Follow update mechanics from `schemas/memory.md`.
+state.md를 삭제했으므로 더 이상 갱신할 메모리 파일이 없다. 이후 현황 조회(`/dev status`)는
+`<task>-log.md` frontmatter에서 완료 정보를 읽는다.
 
-### _index.md Update
-
-- Find the row matching the current task directory in `<memory-root>/_index.md`
-- Update step column to `complete`
-- Update frontmatter `updated:` to today's date
-
-### Completion Message
+### 완료 메시지
 
 ```
-✅ [complete] done — task wrap-up finished
+✅ 작업 완료 — <task-name>
+
+작업 기록: <task>-log.md (결과 · 고민 · 배운 점)
+보존 문서: PRD · architecture(· wireframe)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Optional next steps:
-  /dev retro  — session retrospective
-  /dev til    — TIL note + devlog cleanup
+다음에 할 수 있는 것:
+  /dev retro  — 회고 + 배운 점을 Obsidian 노트로 발행
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```

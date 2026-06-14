@@ -41,6 +41,6 @@ Each step is defined in `steps/`:
 ## Notes
 
 - Runs as a utility tool — no devlog required
-- If an active devlog exists, saves tooling config to `_state.json.artifacts.lintConfig`
-  so `build.md` can use the correct lint command during verification
+- Tooling config is not persisted; `build.md`'s Local Verification detects the lint command
+  on-demand from `package.json` scripts and config files
 - Works alongside the `pre-commit-check` skill (Claude Code-only) without conflict

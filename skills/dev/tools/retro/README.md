@@ -1,13 +1,14 @@
 # dev retro
 
-Capture a session retrospective note to the Obsidian vault. Works with or without a devlog.
+Capture a retrospective + learnings note to the Obsidian vault. Works with or without a devlog.
+Combines what used to be separate `retro` and `til` steps into one note.
 
 ## Features
 
-- **Devlog-aware** — auto-detects post-complete tasks and pre-fills context from `_state.json`
-- **Lifecycle confirmation** — asks before running when a matching devlog is found
+- **Devlog-aware** — auto-detects completed tasks and pre-fills context from `<task>-log.md`
+- **Confirmation** — asks before running when a matching task is found
 - **Standalone mode** — works without a devlog; prompts for task name and description
-- **inline execution** — saves to `04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md` in the Obsidian vault
+- **inline execution** — saves to `04_Notes/<scope>/YYYY-MM-DD-<task-name>/retro.md` in the Obsidian vault
 
 ## Usage
 
@@ -20,25 +21,23 @@ Capture a session retrospective note to the Obsidian vault. Works with or withou
 ```
 Entry Check
     │
-    ├── devlog found (post-complete or retro in progress)
-    │       └── Ask confirmation → yes → Execute with _state.json context
+    ├── task found (completed `<task>-log.md`, or active task before complete)
+    │       └── Ask confirmation → yes → Execute with log/devlog context
     │                            → no  → Stop (can run later)
-    └── no devlog found
+    └── no task found
             └── Standalone mode → ask user for context → Execute
 ```
 
-### Devlog Detection
+### Task Detection
 
-Scans for task directories matching either condition:
-- Post-complete: `currentStep == 6 AND 6 IN completedSteps`
-- Retro in progress: `currentStep == 7 AND 7 NOT IN completedSteps`
+Scans MEMORY.md `## Completed Dev Tasks` / `## Active Dev Tasks`, filtered to the current repo
+(main repo root, worktree-safe). Completed tasks point to `<task>-log.md`; the note is built from
+its `## 결과` / `## 과정에서 고민한 것` / `## 배운 것` sections.
 
-Prioritizes tasks whose `taskName` matches the current repo (`git rev-parse --show-toplevel`).
+### State Update
 
-### State Update (lifecycle mode)
-
-- `currentStep` → 7, append 6 to `completedSteps`
-- `artifacts.retro` ← vault file path
+- Completed mode: `state.md` is already gone — append a `회고:` link line to `<task>-log.md`.
+- Active mode (before complete): add `retro: <path>` to the memory file `## Artifacts`.
 
 ## Requirements
 

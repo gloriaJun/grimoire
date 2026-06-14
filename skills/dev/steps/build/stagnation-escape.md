@@ -22,9 +22,9 @@ Triggered when tests fail after 2 implementation iterations.
 | Option | Action |
 |--------|--------|
 | 1 | Scope reduction: remove non-essential AC, return to feature-executor for re-implementation |
-| 2 | Switch executor: toggle Claude ↔ Codex; update `features[i].executor` in `_state.json` |
-| 3 | Split feature: add F-Xa (base) + F-Xb (blocked) to `features.md` and `_state.json.features`; defer F-Xb |
-| 4 | Defer tests: add `> ⚠️ 테스트 연기됨` warning to feature spec; append stagnation entry to `history.md` Decision Log (see `schemas/history.md` Stagnation Entries) |
+| 2 | Switch executor: toggle Claude ↔ Codex; update the feature's Executor column in the memory file `## Features` |
+| 3 | Split feature: add F-Xa (base) + F-Xb (blocked) rows to the memory file `## Features`; defer F-Xb |
+| 4 | Defer tests: add `> ⚠️ 테스트 연기됨` warning to feature spec; append a stagnation entry to the `history.md` 결정·블로커 기록 (see `schemas/history.md` Stagnation Entries) |
 | 5 | Escalate: write diagnostic note; surface to user for direct resolution |
 
 After handling: return to the calling flow's "proceed to cross-review" step.

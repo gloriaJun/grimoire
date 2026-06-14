@@ -81,5 +81,5 @@ of Claude Code. These two mechanisms complement each other:
 
 ## Lint Detection
 
-Configured tooling is NOT persisted in `_state.json`. The build step's Local Verification
+Configured tooling is NOT persisted in the memory file. The build step's Local Verification
 Checkpoint detects the lint command on-demand from `package.json` scripts and config files.
