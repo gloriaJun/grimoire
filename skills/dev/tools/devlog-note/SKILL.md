@@ -10,9 +10,11 @@ Triggered by: `/dev devlog-note`, "devlogs에 기록/정리해줘", "오늘 작�
 
 Resolve which devlog task to write to.
 
-1. Resolve current repo name:
+1. Resolve current repo name (main repo root — worktree-safe):
    ```bash
-   basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
+   REPO_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")
+   [ -d "$REPO_ROOT" ] || REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+   basename "$REPO_ROOT"
    ```
 
 2. Read MEMORY.md `## Active Dev Tasks` (already in context).
@@ -27,11 +29,11 @@ Resolve which devlog task to write to.
        2. <task-name>   (design)
      > Enter number
      ```
-   - **0 active tasks found**: "현재 레포의 active 태스크가 없습니다. 새 태스크를 시작하시겠습니까? (Y/n)"
+   - **0 active tasks found**: "현재 레포에 진행 중인 작업이 없습니다. 새 작업을 시작할까요? (Y/n)"
      - Y → proceed to `steps/entry.md`
      - n → stop
 
-   **Fallback**: if MEMORY.md has no entries, scan devlog folder for `_state.json` (legacy — see `schemas/state.md`).
+   **Fallback**: if MEMORY.md has no entries, scan `<memory-root>` for orphaned `YYYY-MM-DD-*/state.md` and re-register.
 
 ---
 
@@ -56,9 +58,9 @@ Classify the content (can be multiple):
 
 | Category | Indicators | Write to |
 |----------|-----------|----------|
-| `decision` | 아키텍처 결정, 설계 이유, 트레이드오프 선택 | `history.md` → Decision Log |
-| `blocker` | 블로커, 막힌 이슈, 확인 필요 사항 | `history.md` → Decision Log |
-| `troubleshooting` | 버그 원인, 오류 해결, 디버깅 발견 | `history.md` → Decision Log |
+| `decision` | 아키텍처 결정, 설계 이유, 트레이드오프 선택 | `history.md` → 결정·블로커 기록 |
+| `blocker` | 블로커, 막힌 이슈, 확인 필요 사항 | `history.md` → 결정·블로커 기록 |
+| `troubleshooting` | 버그 원인, 오류 해결, 디버깅 발견 | `history.md` → 결정·블로커 기록 |
 | `progress` | 진행 상황 업데이트, 완료 항목 | `notes.md` |
 | `note` | 일반 메모, 아이디어, 참고 사항 | `notes.md` |
 
@@ -68,11 +70,11 @@ If ambiguous, default to `note`.
 
 ## Step 4: Write
 
-### For `decision`, `blocker`, `troubleshooting`: append to `history.md` Decision Log
+### For `decision`, `blocker`, `troubleshooting`: append to `history.md` 결정·블로커 기록
 
 If `history.md` does not exist in the task directory, create it following `schemas/history.md` initial template.
 
-Append a Decision Log entry in this format:
+Append a 결정·블로커 기록 entry in this format:
 ```
 ### [<current-step from memory file>] YYYY-MM-DD — <title derived from content>
 _type: <decision|blocker|troubleshooting> · status: <open (blocker) or resolved (decision/troubleshooting)>_
@@ -80,7 +82,7 @@ _type: <decision|blocker|troubleshooting> · status: <open (blocker) or resolved
 <content>
 ```
 
-Then regenerate `history.md` Current Snapshot from the memory file (open blockers list will auto-update).
+Then regenerate the `history.md` 현재 상태 block from the memory file (open blockers list will auto-update).
 
 ### For `progress` and `note`: append to `notes.md`
 

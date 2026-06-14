@@ -4,7 +4,7 @@ description: >
   Unified development workflow skill. Triggered by /dev or sub-commands:
   /dev idea, /dev plan, /dev design, /dev build, /dev complete,
   /dev test, /dev refactor, /dev review, /dev troubleshoot,
-  /dev retro, /dev til, /dev help, /dev status.
+  /dev retro, /dev help, /dev status.
   Also triggers on: code refactoring requests ("리팩토링 해줘", "코드 정리해줘",
   "클린 아키텍처 적용해줘", "중복 코드 정리해줘", "타입 추가해줘", "코드 냄새 제거해줘",
   "성능 개선해줘", "refactor this", "clean up this code"),
@@ -65,7 +65,7 @@ stateDiagram-v2
     [*] --> Router: /dev [sub-command]
 
     Router --> ActiveCheck: no sub-command
-    Router --> DirectTool: refactor / troubleshoot / retro / til / review / devlog-note triggers
+    Router --> DirectTool: refactor / troubleshoot / retro / review / devlog-note triggers
     Router --> StepFile: explicit sub-command
 
     ActiveCheck --> ResumeTask: active task found
@@ -86,7 +86,6 @@ stateDiagram-v2
         troubleshoot_tool: tools/troubleshoot
         test_tool: tools/test
         retro_tool: tools/retro
-        til_tool: tools/til
         review_tool: tools/review
         setup_tool: tools/setup
         devlog_note_tool: tools/devlog-note
@@ -123,7 +122,6 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `troubleshoot`, error logs, stack traces, "에러 고쳐줘", etc. | `Read("tools/troubleshoot/SKILL.md")` |
 | `review`, "이 코드 리뷰해줘", "이 부분 검토해줘", "코드 봐줘", "review this", "check this code", etc. | `Read("tools/review/SKILL.md")` |
 | `retro` | `Read("tools/retro/SKILL.md")` |
-| `til` | `Read("tools/til/SKILL.md")` |
 | `setup` | `Read("tools/setup/SKILL.md")` |
 | `devlog-note`, "devlogs에 기록/정리해줘", "오늘 작업 기록해줘", "작업 노트 써줘", etc. | `Read("tools/devlog-note/SKILL.md")` |
 | `status` | `steps/status.md` | scan memory root → print task status summary |
@@ -149,8 +147,7 @@ Utility tools (devlog optional):
   refactor      code cleanup / restructure
   troubleshoot  debug errors and stack traces
   review        code review workflow
-  retro         retrospective → vault note
-  til           TIL note → vault + devlog cleanup
+  retro         retrospective + learnings → vault note
   setup         configure lint, prettier, type-check, and husky
   devlog-note   write a note to the active devlog
   status        show all devlog task statuses
@@ -214,12 +211,21 @@ All task artifacts live inside the Claude Code project memory directory:
 ~/.claude/projects/<project-id>/memory/YYYY-MM-DD-<task-name>/
 ```
 
-**Project-ID derivation**: absolute repo path with `/` replaced by `-` (leading `~` removed):
+**Project-ID derivation** — always resolve the **main repo root** first, so that working
+inside a git worktree still writes to the main repo's memory (no `...-claude-worktrees-*`
+directories):
+
+```bash
+REPO_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")
+[ -d "$REPO_ROOT" ] || REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+```
+
+Then encode `REPO_ROOT` with `/` replaced by `-` (leading `~` removed):
 - `/Users/al03155147/Documents/GitHubPrivate/my-assistant-hub` → `-Users-al03155147-Documents-GitHubPrivate-my-assistant-hub`
 
 **Current repo name** (used to match memory entries to the active project):
 ```bash
-basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
+basename "$REPO_ROOT"
 ```
 
 ---
@@ -236,7 +242,7 @@ MEMORY.md is auto-loaded at session start. When a sub-command is given:
 **Fallback** (no MEMORY.md entry found):
 1. Scan `<memory-root>` for `YYYY-MM-DD-*/state.md` not yet indexed in MEMORY.md; filter by `repo` frontmatter.
 2. If matches: re-add pointer to MEMORY.md and proceed.
-3. If still none: scan devlog folder for `_state.json` (legacy); filter by repo name; offer migration to memory file → proceed.
+3. If still none: proceed to the entry menu (new task).
 
 **Selection table format (multiple tasks):**
 ```
@@ -252,9 +258,9 @@ MEMORY.md is auto-loaded at session start. When a sub-command is given:
 
 ---
 
-## Step Router (Pre-condition Guards)
+## Step Router (단계 진입 조건)
 
-| currentStep | Load file | Pre-condition |
+| currentStep | Load file | 진입 조건 |
 |-------------|-----------|---------------|
 | `"entry"` | steps/entry.md | none |
 | `"idea"` | steps/idea.md | none |
@@ -263,7 +269,7 @@ MEMORY.md is auto-loaded at session start. When a sub-command is given:
 | `"build"` | steps/build.md | `artifacts.architecture` exists |
 | `"complete"` | steps/complete.md | all features in memory file Features table have status `✅ done` |
 
-Verify pre-conditions before loading. If not met, warn and block.
+Verify the 진입 조건 before loading. If not met, warn and block.
 
 ---
 

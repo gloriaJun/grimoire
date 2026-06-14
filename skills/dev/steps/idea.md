@@ -35,9 +35,9 @@ Save `brainstorm.md` to the task directory:
 <task-dir>/brainstorm.md
 ```
 
-Register in `_state.json`:
-```json
-{ "artifacts": { "brainstorm": "brainstorm.md" } }
+Register in the memory file `state.md` `## Artifacts`:
+```
+- brainstorm: `brainstorm.md`
 ```
 
 ### 3.5 Readiness Check
@@ -66,9 +66,9 @@ Ask: "Ready to move to planning? (y / edit / stop)"
 
 ## State Update
 
-`currentStep` ← `"plan"`, append `"idea"` to `completedSteps`, `artifacts.brainstorm` ← path
+`current-step` ← `"plan"`, append `"idea"` to `## Completed Steps`, `## Artifacts` brainstorm ← path
 
-Follow update mechanics from `schemas/state.md`.
+Follow update mechanics from `schemas/memory.md`.
 
 ## Session Handoff
 

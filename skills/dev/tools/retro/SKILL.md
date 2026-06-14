@@ -5,155 +5,166 @@ description: >
   Not a standalone skill — invoked only from dev/SKILL.md.
 ---
 
-# Retro — Session Retrospective
+# Retro — 회고 + 배운 점 노트
 
-Capture a retrospective note for a completed task and save it to the Obsidian vault.
-Works with or without a devlog.
+완료된 작업의 회고(잘된 점·아쉬운 점·다음에 바꿀 것)와 기술적으로 배운 점을 **하나의 노트**로
+묶어 Obsidian vault에 발행한다. devlog가 있든 없든 동작한다.
+
+> 이전의 `retro`/`til` 두 단계를 하나로 합친 명령이다. 작업 내부 정리는 `/dev complete`가
+> `<task>-log.md`로 끝내고, 이 명령은 그 내용을 vault에 정리해 남기는 역할만 한다.
 
 ---
 
-## Entry Check
+## 진입 확인
 
-**Resolve current repo name:**
+**현재 레포 이름** (main repo root 기준 — worktree에서도 메인을 가리킴):
 ```bash
-basename $(git rev-parse --show-toplevel 2>/dev/null || pwd)
+REPO_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")
+[ -d "$REPO_ROOT" ] || REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+basename "$REPO_ROOT"
 ```
 
-**Scan for candidate tasks** from MEMORY.md `## Active Dev Tasks` and `## Completed Dev Tasks`:
-- Post-complete, retro not started: memory file `current-step == "complete"` AND `retro` NOT in Completed Steps
-- Retro in progress: memory file `current-step == "retro"` AND `retro` NOT checked
+**후보 작업 탐색** — MEMORY.md의 `## Completed Dev Tasks`와 `## Active Dev Tasks`에서 현재 레포(`repo`)로 필터:
+- **완료 작업**: 포인터가 `<task>-log.md`를 가리키는 항목 (가장 흔한 경우)
+- **진행 중 작업**: `state.md`의 `current-step`이 `complete` 직전까지 온 항목
 
-Filter by current repo (`repo` frontmatter). If multiple candidates: list them and ask user to choose.
+후보가 여러 개면 목록을 보여주고 사용자가 고르게 한다.
 
-**Fallback**: if MEMORY.md has no entries, resolve devlogs root from cwd and scan `_state.json` files (legacy):
-- `GitHubWork` cwd → `~/Documents/GitHubWork/_claude/devlogs/`
-- `GitHubPrivate` cwd → `~/Documents/GitHubPrivate/_claude/devlogs/`
+**모드 결정:**
+- **완료 모드** (`<task>-log.md` 존재): 로그 파일을 읽어 `## 결과`·`## 과정에서 고민한 것`·`## 배운 것`을 입력으로 쓴다.
+- **진행 중 모드** (`state.md`만 있고 아직 complete 전): 경고만 하고 막지는 않는다. `state.md`·`history.md`에서 컨텍스트를 모은다.
+- **단독 모드** (후보 없음): 사용자에게 직접 묻는다.
 
-**Lifecycle mode** (candidate task found):
-1. Read memory file: extract `task-name`, `task-dir`, `## Artifacts`; read `history.md` from task directory if it exists
-2. If `current-step` is not `"complete"`: warn "complete step not yet done" — do not block
-3. Ask: "Write a retrospective for **<task-name>**? (y/n)"
-   - `n` → stop. Show: "Skipped. Run `/dev retro` anytime to write it later."
-   - `y` → proceed
-
-**Standalone mode** (no candidate task found): proceed directly without asking.
+진행에 앞서 한 번 확인: "**<task-name>** 회고 노트를 작성할까요? (y/n)"
+- `n` → 중단. "건너뜀. 나중에 `/dev retro`로 언제든 작성할 수 있습니다."
+- `y` → 진행
 
 ---
 
-## Context
+## 컨텍스트 수집
 
-**Lifecycle mode** — from memory file and devlog:
-- `task-name`, `task-dir`, `## Artifacts` from memory file
-- `history.md` Decision Log from task directory (if exists)
-
-**Standalone mode** — ask user:
-- Task name
-- Brief description of what was accomplished
+- **완료 모드**: `<task>-log.md`의 요약·결과·고민·배운 점.
+- **진행 중 모드**: `state.md`의 `task-name`·`## Artifacts`, `history.md`의 결정·블로커 기록.
+- **단독 모드**: 작업 이름과 한 일을 사용자에게 묻는다.
 
 ---
 
-## Execute
+## 실행
 
-Write `retrospect.md` directly to the task folder:
+vault에 노트 하나(`retro.md`)를 쓴다.
 
-1. Resolve output path:
-   - `~/Documents/obsidian-vault/04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md`
-   - Create the task folder if it doesn't exist.
-2. Gather context:
-   - **task-name**: from memory file `task-name` or user input
-   - **scope**: resolve from cwd:
-     | cwd contains | scope |
-     |---|---|
-     | `GitHubWork` | `work` |
-     | `GitHubPrivate` | `life` |
-     | neither | ask the user |
-   - **context**: summarize from `history` + artifacts (lifecycle) or user description (standalone)
-3. **Action Items 초안 확인** (lifecycle mode only, `history.md`가 있을 때):
-   - `history.md` Decision Log의 `status: resolved` 항목 + `artifacts` 목록에서 후보 3–5개 도출
+1. 출력 경로 결정:
+   - `~/Documents/obsidian-vault/04_Notes/<scope>/YYYY-MM-DD-<task-name>/retro.md`
+   - 폴더가 없으면 만든다.
+2. `scope`는 cwd로 판단:
+   | cwd 포함 | scope |
+   |---|---|
+   | `GitHubWork` | `work` |
+   | `GitHubPrivate` | `life` |
+   | 둘 다 아님 | 사용자에게 질문 |
+3. **용도(audience) 선택** — 한 번 묻는다:
+   ```
+   이 노트의 용도를 선택하세요:
+     1. 개인 메모 (기본) — 내가 나중에 참고
+     2. 팀 공유 — 팀원이 읽을 기술 문서
+   ```
+   - `1` 또는 Enter → `audience: personal`
+   - `2` → `audience: team`
+4. **Action Items 초안 확인** (완료/진행 중 모드, 입력 컨텍스트가 있을 때):
+   - `<task>-log.md`의 `## 배운 것`/`## 과정에서 고민한 것`(또는 history.md 결정·블로커 기록)에서 후보 3~5개 도출
    - 사용자에게 제시:
      ```
      Action Items 초안:
      - [ ] ...
      - [ ] ...
 
-     수정하거나 추가할 항목이 있으면 알려주세요. 없으면 그대로 진행합니다.
+     수정·추가할 항목이 있으면 알려주세요. 없으면 그대로 진행합니다.
      ```
-   - 사용자 응답을 반영해 Action Items 확정 후 다음 단계 진행
-   - `history.md` 없거나 standalone mode이면 이 단계를 건너뜀
-4. Write `retrospect.md` using this template:
+   - 응답을 반영해 확정. 단독 모드이거나 입력 컨텍스트가 없으면 건너뜀.
+5. 아래 템플릿으로 `retro.md`를 쓴다:
 
 ```markdown
 ---
 date: YYYY-MM-DD
 task: <task-name>
 scope: <scope>
+audience: personal
 tags: []
+keywords: []
 summary: "<한 줄 요약>"
 effort: S | M | L
 related: []
+follow_up: []
 ---
 
-## What Went Well
+## 한 일
+- **목표:** (이 작업에서 해결하려던 것 — 작업명을 몰라도 읽히게)
+- 스택 / 도구:
 
-## What Didn't Go Well
+## 잘된 점
 
-## Key Takeaways
+## 아쉬운 점
 
-## Action Items
+## 다음에 바꿀 것
+<행동·습관·프로세스 변화 — "다음엔 X 하겠다">
 
-## Process Reflection
+## 배운 것 (기술)
+<기술 사실·패턴 — "X 상황에서는 Y 방법을 쓴다" 형태로 일반화>
 
-## Task Links
+## 트러블슈팅 (있으면)
+### [문제 제목]
+- **증상:**
+- **원인:** (불명확하면 Unknown으로 명시)
+- **해결:**
+
+## 참고 자료
+
+## 링크
 ```
 
-Field guidance:
-- `tags`: required — use 1–3 topic tags
-- `summary`: required — one sentence capturing what was reflected on and the key lesson
-- `effort`: optional — S (< 2h), M (2–8h), L (> 8h)
-- `What I Learned` vs `Key Takeaways`: Key Takeaways = behavior/habit change ("다음엔 X 하겠다"); til What I Learned = technical facts
-- `What Didn't Go Well` vs `Process Reflection`: former = "무엇이 문제였나", latter = "다음에 프로세스를 어떻게 바꿀까"
+필드 가이드:
+- `tags`: 필수 — 주제 태그 1~3개
+- `keywords`: 선택 — 검색용 구체 용어(에러 메시지·패키지명·증상)
+- `summary`: 필수 — 무엇을 회고했고 핵심 교훈은 무엇인지 한 문장
+- `effort`: 선택 — S (< 2h), M (2–8h), L (> 8h)
+- `follow_up`: 선택 — 남은 기술 부채·추가로 파볼 항목
+- `다음에 바꿀 것` vs `배운 것`: 전자는 행동/습관 변화, 후자는 기술 사실
+- `한 일 > 목표`: 필수. 작업명을 모르는 독자도 배경을 한 문장으로 이해할 수 있게 (Every Page is Page One 원칙).
 
-After writing the file, fill the `related:` field:
+**팀 공유 모드(`audience: team`) 보강:**
+- `한 일 > 목표`: 배경 지식 없는 독자가 이해하도록 2~3문장으로 상세히
+- `배운 것`: "왜 그 상황이 생기는지" 배경 설명 추가
+- `트러블슈팅 > 원인`: `Unknown` 금지 — 확인된 사실만 (불명확하면 해당 항목 삭제)
+- `참고 자료`: 독자 학습용 자료 필수 (개인 모드에서는 선택)
 
-1. Read `shared/vault-context.md` and execute with:
-   - **keywords**: `tags` values + `task-name` terms
-   - **search_focus**: `references`, `past-mistakes`
-   - **scope_hint**: same as `scope` field
-2. Top matching files (max 3) → rewrite `related:` as:
-   ```yaml
-   related:
-     - "[[04_Notes/work/2026-04-07-sentry-insight/til]]"
-     - "[[10_Knowledge/dev/debugging-tips]]"
-   ```
-3. If no matches → leave `related: []` as-is.
+노트를 쓴 뒤 `related:`와 `참고 자료`를 채운다:
 
----
-
-## State Update (lifecycle mode only)
-
-1. Update memory file:
-   - frontmatter `current-step` ← `"retro"`
-   - frontmatter `updated` ← today
-   - `## Completed Steps`: append `- [x] retro — YYYY-MM-DD`
-   - `## Artifacts`: add `retro: 04_Notes/<scope>/YYYY-MM-DD-<task-name>/retrospect.md`
-   - Update MEMORY.md pointer step display
-
-2. Update `_index.md`:
-   - Find the row matching the task directory in `<memory-root>/_index.md`
-   - Update step column to `retro`
-   - Update frontmatter `updated:` to today's date
+1. `shared/vault-context.md`를 Read하고 다음으로 실행:
+   - **keywords**: `keywords` 필드 값(있으면), 없으면 `tags` + `task-name` 용어
+   - **search_focus**: `references`, `error-history`, `past-mistakes`
+   - **scope_hint**: `scope`와 동일
+2. 상위 매칭 파일(최대 3개):
+   - `04_Notes` 파일 → `related:`에 `"[[path/to/file]]"`로 추가
+   - `10_Knowledge` 파일 → `참고 자료`에 `[[path/to/file]] — <frontmatter 요약>`로 추가
+3. 매칭 없으면 그대로 둔다.
 
 ---
 
-## Completion
+## 상태 갱신
+
+- **완료 모드**: `state.md`는 이미 삭제됐다. `<task>-log.md`의 `## 참고 문서` 아래에
+  `- 회고: 04_Notes/<scope>/YYYY-MM-DD-<task-name>/retro.md` 한 줄을 추가한다.
+  MEMORY.md 완료 포인터는 그대로 둔다.
+- **진행 중 모드**: `state.md`의 `## Artifacts`에 `retro: <경로>`를 추가하고 `updated`를 오늘로 갱신.
+
+---
+
+## 완료
 
 ```
-✅ [retro] complete — retrospect note saved
+✅ 회고 노트 저장 완료 — <task-name>
 
 📄 <retro-path>
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Next:  /dev til
-Start a new session and run `/dev til` — it will detect this task and resume.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+작업 라이프사이클이 모두 끝났습니다. 다음 단계는 없습니다.

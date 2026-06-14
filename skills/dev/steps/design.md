@@ -170,7 +170,7 @@ Memory file updates:
 
 MEMORY.md pointer: update step display to `build`.
 
-Append review approval entry to `history.md` Decision Log (see `schemas/history.md` Review Approval Entries).
+Append review approval entry to the `history.md` 결정·블로커 기록 (see `schemas/history.md` Review Approval Entries).
 
 Note: test framework info from the Testing Strategy table is detected on-demand at build time — not stored in the memory file.
 

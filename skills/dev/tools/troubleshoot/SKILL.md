@@ -43,7 +43,7 @@ flowchart TD
     P -- "No" --> Q{"Save to vault?\n(error/debug mode)"}
     P -- "Yes" --> R["Suggest /g-test-writer"]
     R --> Q
-    Q -- "y" --> S["Load til/SKILL.md standalone"] --> T(["Complete"])
+    Q -- "y" --> S["Load retro/SKILL.md standalone"] --> T(["Complete"])
     Q -- "n" --> T
 ```
 

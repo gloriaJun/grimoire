@@ -3,8 +3,6 @@
 Task state file that tracks `/dev` workflow progress across sessions.
 Stored in the Claude Code project memory directory as a task subdirectory.
 
-**Replaces**: `_state.json` (see `schemas/state.md` for legacy reference)
-
 ## File Location
 
 ```
@@ -19,9 +17,24 @@ Example: `~/.claude/projects/-Users-al03155147-Documents-GitHubPrivate-my-assist
 
 ### Project-ID Derivation
 
-Encode the absolute repo path by removing the home prefix and replacing `/` with `-`:
+Always resolve the **main repo root** first — never the worktree path. This keeps worktree
+sessions writing into the main repo's memory directory instead of creating a separate
+(usually empty) `...-claude-worktrees-<name>` project directory.
+
+```bash
+# Main repo root — returns the main repo even from inside a worktree
+REPO_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")
+[ -d "$REPO_ROOT" ] || REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+```
+
+`git rev-parse --git-common-dir` returns the main `.git` directory even inside a worktree,
+so its parent is the main repo root. Encode `REPO_ROOT` by removing the home prefix and
+replacing `/` with `-`:
 - Repo path: `/Users/al03155147/Documents/GitHubPrivate/my-assistant-hub`
 - Project-ID: `-Users-al03155147-Documents-GitHubPrivate-my-assistant-hub`
+
+The actual worktree path (when working in one) is recorded only in `## Build Context` →
+`Worktree:`, not in the project-id.
 
 ## Frontmatter
 
@@ -105,7 +118,15 @@ Add to `## Active Dev Tasks` section when task is created:
 - [<task-name>](YYYY-MM-DD-<task-name>/state.md) — <repo> / <step> (<N>/<M> features)
 ```
 
-Move to `## Completed Dev Tasks` section when `/dev complete` is called.
+When `/dev complete` runs, the task is consolidated into `<task-name>-log.md` and `state.md`
+is deleted (see `steps/complete.md`). Move the pointer to `## Completed Dev Tasks` and
+**repoint it to the log file**:
+
+```markdown
+## Completed Dev Tasks
+
+- [<task-name>](YYYY-MM-DD-<task-name>/<task-name>-log.md) — <repo> / 완료 YYYY-MM-DD
+```
 
 ## Creation Rules
 
@@ -120,7 +141,7 @@ Move to `## Completed Dev Tasks` section when `/dev complete` is called.
 - Update `current-step` frontmatter BEFORE loading the next step file
 - Append `- [x] <step> — YYYY-MM-DD` to Completed Steps AFTER user confirms step completion
 - Add artifact paths to `## Artifacts` as soon as files are created
-- After every update: regenerate `history.md` Current Snapshot from this file (see `schemas/history.md`)
+- After every update: regenerate the `history.md` 현재 상태 block from this file (see `schemas/history.md`)
 - Update `updated:` frontmatter on every write
 
 ## Session Restoration
@@ -132,7 +153,6 @@ Move to `## Completed Dev Tasks` section when `/dev complete` is called.
 5. Load the step file for `current-step`
 
 **Fallback**: if no MEMORY.md entry found, scan `<memory-root>` for `YYYY-MM-DD-*/state.md` not yet indexed.
-**Legacy fallback**: scan devlog folder for `_state.json` — see `schemas/state.md`
 
 ## Feature Tracking
 
@@ -141,31 +161,24 @@ Move to `## Completed Dev Tasks` section when `/dev complete` is called.
 - Feature rows added/removed freely throughout build step (flexible, not locked at design time)
 - `executor` and `testing` columns filled when user chooses at build step
 - Dependency notation in architecture.md: `<!-- depends: F-01 -->`
-- Stagnation events logged in `history.md` Decision Log, not here
+- Stagnation events logged in `history.md` 결정·블로커 기록, not here
 
 ## Plan File Storage
 
 During an active dev task session, if the user requests "계획 저장" or similar:
 - Save as `<task-dir>/plan.md` (NOT to `~/.claude/plans/`)
 
-## Removed Fields (detect-on-demand)
+## Detect-on-demand Fields
 
-Same as `_state.json` removed fields — these are never stored in the memory file:
+These are never stored in the memory file — detect them when needed:
 
-| Removed field | Replacement |
+| Field | How it's resolved |
 |---|---|
 | `artifacts.testConfig` | Detected at build step: check `vitest.config.*`, `jest.config.*`, `package.json` scripts |
 | `artifacts.lintConfig` | Detected at verification: check `eslint.config.*`, `package.json` scripts, nx.json |
 | `codexAvailability` | Detected at first cross-review invocation per session |
-| review approvals | Logged in `history.md` Decision Log as `type: decision` entries |
-| stagnation resolutions | Logged in `history.md` Decision Log as `type: troubleshooting` entries |
+| review approvals | Logged in `history.md` 결정·블로커 기록 as `type: decision` entries |
+| stagnation resolutions | Logged in `history.md` 결정·블로커 기록 as `type: troubleshooting` entries |
 
-## _index.md
-
-Task registry file stored at `<memory-root>/_index.md`:
-
-```
-~/.claude/projects/<project-id>/memory/_index.md
-```
-
-Tracks all tasks for this project. Append a row on task creation; update status on step transitions.
+> Task indexing is handled solely by `MEMORY.md` (`## Active Dev Tasks` / `## Completed Dev Tasks`).
+> There is no separate `_index.md`.

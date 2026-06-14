@@ -46,62 +46,47 @@ No devlog folder scanning required — read from memory.
 3. **Fallback — orphaned task directory scan**:
    - Scan `<memory-root>` for `YYYY-MM-DD-*/state.md` not yet listed in MEMORY.md.
    - Filter by `repo` frontmatter field in each `state.md`.
-   - If matches found → treat as active tasks → go to step 4.
-   - If no matches → fall back to legacy `_state.json` scan:
-     - Detect workspace from `cwd`:
-       - Path contains `GitHubWork` → `~/Documents/GitHubWork/_claude/devlogs/`
-       - Path contains `GitHubPrivate` → `~/Documents/GitHubPrivate/_claude/devlogs/`
-       - Neither → ask the user
-     - List folder names under devlogs root. Filter by repo name substring.
-   - If matches: read `_state.json` for matched folders only.
-     - Active: `currentStep NOT IN completedSteps`
-   - If active legacy tasks found: display migration prompt:
+   - If matches found → re-register in MEMORY.md → treat as active tasks → go to step 4.
+   - If no matches → check other repos:
      ```
-     ⚠️ 레거시 태스크가 감지됐습니다: <folder-name>
-     메모리 파일로 마이그레이션하시겠습니까? (Y/n)
-     ```
-     - Y: create memory file from `_state.json` per `schemas/state.md` Migration section
-          → add MEMORY.md pointer → go to step 4 using the new memory file
-     - n: continue using `_state.json` directly → go to step 4
-   - If no active legacy tasks: check other repos (same Pass 2 logic as before):
-     ```
-     현재 레포(<repo>)와 일치하는 태스크가 없습니다.
-     다른 태스크를 이어하시겠습니까?
+     현재 레포(<repo>)에 진행 중인 작업이 없습니다.
+     다른 레포 작업을 이어서 할까요?
 
        1. 2026-04-28-repo-task-name  (build)
        2. ...
 
-     > 번호 선택 / n 새 태스크
+     > 번호 선택 / n 새 작업 시작
      ```
+   - If still nothing → proceed to entry menu (step 6).
 
-4. Resume menu (when active tasks found):
+4. 이어할 작업 선택 (진행 중인 작업이 있을 때):
    ```
-   Active tasks found:
+   진행 중인 작업:
 
-     1. <task-name>  (<current-step> — <one-line progress>)
+     1. <task-name>  (<current-step> — <한 줄 진행 상황>)
      2. ...
 
-   Resume one, or start a new task?
-   > [number] to resume / [n] for new task
+   이어서 할 작업 번호를 고르거나, 새로 시작할까요?
+   > [번호] 이어하기 / [n] 새 작업
    ```
 
-5. On resume: read the memory file (or legacy `_state.json`), apply step name migration if needed (see `schemas/state.md` Legacy Step Name Migration), verify artifact paths in `## Artifacts`.
-   - If an artifact path is missing: warn the user and ask whether to skip or re-register.
-   - If `current-step` is `"build"` and `history.md` exists in the task directory:
-     - Read `history.md` and display context block:
-       ```
-       Resuming **<taskName>** at step build
+5. 이어하기 선택 시: 메모리 파일(`state.md`)을 읽고, 단계명 마이그레이션이 필요하면 적용
+   (`"wireframe"`/`"breakdown"` → `"build"`), `## Artifacts`의 경로가 실제로 있는지 확인한다.
+   - 산출물 경로가 없으면: 사용자에게 알리고 건너뛸지 다시 등록할지 묻는다.
+   - `current-step`이 `"build"`이고 작업 폴더에 `history.md`가 있으면 아래 요약을 보여준다:
+     ```
+     이어서 진행: **<taskName>** — 현재 build 단계
 
-       Branch: <branch from memory file ## Build Context>
-       Worktree: <worktree from memory file ## Build Context, or "(main repo)">
-       Progress: <done count>/<total> features done · Next: <next ⏳ feature from ## Features table>
+     브랜치: <메모리 ## Build Context의 Branch>
+     작업 위치: <메모리 ## Build Context의 Worktree, 없으면 "(메인 레포)">
+     진행률: 완료 <done>개 / 전체 <total>개 · 다음 작업: <## Features 표의 다음 ⏳ 기능>
 
-       📝 최근 결정사항: <last 1-2 Decision Log entries, or "(없음)">
-       ⚠️ 블로커: <open blocker entries from Decision Log, or "(없음)">
-       ```
-   - Otherwise: display standard resume confirmation and load the step file.
+     📝 최근 결정·이슈: <history.md 결정·블로커 기록 최근 1~2건, 없으면 "(없음)">
+     ⚠️ 막힌 부분: <결정·블로커 기록 중 status: open 항목, 없으면 "(없음)">
+     ```
+   - 그 외에는 간단한 이어하기 확인 후 단계 파일을 로드한다.
 
-6. No active tasks → proceed to entry menu.
+6. 진행 중인 작업이 없으면 → 시작 메뉴로 이동.
 
 ---
 
@@ -120,13 +105,13 @@ Select your starting point:
 > Enter number or sub-command name
 ```
 
-| Choice | Starts at | Pre-condition |
+| Choice | Starts at | 진입 조건 |
 |--------|-----------|---------------|
 | idea   | `steps/idea.md`   | none |
 | plan   | `steps/plan.md`   | none (creates new task directory + memory file) |
 | design | `steps/design.md` | PRD exists |
 | build  | `steps/build.md`  | architecture.md exists |
-| resume | prompts for task  | memory file or `_state.json` exists |
+| resume | prompts for task  | memory file (`state.md`) exists |
 | import | Import Flow below | existing artifacts in any form |
 
 ## New Task Initialization
@@ -135,7 +120,12 @@ After entry point is confirmed:
 
 1. Ask for task name (kebab-case, e.g., `one-auth-refactor`)
 2. Determine task directory:
-   - project-id: absolute repo path with `/` replaced by `-` (leading `~` removed), e.g. `/Users/al03155147/Documents/GitHubPrivate/my-assistant-hub` → `-Users-al03155147-Documents-GitHubPrivate-my-assistant-hub`
+   - Resolve the **main repo root** (worktree-safe; see `SKILL.md` Task Directory Detection):
+     ```bash
+     REPO_ROOT=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")
+     [ -d "$REPO_ROOT" ] || REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+     ```
+   - project-id: `REPO_ROOT` with `/` replaced by `-` (leading `~` removed), e.g. `/Users/al03155147/Documents/GitHubPrivate/my-assistant-hub` → `-Users-al03155147-Documents-GitHubPrivate-my-assistant-hub`
    - memory-root: `~/.claude/projects/<project-id>/memory/`
    - task-dir: `<memory-root>/YYYY-MM-DD-<task-name>/`
    - Create `<task-dir>` (mkdir).
@@ -149,35 +139,30 @@ After entry point is confirmed:
    - [<task-name>](YYYY-MM-DD-<task-name>/state.md) — <repo> / <step> (0/? features)
    ```
 5. Create `<task-dir>/history.md` using the initial template in `schemas/history.md`.
-6. Update `_index.md`:
-   - Read `<memory-root>/_index.md`
-   - Append row under `## Active Tasks`:
-     `` | `YYYY-MM-DD-<task-name>/` | <task-name> | <step-name> | in progress | ``
-   - Update frontmatter `updated:` to today's date
-7. Load the step file for the selected entry point.
+6. Load the step file for the selected entry point.
 
 ## Import Flow
 
-Triggered by `/dev import` or entry menu option 6.
+Triggered by `/dev import`, entry menu option 6, or an artifact passed after `/dev`.
 Use when the user already has completed artifacts (PRD, architecture.md, plan files, or inline content).
 
-1. **Determine task directory** (same project-id derivation as New Task Initialization step 2).
-2. **Ask for task name** (kebab-case).
-3. **Create task directory**: `<memory-root>/YYYY-MM-DD-<task-name>/`
-4. **Collect artifacts**: for each slot, ask for source or "skip":
+1. **Ask for task name** (kebab-case) and determine the task directory
+   (same worktree-safe `REPO_ROOT` / project-id derivation as New Task Initialization step 2).
+   Create `<memory-root>/YYYY-MM-DD-<task-name>/`.
 
-   | Slot | Memory file key | File to create |
-   |------|-----------------|----------------|
-   | Brainstorm | `artifacts - brainstorm` | `brainstorm.md` |
-   | PRD | `artifacts - prd` | `PRD-<task-name>.md` |
-   | Architecture | `artifacts - architecture` | `architecture.md` |
+2. **Collect artifacts in one pass.** Ask the user to point to whatever they already have —
+   file paths or inline content — for any of: brainstorm, PRD, architecture. One question, not three:
+   ```
+   가지고 있는 산출물의 경로(또는 내용)를 알려주세요. 해당되는 것만 적으면 됩니다.
+     - brainstorm:
+     - PRD:
+     - architecture:
+   ```
+   For each provided source: file path → copy into the task directory; inline/plan content →
+   write into the task directory (`brainstorm.md`, `PRD-<task-name>.md`, `architecture.md`).
+   Omit unprovided slots from `## Artifacts`.
 
-   Source can be:
-   - **File path**: copy file content into task directory
-   - **Inline / plan file**: user points to content in conversation → write to task directory
-   - **Skip**: omit from `## Artifacts`
-
-5. **Infer `current-step`** from artifacts provided:
+3. **Infer `current-step`** from what was provided:
 
    | Artifacts present | `current-step` |
    |---|---|
@@ -186,26 +171,24 @@ Use when the user already has completed artifacts (PRD, architecture.md, plan fi
    | PRD (no architecture) | `"design"` |
    | PRD + architecture | `"build"` |
 
-6. **Create memory file** (see `schemas/memory.md` Creation Rules):
+4. **Create memory file + history.md** (see `schemas/memory.md` Creation Rules):
    - frontmatter with inferred `current-step`, `entry-point: "import"`
    - `## Completed Steps`: all lifecycle steps preceding `current-step` marked `[x]`
    - `## Artifacts`: populated from collected artifacts
    - `## Features`: populate from architecture.md `## Features` checklist if available, else empty
 
-7. **Add MEMORY.md pointer** under `## Active Dev Tasks`:
+5. **Add MEMORY.md pointer** under `## Active Dev Tasks`:
    ```
    - [<task-name>](YYYY-MM-DD-<task-name>/state.md) — <repo> / <step> (0/? features)
    ```
 
-8. **Update `_index.md`** (same as New Task Initialization step 6).
-
-9. Confirm:
+6. Confirm:
    ```
-   ✅ 태스크 초기화 완료
+   ✅ 작업 초기화 완료
    경로: <task-dir>
    현재 단계: <current-step>
 
-   /dev <current-step> 을 이어서 실행하시겠습니까? (Y/n)
+   <current-step> 단계를 이어서 진행할까요? (Y/n)
    ```
    - Y: load the step file for `current-step`
    - n: stop

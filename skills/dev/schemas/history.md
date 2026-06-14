@@ -1,9 +1,10 @@
 # history.md Schema
 
 Human-readable lifecycle document for the full dev workflow.
-Stored in the devlog task subdirectory alongside `_state.json`.
+Stored in the task subdirectory alongside `state.md`.
 
 **Scope**: created at task initialization; spans idea → complete.
+At `/dev complete`, this file is consolidated into `<task>-log.md` and deleted (see `steps/complete.md`).
 
 ---
 
@@ -15,30 +16,30 @@ Stored in the devlog task subdirectory alongside `_state.json`.
      Regenerated on every step transition and feature completion
      ═══════════════════════════════════════════════════════════ -->
 
-## Current Snapshot
+## 현재 상태
 
-[generated content — see "Current Snapshot Format" below]
+[generated content — see "현재 상태 Format" below]
 
 <!-- ═══════════════════════════════════════════════════════════
-     END AUTO-GENERATED — append Decision Log entries below
+     END AUTO-GENERATED — append 결정·블로커 기록 entries below
      ═══════════════════════════════════════════════════════════ -->
 
 ---
 
-## Decision Log
+## 결정·블로커 기록
 
-[append-only entries — see "Decision Log Format" below]
+[append-only entries — see "결정·블로커 기록 Format" below]
 ```
 
 ---
 
-## Current Snapshot Format
+## 현재 상태 Format
 
 Regenerate this section in full from the memory file on every step transition and feature completion.
 Replace the entire block between the two comment markers.
 
 ```markdown
-## Current Snapshot
+## 현재 상태
 
 _Updated: YYYY-MM-DD_
 
@@ -61,11 +62,11 @@ _Updated: YYYY-MM-DD_
 <Artifacts line — only include artifact paths present in memory file ## Artifacts>
 **Artifacts**: [PRD](<prd-path>) · [Architecture](<architecture-path>) · [Wireframe](<wireframe-path>)
 
-<Open blockers — only include if Decision Log has entries with status: open>
-**Open blockers**: <titles of open Decision Log entries, comma-separated>
+<Open blockers — only include if 결정·블로커 기록 has entries with status: open>
+**Open blockers**: <titles of open 결정·블로커 기록 entries, comma-separated>
 ```
 
-### Current Snapshot Rules
+### 현재 상태 Rules
 
 - The comment markers (`<!-- AUTO-GENERATED ... -->` and `<!-- END AUTO-GENERATED ... -->`) must be preserved exactly — they are parsing anchors.
 - Replace the entire block between markers on each update; never do partial updates.
@@ -76,7 +77,7 @@ _Updated: YYYY-MM-DD_
 
 ---
 
-## Decision Log Format
+## 결정·블로커 기록 Format
 
 Append-only. Each entry follows this format:
 
@@ -97,7 +98,7 @@ _type: <decision|blocker|troubleshooting> · status: <open|resolved>_
 
 ### Review Approval Entries
 
-When a PRD, TRD, or feature breakdown is reviewed and approved, append a Decision Log entry:
+When a PRD, TRD, or feature breakdown is reviewed and approved, append a 결정·블로커 기록 entry:
 
 ```markdown
 ### [plan] YYYY-MM-DD — PRD approved
@@ -110,7 +111,7 @@ Replace `plan` with the current step (`design` for architecture review).
 
 ### Stagnation Entries
 
-When a stagnation escape is triggered (tests fail ×2), append a Decision Log entry:
+When a "테스트 막힘 탈출" is triggered (tests fail ×2), append a 결정·블로커 기록 entry:
 
 ```markdown
 ### [build] YYYY-MM-DD — F-XX stagnation: <feature name>
@@ -126,12 +127,12 @@ Update `status: resolved` when the stagnation is resolved.
 
 | status | Meaning |
 |--------|---------|
-| `open` | Not yet resolved — surfaces in Current Snapshot's "Open blockers" |
-| `resolved` | Resolved within this task — candidate for TIL archiving |
+| `open` | Not yet resolved — surfaces in the 현재 상태 block's "Open blockers" |
+| `resolved` | Resolved within this task |
 
-### Decision Log Rules
+### 결정·블로커 기록 Rules
 
-- Only append, never edit or delete entries (except via `/dev til` archive flow).
+- Append-only while the task is active: never edit or delete entries.
 - If a blocker is resolved: add a follow-up entry `### [<step>] YYYY-MM-DD — <title> (resolved)` with `status: resolved` and a brief note. Do not edit the original entry.
 - The step field should match the step at the time of writing (e.g., `build`, `design`).
 
@@ -148,7 +149,7 @@ Create with the comment markers and empty sections only — no content until fir
      Regenerated on every step transition and feature completion
      ═══════════════════════════════════════════════════════════ -->
 
-## Current Snapshot
+## 현재 상태
 
 _Updated: YYYY-MM-DD_
 
@@ -160,21 +161,18 @@ _Updated: YYYY-MM-DD_
 | **Task Dir** | <task-dir>/ |
 
 <!-- ═══════════════════════════════════════════════════════════
-     END AUTO-GENERATED — append Decision Log entries below
+     END AUTO-GENERATED — append 결정·블로커 기록 entries below
      ═══════════════════════════════════════════════════════════ -->
 
 ---
 
-## Decision Log
+## 결정·블로커 기록
 ```
 
 ---
 
-## Pruning Policy
+## Lifecycle End
 
-- `/dev complete` → **do not prune**. Completed-task decisions are the most valuable entries.
-- `/dev til` → review Decision Log:
-  - `status: resolved` entries that map to TIL learnings: archive to `<task-dir>/archived/history-<date>.md`
-  - `status: open` entries: surface as `follow_up` items in the TIL note
-  - Entries without clear TIL value: leave in place
-- Automatic deletion is **never allowed**.
+- While the task is active, this file is never pruned — every decision and blocker stays.
+- At `/dev complete`, the 결정·블로커 기록 is summarized into `<task>-log.md` (`## 과정에서 고민한 것`)
+  and this file is deleted as part of consolidation. There is no separate archive step.
