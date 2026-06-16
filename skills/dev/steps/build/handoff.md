@@ -12,20 +12,44 @@
 
 **Build Context** (on first feature completion of this task):
 - `## Build Context - Branch` ← `git branch --show-current`
-- `## Build Context - Worktree`: set to the current worktree path only when working inside one;
-  otherwise "(main repo)". Detect with:
-  ```bash
-  TOP=$(git rev-parse --show-toplevel 2>/dev/null)
-  MAIN=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")
-  [ "$TOP" != "$MAIN" ] && echo "$TOP" || echo "(main repo)"
-  ```
-  (The memory directory itself always lives under the main repo — see `SKILL.md` Task Directory Detection.)
+- `## Build Context - Worktree`:
+  - `worktree_path` 컨텍스트 변수가 있으면 해당 경로를 기록
+  - 없으면 `"(main repo)"`
 
 **architecture.md:**
 - `## Features` checklist: mark completed feature `- [ ] F-NN` → `- [x] F-NN`
 
 **MEMORY.md pointer:**
 - Update step display: `build (<N>/<M> features)` or `complete` if all done
+
+## Worktree Merge & Cleanup
+
+`worktree_path` 컨텍스트 변수가 없으면 이 섹션 전체 skip (Codex path 또는 worktree 미사용).
+
+1. 미커밋 변경 확인:
+   ```bash
+   git -C <worktree_path> status --porcelain
+   ```
+   결과가 있으면: 먼저 commit 요청 후 진행.
+
+2. 메인 브랜치로 merge:
+   ```bash
+   git merge <worktree_branch> --no-ff
+   ```
+
+3. Worktree 제거:
+   ```bash
+   git worktree remove <worktree_path>
+   ```
+
+4. 브랜치 삭제:
+   ```bash
+   git branch -d <worktree_branch>
+   ```
+
+5. Build Context - Worktree 항목을 `"(merged: <worktree_branch>)"` 로 업데이트.
+
+---
 
 ## history.md Update
 

@@ -9,6 +9,9 @@
    - PRD and architecture.md paths for context
 4. The feature-executor asks the user to choose implementation agent (default: Codex).
 5. Update Executor column in memory file `## Features` table.
+6. (Claude path only) If the Agent result contains a worktree path and branch:
+   store as `worktree_path` and `worktree_branch` in conversation context for handoff cleanup.
+   Subsequent steps (simplify, cross-review, verification) reference files under `worktree_path`.
 
 ## Step C-2: Simplify (Pre-Review)
 

@@ -10,6 +10,9 @@
 4. The feature-executor asks the user to choose implementation agent (default: Codex).
 5. Update Executor column in memory file `## Features` table.
 6. Implementation proceeds based on user choice.
+7. (Claude path only) If the Agent result contains a worktree path and branch:
+   store as `worktree_path` and `worktree_branch` in conversation context for handoff cleanup.
+   Subsequent steps reference files under `worktree_path`.
 
 ## Step B-2: Test Generation
 

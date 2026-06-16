@@ -58,6 +58,8 @@ If the user chooses Claude:
 3. Implement changes following the TRD
 4. Verify against acceptance criteria
 5. Run relevant tests if available
+6. Upon completion, the **orchestrator** (not this agent) handles worktree merge and cleanup
+   at the handoff step. Do not attempt cleanup inside this agent.
 
 ### 2b. Codex Delegation
 
