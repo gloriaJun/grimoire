@@ -22,8 +22,6 @@
       "Bash(brew upgrade:*)",
       "Bash(rtk *)",
       "Bash(plannotator:*)",
-      "Plannotator:*",
-      "Codex:*",
       "Bash(grep -E:*)",
       "Bash(curl -s http://localhost:*)",
       "Bash(* --version)",
@@ -128,6 +126,7 @@
       }
     }
   },
+  "skipWorkflowUsageWarning": true,
   "theme": "dark-daltonized",
   "autoCompactEnabled": false,
   "skipAutoPermissionPrompt": true

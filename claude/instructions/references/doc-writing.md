@@ -8,6 +8,13 @@ Does NOT apply to internal config files (CLAUDE.md, SKILL.md, settings.json, etc
 Do NOT use horizontal rules (`---`, `----`, `***`) as section dividers.
 Use headings (`##`, `###`) for all structural separation.
 
+Note: table separator rows (`|---|---|`) are required Markdown table syntax — they are NOT horizontal rules and are exempt from this rule.
+
+## Heading Numbering
+
+Do NOT prefix headings with sequential numbers (`## 1. 배경`, `## 2. 개요`).
+Use plain-text headings (`## 배경`, `## 개요`). Ordering is implied by document flow.
+
 ## Table of Contents
 
 Include a TOC only when the document has **3 or more top-level sections** (`##` headings).

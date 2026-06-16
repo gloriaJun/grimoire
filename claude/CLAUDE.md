@@ -47,7 +47,7 @@ The following hooks are intentional exceptions to the "no autonomous modificatio
 - When model selection is needed by agent task type → load `@instructions/references/agent-task-mapping.md`
 - When user requests a review of their own written code → load `@instructions/references/code-review.md`
 - When user references prior notes/ideas ("이전에 정리한", "메모", "노트", "기록"), requests knowledge lookup from personal materials, or task involves ideation with personal context → load `@instructions/references/obsidian-vault.md` and follow routing rules
-- When writing technical or user-facing documents (guides, wikis, READMEs, drafts) → load `@instructions/references/doc-writing.md`
+- When writing technical or user-facing documents (guides, wikis, READMEs, drafts) → load `@instructions/references/doc-writing.md`. This includes documents produced via skills (`/dev` devlog/wiki-draft, `l-doc-skills` wiki-publishing) or natural-language "정리해줘/문서로 만들어줘" requests — load it before writing the document output, even when the task arrived through another skill's routing.
 
 @RTK.md
 
