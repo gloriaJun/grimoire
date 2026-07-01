@@ -117,10 +117,13 @@ The agent produces `architecture.md` in the devlog task directory.
 
 After `architecture.md` is approved, generate `wireframe.html` inline (no agent).
 
-> **No auto-deploy.** Never generate `pages.linecorp.com` URLs or auto-call `/deploy-wireframe`.
-> Only deploy when the user explicitly requests it.
+> **No auto-deploy.** Never generate `pages.linecorp.com` URLs or auto-call `/showcase`.
+> Only publish when the user explicitly requests it.
 >
 > **No external tool prompts.** Do not generate Figma/Google Stitch prompts unless the user asks.
+>
+> **Sharing via showcase.** When the user asks to publish/share a wireframe, follow the meta
+> convention in the showcase repo `docs/AUTHORING.md` and publish with `/showcase`.
 
 Write `<devlogs-task-dir>/wireframe.html`:
 
