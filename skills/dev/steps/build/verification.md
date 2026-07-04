@@ -2,6 +2,20 @@
 
 Run after cross-review, for every feature regardless of testingApproach.
 
+## Requirement Delta Check
+
+Run FIRST, before local verification.
+
+1. Scan this session's conversation (and `history.md` 결정·블로커 기록) for user
+   corrections that reversed or amended an earlier decision after the feature
+   started — e.g. "A가 아니라 B", "그게 아니라", a re-stated instruction.
+2. For each delta found:
+   - Record in `history.md` as `type: decision` with title `요구사항 변경: <before> → <after>`
+     (skip if an entry for this delta already exists)
+   - Verify the change is actually applied in the current diff — cite evidence (file:line)
+3. If a delta is NOT applied: fix it now, before proceeding. Never defer a
+   user-stated correction to review or a later feature.
+
 ## Local Verification Checkpoint
 
 ### Step 1: testingApproach별 확인

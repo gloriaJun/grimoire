@@ -11,7 +11,21 @@ Triggers:
 
 - Feature implementation committed → update feature status + add history entry
 - Step completed (all features in step done) → update currentStep + completedSteps
-- Feature started but not finished → do NOT update (avoid partial state)
+- Feature started but not finished → do NOT change `features[].status` (avoid partial state)
+- **Session ends without a commit** → still write a handoff record: update `notes`
+  with actual progress and an `"uncommitted"` marker, and append a history entry
+  (`action: "session-handoff"`). Without this, `_state.json` freezes at a stale step
+  even though work exists on disk.
+
+## Resume Integrity Check
+
+On plan resume, before continuing work:
+
+1. Pick 1–2 features still marked `"pending"` in `_state.json`.
+2. Spot-check against repo reality: do the target files exist? does
+   `git log --oneline -20` show related commits?
+3. If reality is ahead of the state (work done but still `"pending"`),
+   reconcile `_state.json` first — with the user's confirmation — then continue.
 
 ## What to Update
 

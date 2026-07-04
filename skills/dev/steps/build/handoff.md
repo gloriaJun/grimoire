@@ -73,10 +73,15 @@ Format: `### [build] YYYY-MM-DD — <title>`
 
 ## Completion Message
 
+Every completion claim must carry evidence — the commands actually run and their
+results (test/lint output, delta check outcome). Anything not directly verified
+is reported as `미확인`, never asserted.
+
 **When features remain:**
 
 ```
 ✅ F-<NN> <feature-name> complete
+근거: <executed commands + results, e.g. "pnpm test 12 passed · lint clean · 델타 0건">
 
 Remaining: N feature(s) pending
 
@@ -90,6 +95,7 @@ Start a new session and run `/dev` to resume automatically.
 
 ```
 ✅ F-<NN> <feature-name> 완료 — 모든 기능 완료!
+근거: <executed commands + results>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 모든 기능이 완료되었습니다.
