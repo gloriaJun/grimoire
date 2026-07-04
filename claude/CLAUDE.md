@@ -19,6 +19,7 @@
 ## Action Judgment Rules
 - `"~해줘"`, `"~해"` → execute. `"~하려고해"`, `"~할 예정이야"`, `"~할 계획이야"` → user's own plan, do NOT act.
 - Irreversible external actions (GitHub Discussion/Issue/PR creation, sending messages) → always confirm before executing, even when the request seems clear.
+- Bulk file restructuring (moving/deleting 3+ files, or any `rm -rf`) → never one chained command; present the plan, then execute in small approved steps.
 - During design/planning: present a clear recommendation with reasoning first, then ask. Do not list options without a stated preference. Reserve confirmation requests for actual decision gates (before writing files, before creating Jira tickets, etc.).
 
 ## Hook Exceptions (Intentional Autonomous Behaviors)
@@ -26,6 +27,7 @@ The following hooks are intentional exceptions to the "no autonomous modificatio
 - SessionStart: `codex login` — initialize Codex CLI session (async, only when OPENAI_CODEX_API_KEY is set)
 - SessionStart: `memory-obsidian-link.sh` — auto-create Obsidian symlink for project memory directory (async)
 - ExitPlanMode: `plannotator` — display plan review UI (managed by plannotator plugin via PermissionRequest hook; do not add a duplicate hook in settings.json)
+- PostToolUse: `definition-file-check.sh` — advisory token-budget + English-only check on definition-file writes (skills/agents/instructions)
 
 ## Recommended Model
 - Default CLI model: **Sonnet** (cost-efficient orchestrator)
@@ -50,8 +52,6 @@ The following hooks are intentional exceptions to the "no autonomous modificatio
 - When user requests a review of their own written code → load `@instructions/references/code-review.md`
 - When user references prior notes/ideas ("이전에 정리한", "메모", "노트", "기록"), requests knowledge lookup from personal materials, or task involves ideation with personal context → load `@instructions/references/obsidian-vault.md` and follow routing rules
 - When writing technical or user-facing documents (guides, wikis, READMEs, drafts) → load `@instructions/references/doc-writing.md`. This includes documents produced via skills (`/dev` devlog/wiki-draft, `l-doc-skills` wiki-publishing) or natural-language "정리해줘/문서로 만들어줘" requests — load it before writing the document output, even when the task arrived through another skill's routing.
-
-@RTK.md
 
 ## Memory Format
 

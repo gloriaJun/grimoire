@@ -34,3 +34,13 @@ When creating a new instruction file, decide its placement:
 
 **Default to `references/`** unless you can justify always-loading.
 The cost of an unnecessary @import is paid every session; the cost of an on-demand Read is paid only when relevant.
+
+## Enforcement
+
+- Before writing a definition file, measure it: tokens = `wc -c` / 4. State actual vs budget in the result.
+- A PostToolUse hook (`hooks/definition-file-check.sh`) re-checks size and the English-only convention
+  after every definition-file Write/Edit. Treat its warnings as review findings: fix or explicitly justify.
+- Budgets are advisory ceilings, not hard blocks. Hub-style SKILL.md files with many sub-commands
+  (e.g. `dev`) may exceed the SKILL.md ceiling — justify the overage in the commit body.
+- When adding a rule to an always-loaded file, compress or remove an equivalent (one in, one out).
+  One-off incidents belong in memory; only recurring patterns earn instruction lines.

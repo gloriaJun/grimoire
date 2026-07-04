@@ -17,8 +17,10 @@ description: >
   Devlog write/note ("devlogs에 정리해줘", "devlog에 기록해줘", "오늘 작업 기록해줘",
   "작업 내용 정리해줘", "이거 기록해줘", "devlog에 남겨줘", "작업 노트 써줘").
   Session resume/status ("작업 이어하자", "이어서 진행하자", "작업 현황 보여줘", "devlog 상태 보여줘").
-  Code review/modification ("이 부분 검토해줘", "이 코드 리뷰해줘", "이 코드 봐줘",
-  "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this", "check this code").
+  Code modification suggestions ("코드 개선 제안해줘", "이 부분 수정 제안해줘").
+  NOT own-code review requests ("코드 리뷰해줘", "이 코드 봐줘", "review this",
+  "check this code") — those route to the code-review.md on-demand reference;
+  task-context review stays available via explicit /dev review.
   Manages task state via Claude Code memory files for cross-session persistence.
   Manual planning steps (idea/plan/design/build/complete) require explicit invocation.
 ---
@@ -120,7 +122,7 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `test` | `Read("tools/test/SKILL.md")` |
 | `refactor`, "리팩토링 해줘", "코드 정리해줘", etc. | `Read("tools/refactor/SKILL.md")` |
 | `troubleshoot`, error logs, stack traces, "에러 고쳐줘", etc. | `Read("tools/troubleshoot/SKILL.md")` |
-| `review`, "이 코드 리뷰해줘", "이 부분 검토해줘", "코드 봐줘", "review this", "check this code", etc. | `Read("tools/review/SKILL.md")` |
+| `review` (explicit only — NL own-code review routes to the global code-review.md reference) | `Read("tools/review/SKILL.md")` |
 | `retro` | `Read("tools/retro/SKILL.md")` |
 | `setup` | `Read("tools/setup/SKILL.md")` |
 | `devlog-note`, "devlogs에 기록/정리해줘", "오늘 작업 기록해줘", "작업 노트 써줘", etc. | `Read("tools/devlog-note/SKILL.md")` |
@@ -164,9 +166,9 @@ Utility tools (devlog optional):
 > /dev → {tool-or-step}  [trigger: {explicit|natural-language: "<trigger phrase>"}]
 ```
 Examples:
-- `/dev build` 명시 호출: `> /dev → build  [trigger: explicit]`
-- "에러 고쳐줘" 자동: `> /dev → troubleshoot  [trigger: natural-language: "에러 고쳐줘"]`
-- "devlog에 기록해줘" 자동: `> /dev → devlog-note  [trigger: natural-language: "devlog에 기록해줘"]`
+- explicit `/dev build`: `> /dev → build  [trigger: explicit]`
+- natural language "에러 고쳐줘": `> /dev → troubleshoot  [trigger: natural-language: "에러 고쳐줘"]`
+- natural language "devlog에 기록해줘": `> /dev → devlog-note  [trigger: natural-language: "devlog에 기록해줘"]`
 
 When triggered by natural language (not an explicit `/dev` command):
 
@@ -179,9 +181,11 @@ When triggered by natural language (not an explicit `/dev` command):
    - Session resume/status signal:
      - "작업 현황 보여줘", "devlog 상태 보여줘" → load `steps/status.md`
      - "작업 이어하자", "이어서 진행하자" → proceed to `steps/entry.md` (resume flow)
-   - Code review/modification signal ("이 코드 리뷰/검토해줘", "이 코드 봐줘",
-     "코드 개선 제안해줘", "이 부분 수정 제안해줘", "review this code", "check this code")
+   - Code modification signal ("코드 개선 제안해줘", "이 부분 수정 제안해줘")
      → load `tools/review/SKILL.md` directly, skip entry menu
+   - Own-code review requests ("코드 리뷰해줘", "이 코드 봐줘", "review this code",
+     "check this code") are NOT handled here — defer to the global code-review.md
+     on-demand reference; explicit `/dev review` still loads `tools/review/SKILL.md`
    - Generic questions without error artifact ("왜 안돼", "왜 느리지" alone) → do NOT auto-route to troubleshoot; treat as general conversation
    - Otherwise → proceed to `steps/entry.md`
 
@@ -258,9 +262,9 @@ MEMORY.md is auto-loaded at session start. When a sub-command is given:
 
 ---
 
-## Step Router (단계 진입 조건)
+## Step Router (entry conditions)
 
-| currentStep | Load file | 진입 조건 |
+| currentStep | Load file | Entry condition |
 |-------------|-----------|---------------|
 | `"entry"` | steps/entry.md | none |
 | `"idea"` | steps/idea.md | none |
@@ -269,7 +273,7 @@ MEMORY.md is auto-loaded at session start. When a sub-command is given:
 | `"build"` | steps/build.md | `artifacts.architecture` exists |
 | `"complete"` | steps/complete.md | all features in memory file Features table have status `✅ done` |
 
-Verify the 진입 조건 before loading. If not met, warn and block.
+Verify the entry condition before loading. If not met, warn and block.
 
 ---
 
