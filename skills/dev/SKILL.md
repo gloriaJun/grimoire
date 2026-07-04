@@ -40,6 +40,19 @@ Claude acts as a **technical project manager** in this workflow:
 - **Build phase**: produces mini-design per feature, delegates implementation to the feature-executor agent; owns state tracking and cross-session continuity.
 - **Quality bar**: PRD and architecture.md must be self-contained enough that a developer with no prior context could implement from them.
 
+## Document Conventions (load before writing any artifact)
+
+Before writing or editing ANY artifact (`.md`) — brainstorm, PRD, architecture, `review.md`, `state.md`, reference notes, devlog — first read and follow
+`~/.claude/instructions/references/doc-writing.md`.
+This applies even though artifacts are produced through this skill (it is a frequent miss).
+
+Inlined essentials (defense-in-depth; the file is the source of truth):
+
+- No sequential numbers on headings (`## 1. 배경` → `## 배경`).
+- No `---` horizontal separators between sections; structure with headings. (YAML frontmatter delimiters and table `| --- |` rows are exempt.)
+- Use a plain hyphen `-`, never an em dash `—` or en dash `–`.
+- Write reader-friendly by default; do not wait to be asked.
+
 ---
 
 ## Argument Pre-processing
