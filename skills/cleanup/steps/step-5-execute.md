@@ -23,6 +23,7 @@ Read `references/protected-paths.md` and double-check every path against the pro
    bash ~/.claude/skills/cleanup/scripts/truncate-history.sh <days>
    ```
 5. For `M1` (Memory audit): re-run `scripts/audit-memory.sh` and for each issue:
+   - **Preserve guard (선행)**: 삭제 대상 `memory/` 디렉토리나 파일에 `preserve: true` frontmatter가 하나라도 있으면 자동 삭제하지 말고 사용자에게 개별 확인한다.
    - `ORPHANED`: delete the entire `memory/` dir (it has no live project)
    - `BROKEN_LINK`: delete only the missing-referenced file entry from MEMORY.md (edit, not delete)
    - `DUPLICATE`: delete the older/smaller memory dir after confirming with user which to keep
