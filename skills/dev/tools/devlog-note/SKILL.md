@@ -29,9 +29,20 @@ Resolve which devlog task to write to.
        2. <task-name>   (design)
      > Enter number
      ```
-   - **0 active tasks found**: "현재 레포에 진행 중인 작업이 없습니다. 새 작업을 시작할까요? (Y/n)"
-     - Y → proceed to `steps/entry.md`
-     - n → stop
+   - **0 active tasks found**: offer a standalone vault note instead of forcing a task:
+     ```
+     현재 레포에 진행 중인 작업이 없습니다.
+       1. 단독 노트로 기록 (vault 04_Notes) — 기본
+       2. 새 작업 시작
+       n. 취소
+     ```
+     - `1` or Enter → resolve scope from cwd (GitHubWork → `work`, GitHubPrivate → `life`,
+       else ask). Write `~/Documents/obsidian-vault/04_Notes/<scope>/YYYY-MM-DD-<slug>/note.md`
+       with frontmatter (`created`, `tags`, `summary`) and the content from Step 2.
+       Plain-language rule applies (write so it reads clearly six months later;
+       spell out jargon). Skip Steps 3–4, confirm per Step 5.
+     - `2` → proceed to `steps/entry.md`
+     - `n` → stop
 
    **Fallback**: if MEMORY.md has no entries, scan `<memory-root>` for orphaned `YYYY-MM-DD-*/state.md` and re-register.
 

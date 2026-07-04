@@ -20,7 +20,7 @@ Uses the same grep-first → frontmatter-score → top-N-read strategy as the ob
 | Focus | Primary Folders | Notes |
 |-------|----------------|-------|
 | `duplicate` | `02_Ideas`, `03_Logs` | Detect overlapping plans or in-progress tasks |
-| `past-mistakes` | `04_Notes/retrospect`, `04_Notes/process`, `04_Notes/til` | Surface lessons from past retro/TIL |
+| `past-mistakes` | `04_Notes/work`, `04_Notes/life` | retro/TIL files live inside session folders (`YYYY-MM-DD-<task>/retro.md`, `til*.md`) — prefer files whose name contains `retro` or `til` |
 | `error-history` | `04_Notes` (all) | Match `keywords:` frontmatter field first |
 | `references` | `10_Knowledge` | Curated reference material for design/build |
 
