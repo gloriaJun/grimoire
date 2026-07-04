@@ -9,7 +9,7 @@ Triggered when tests fail after 2 implementation iterations.
 
 복구 방법을 선택하세요:
   1. 범위 축소   — non-essential AC 제외 후 재구현
-  2. 실행기 전환 — Claude ↔ Codex 전환
+  2. 접근 전환   — 구현 전략을 바꿔 재구현 (라이브러리 교체·단순화 등)
   3. 피처 분할   — F-Xa(기반) + F-Xb(막힌 부분)으로 분할; F-Xb 연기
   4. 테스트 연기 — "pending" 마킹 후 /dev complete 전 처리
   5. 에스컬레이션 — 진단 메모와 함께 사용자에게 위임
@@ -22,7 +22,7 @@ Triggered when tests fail after 2 implementation iterations.
 | Option | Action |
 |--------|--------|
 | 1 | Scope reduction: remove non-essential AC, return to feature-executor for re-implementation |
-| 2 | Switch executor: toggle Claude ↔ Codex; update the feature's Executor column in the memory file `## Features` |
+| 2 | Switch approach: re-implement with a different strategy (alternative library, simpler design); record the change as a `decision` entry in `history.md` |
 | 3 | Split feature: add F-Xa (base) + F-Xb (blocked) rows to the memory file `## Features`; defer F-Xb |
 | 4 | Defer tests: add `> ⚠️ 테스트 연기됨` warning to feature spec; append a stagnation entry to the `history.md` 결정·블로커 기록 (see `schemas/history.md` Stagnation Entries) |
 | 5 | Escalate: write diagnostic note; surface to user for direct resolution |

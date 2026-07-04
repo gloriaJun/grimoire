@@ -96,4 +96,3 @@ All approaches share these categories (detail in `references/test-patterns.md`):
 |------|---------|----------|
 | Test runner (jest/vitest/mocha/pytest) | Execute tests | Inform user to run manually |
 | Storybook | UI component story-driven testing | Fall back to standard component tests |
-| Codex (cross-review) | Review test quality | Claude self-review |

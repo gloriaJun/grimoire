@@ -2,27 +2,17 @@
 
 After simplify completes, update `features[i].status` to `"review"`.
 
-## Reviewer Assignment
+## Review Execution
 
-| Executor | Reviewer | Method |
-|----------|----------|--------|
-| Claude | Codex | Invoke `code-reviewer` agent → delegates to `/codex:review` |
-| Codex | Claude | Invoke `code-reviewer` agent → reviews with Claude |
-
-Set `features[i].reviewer` accordingly.
-
-## Parallel Review (frontend changes exist)
-
-Dispatch `code-reviewer` and `frontend-reviewer` simultaneously (single message, 2 Agent tool calls).
-Apply action markers per `agent-guidelines.md`. Wait for both, then aggregate findings.
-
-## Sequential Review (no frontend changes)
-
-Invoke only `code-reviewer`.
+1. Run the `code-review` skill on the current diff
+   (when `worktree_path` is set, review the diff inside the worktree).
+2. If the change includes frontend files (components, styles, hooks):
+   also dispatch the `frontend-reviewer` agent, then aggregate findings.
 
 ## Review Resolution
 
-1. Present review findings to the user.
+1. Present findings to the user with evidence (file:line). Mark anything
+   not directly verified as unverified — never present speculation as fact.
 2. If changes requested: fix and re-review (max 2 iterations).
 3. Update `features[i].status` to `"done"`.
 

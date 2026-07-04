@@ -9,7 +9,6 @@ Generates comprehensive test suites following TDD methodology. Analyzes target c
 - **Iterative Fix Loop** — When tests fail, analyzes failures and applies corrections automatically
 - **UI Component Support** — Recommends Storybook TDD for UI components with story-first workflow
 - **Prototype Detection** — Identifies exploratory code and recommends stabilization before testing
-- **Cross-Review** — Offers Codex validation of test quality; falls back to Claude self-review
 
 ## Usage
 

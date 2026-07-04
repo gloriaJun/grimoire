@@ -5,8 +5,8 @@ On-demand code review. Supports PR URLs and local diffs. No devlog required.
 ## Features
 
 - **Auto scope detection** — staged changes → unstaged → file path → PR URL
-- **Cross-agent routing** — Claude reviews Codex output; Codex reviews Claude output
-- **Parallel frontend review** — dispatches `frontend-reviewer` alongside `code-reviewer` when UI changes are detected
+- **Skill-first routing** — diffs go to the `code-review` skill; file-scope reviews use the `code-reviewer` agent
+- **Parallel frontend review** — dispatches `frontend-reviewer` alongside when UI changes are detected
 - **Plannotator support** — visual review when a PR URL is provided
 - **Severity grouping** — findings presented as Blocking / Suggestions / Looks good
 
@@ -24,19 +24,10 @@ On-demand code review. Supports PR URLs and local diffs. No devlog required.
 Scope Detection
     │
     ├── PR URL → plannotator-review skill
-    └── diff / file
-            ├── Detect authorship (Claude / Codex / mixed)
-            ├── Dispatch code-reviewer agent
+    ├── diff  → code-review skill
+    └── file  → code-reviewer agent
             └── Frontend changes? → also dispatch frontend-reviewer (parallel)
 ```
-
-### Review Routing
-
-| Author | Reviewer | Method |
-|--------|----------|--------|
-| Claude | Codex | `code-reviewer` agent → `/codex:review` |
-| Codex | Claude | `code-reviewer` agent (Claude reviews) |
-| Unknown / mixed | Claude | `code-reviewer` agent |
 
 ### Output Format
 

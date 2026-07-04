@@ -21,7 +21,7 @@ If already provided in the trigger message, use that as input.
 
 ### 2. Invoke idea-explorer Agent
 
-Dispatch the `idea-explorer` agent (model: sonnet) with the user's description.
+Dispatch the `idea-explorer` agent with the user's description.
 
 The agent will:
 - Ask clarifying questions (one at a time) to explore the idea

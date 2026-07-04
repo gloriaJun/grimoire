@@ -31,13 +31,11 @@ Proceed? (y / specify different scope)
 
 ## Review Routing
 
-Determine who reviews based on recent authorship:
-
-| Author | Reviewer | Method |
-|--------|----------|--------|
-| Claude | Codex | `/codex:review` via `code-reviewer` agent |
-| Codex | Claude | `code-reviewer` agent (Claude reviews) |
-| Unknown / mixed | Claude | `code-reviewer` agent |
+| Scope | Method |
+|-------|--------|
+| PR URL | `plannotator-review` skill |
+| Staged / unstaged diff | `code-review` skill |
+| Specific file (committed code) | `code-reviewer` agent |
 
 If scope includes frontend changes (components, styles, a11y), also dispatch `frontend-reviewer` in parallel.
 
@@ -49,13 +47,18 @@ If scope includes frontend changes (components, styles, a11y), also dispatch `fr
 
 Invoke `plannotator-review` skill with the PR URL.
 
-### Option B: Staged/unstaged diff or file
+### Option B: Staged/unstaged diff
 
-1. Dispatch `code-reviewer` agent with:
-   - The diff or file contents
-   - Brief context: what the change does and why
+1. Run the `code-review` skill on the diff.
 2. If frontend changes detected, dispatch `frontend-reviewer` in parallel.
 3. Wait for all reviewers to complete.
+
+### Option C: Specific file
+
+1. Dispatch `code-reviewer` agent with:
+   - The file contents
+   - Brief context: what the change does and why
+2. If frontend changes detected, dispatch `frontend-reviewer` in parallel.
 
 ---
 

@@ -19,7 +19,7 @@ If skipping:
 
 ## Agent
 
-`system-architect` (model: sonnet)
+`system-architect`
 
 Produces `architecture.md`. Wireframe generation is performed inline by the orchestrator after the agent completes.
 
@@ -154,7 +154,6 @@ On wireframe feedback: update the same file, increment version badge, re-provide
 
 Load `references/review-protocol.md` and execute the full review workflow.
 - **Artifact**: `architecture.md` at `artifacts.architecture`
-- **Codex focus**: "Review this architecture for tech stack feasibility, missing features, unclear dependencies, and TODO items that should be resolved before building"
 - **Structural pre-check**:
   - [ ] Tech Stack section exists (TODO items explicitly marked)
   - [ ] Features checklist exists (minimum 1 feature)

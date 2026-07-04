@@ -95,7 +95,7 @@ Search the codebase for code related to this error:
 - Report: file paths, relevant code sections, recent commits touching these files
 ```
 
-Use `subagent_type: Explore` with `model: sonnet`.
+Use `subagent_type: Explore`.
 
 ## 0f. Merge and Summarize
 

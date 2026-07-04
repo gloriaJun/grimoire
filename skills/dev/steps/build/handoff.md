@@ -5,7 +5,6 @@
 **Memory file:**
 - `## Features` table: update completed feature row
   - Status → ✅ done
-  - Executor → selected executor (claude | codex)
   - Testing → confirmed approach from mini-design
 - frontmatter `updated` ← today's date
 - If all features done: frontmatter `current-step` ← `"complete"`, append `- [x] build — YYYY-MM-DD` to `## Completed Steps`
@@ -24,7 +23,7 @@
 
 ## Worktree Merge & Cleanup
 
-`worktree_path` 컨텍스트 변수가 없으면 이 섹션 전체 skip (Codex path 또는 worktree 미사용).
+`worktree_path` 컨텍스트 변수가 없으면 이 섹션 전체 skip (worktree 미사용).
 
 1. 미커밋 변경 확인:
    ```bash

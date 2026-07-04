@@ -36,7 +36,7 @@ flowchart TD
     J --> K{"User selects fix"}
     K --> L["Implement fix"]
     L --> M{"Cross-review?"}
-    M -- "User opts in" --> N["code-reviewer / Codex"]
+    M -- "User opts in" --> N["code-reviewer"]
     M -- "Skip" --> O["Step 4: Prevention Tests"]
     N --> O
     O --> P{"Need broader coverage?"}
@@ -91,8 +91,7 @@ The mode is auto-detected at Step 0 and can be overridden by the user.
 | Tool | Used in | Purpose | Fallback |
 |------|---------|---------|----------|
 | Explore agent | Step 0 | Parallel codebase search based on error context | Sequential Grep/Glob in main flow |
-| code-reviewer agent | Step 3 | Optional cross-review of fix implementation | User reviews directly |
-| Codex (cross-review) | Step 3 | Alternative cross-review when available | code-reviewer agent |
+| code-reviewer agent | Step 3 | Optional review of fix implementation | User reviews directly |
 | /g-test-writer | Step 4 | Escalation for comprehensive test coverage | Inline regression tests only |
 
 Never block the workflow because a tool is unavailable. Fall back gracefully.

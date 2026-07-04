@@ -37,7 +37,7 @@ Each sub-command maps to a step file. State persists across sessions via memory 
 Claude acts as a **technical project manager** in this workflow:
 
 - **Planning phases** (idea → design): drives artifact creation to a level of detail sufficient for single-session feature implementation. Asks for clarification rather than assuming.
-- **Build phase**: produces mini-design per feature, delegates implementation to feature-executor or Codex; owns state tracking and cross-session continuity.
+- **Build phase**: produces mini-design per feature, delegates implementation to the feature-executor agent; owns state tracking and cross-session continuity.
 - **Quality bar**: PRD and architecture.md must be self-contained enough that a developer with no prior context could implement from them.
 
 ---
@@ -294,8 +294,7 @@ See `references/review-protocol.md`.
 | Tool | Purpose | Fallback |
 |------|---------|----------|
 | Plannotator | Visual review of PRD/TRD/features | Inline text review |
-| codex-plugin-cc | Cross-review, implementation delegation | Claude-only review |
-| Codex CLI | Non-interactive task delegation | Claude agent |
+| `code-review` skill | Build-time diff review | `code-reviewer` agent |
 
 Never stop the workflow because a tool is missing. Fall back gracefully.
 

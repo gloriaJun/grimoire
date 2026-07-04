@@ -98,10 +98,10 @@ tags:
 
 ## Features
 
-| # | Feature | Status | Executor | Testing |
-|---|---------|--------|----------|---------|
-| F-01 | <name> | ✅ done | claude | TDD |
-| F-02 | <name> | ⏳ pending | — | — |
+| # | Feature | Status | Testing |
+|---|---------|--------|---------|
+| F-01 | <name> | ✅ done | TDD |
+| F-02 | <name> | ⏳ pending | — |
 
 ## Open Blockers
 
@@ -159,7 +159,7 @@ is deleted (see `steps/complete.md`). Move the pointer to `## Completed Dev Task
 - `## Features` table populated at design step (one row per feature, status: ⏳ pending)
 - Status icons: `✅ done`, `🔄 in-progress`, `👀 review`, `⏳ pending`
 - Feature rows added/removed freely throughout build step (flexible, not locked at design time)
-- `executor` and `testing` columns filled when user chooses at build step
+- `testing` column filled from the mini-design at build step
 - Dependency notation in architecture.md: `<!-- depends: F-01 -->`
 - Stagnation events logged in `history.md` 결정·블로커 기록, not here
 
@@ -176,7 +176,6 @@ These are never stored in the memory file — detect them when needed:
 |---|---|
 | `artifacts.testConfig` | Detected at build step: check `vitest.config.*`, `jest.config.*`, `package.json` scripts |
 | `artifacts.lintConfig` | Detected at verification: check `eslint.config.*`, `package.json` scripts, nx.json |
-| `codexAvailability` | Detected at first cross-review invocation per session |
 | review approvals | Logged in `history.md` 결정·블로커 기록 as `type: decision` entries |
 | stagnation resolutions | Logged in `history.md` 결정·블로커 기록 as `type: troubleshooting` entries |
 

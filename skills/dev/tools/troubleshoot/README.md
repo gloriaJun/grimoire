@@ -10,7 +10,7 @@ Unified troubleshooting skill for error analysis, debugging, and performance dia
 - **User-Friendly Explanation** — Translates technical findings into clear, actionable descriptions
 - **Fix Implementation** — Proposes and applies fixes with user confirmation
 - **Defensive Test Writing** — Generates tests to prevent regression, with escalation to `/g-test-writer` for broader coverage
-- **Optional Cross-Review** — Offers code-reviewer agent or Codex validation of fixes
+- **Optional Review** — Offers code-reviewer agent validation of fixes
 
 ## Usage
 
@@ -47,8 +47,7 @@ Also triggers on natural language inputs:
 ## Requirements
 
 - Claude Code CLI
-- code-reviewer agent (optional — for cross-review)
-- Codex CLI (optional — alternative cross-review)
+- code-reviewer agent (optional — for fix review)
 
 ## License
 
