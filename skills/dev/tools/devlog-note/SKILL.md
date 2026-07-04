@@ -38,9 +38,11 @@ Resolve which devlog task to write to.
      ```
      - `1` or Enter → resolve scope from cwd (GitHubWork → `work`, GitHubPrivate → `life`,
        else ask). Write `~/Documents/obsidian-vault/04_Notes/<scope>/YYYY-MM-DD-<slug>/note.md`
-       with frontmatter (`created`, `tags`, `summary`) and the content from Step 2.
+       with frontmatter (`created`, `tags`, `summary`, `scope`) and the content from Step 2.
        Plain-language rule applies (write so it reads clearly six months later;
-       spell out jargon). Skip Steps 3–4, confirm per Step 5.
+       spell out jargon). After writing, self-check silently: required frontmatter
+       present, any `[[wikilink]]` target exists — fix immediately.
+       Skip Steps 3–4, confirm per Step 5.
      - `2` → proceed to `steps/entry.md`
      - `n` → stop
 
