@@ -12,3 +12,6 @@ codex/config.toml
 
 # Codex auto-saved session rules (may contain internal URLs)
 codex/rules/default.rules
+
+# Personal editor workspace (local folder layout)
+*.code-workspace
