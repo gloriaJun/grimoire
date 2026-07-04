@@ -12,8 +12,8 @@
 **Build Context** (on first feature completion of this task):
 - `## Build Context - Branch` ← `git branch --show-current`
 - `## Build Context - Worktree`:
-  - `worktree_path` 컨텍스트 변수가 있으면 해당 경로를 기록
-  - 없으면 `"(main repo)"`
+  - if the `worktree_path` context variable exists, record that path
+  - otherwise `"(main repo)"`
 
 **architecture.md:**
 - `## Features` checklist: mark completed feature `- [ ] F-NN` → `- [x] F-NN`
@@ -23,30 +23,30 @@
 
 ## Worktree Merge & Cleanup
 
-`worktree_path` 컨텍스트 변수가 없으면 이 섹션 전체 skip (worktree 미사용).
+Skip this entire section when the `worktree_path` context variable is absent (no worktree used).
 
-1. 미커밋 변경 확인:
+1. Check for uncommitted changes:
    ```bash
    git -C <worktree_path> status --porcelain
    ```
-   결과가 있으면: 먼저 commit 요청 후 진행.
+   If anything shows: request a commit first, then continue.
 
-2. 메인 브랜치로 merge:
+2. Merge into the main branch:
    ```bash
    git merge <worktree_branch> --no-ff
    ```
 
-3. Worktree 제거:
+3. Remove the worktree:
    ```bash
    git worktree remove <worktree_path>
    ```
 
-4. 브랜치 삭제:
+4. Delete the branch:
    ```bash
    git branch -d <worktree_branch>
    ```
 
-5. Build Context - Worktree 항목을 `"(merged: <worktree_branch>)"` 로 업데이트.
+5. Update `Build Context - Worktree` to `"(merged: <worktree_branch>)"`.
 
 ---
 
@@ -54,13 +54,13 @@
 
 Schema: `schemas/history.md`
 
-**Step 1 — Regenerate the 현재 상태 block:**
+**Step 1 — Regenerate the `현재 상태` block:**
 
-Rebuild the 현재 상태 section in full from the memory file (same mechanic as `steps/_handoff.md` step 2).
+Rebuild the `현재 상태` section in full from the memory file (same mechanic as `steps/_handoff.md` step 2).
 
-**Step 2 — Append to 결정·블로커 기록 (conditional):**
+**Step 2 — Append to `결정·블로커 기록` (conditional):**
 
-For each of the following that applies to this feature, append a 결정·블로커 기록 entry:
+For each of the following that applies to this feature, append a `결정·블로커 기록` entry:
 
 - Non-obvious architecture or design choice made during implementation → `type: decision · status: resolved`
 - Key files introduced or significantly changed → fold into a `decision` entry as context (not a separate entry)

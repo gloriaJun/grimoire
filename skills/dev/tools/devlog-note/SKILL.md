@@ -69,11 +69,11 @@ Classify the content (can be multiple):
 
 | Category | Indicators | Write to |
 |----------|-----------|----------|
-| `decision` | 아키텍처 결정, 설계 이유, 트레이드오프 선택 | `history.md` → 결정·블로커 기록 |
-| `blocker` | 블로커, 막힌 이슈, 확인 필요 사항 | `history.md` → 결정·블로커 기록 |
-| `troubleshooting` | 버그 원인, 오류 해결, 디버깅 발견 | `history.md` → 결정·블로커 기록 |
-| `progress` | 진행 상황 업데이트, 완료 항목 | `notes.md` |
-| `note` | 일반 메모, 아이디어, 참고 사항 | `notes.md` |
+| `decision` | architecture decision, design rationale, trade-off choice | `history.md` → `결정·블로커 기록` |
+| `blocker` | blocked issue, item needing confirmation | `history.md` → `결정·블로커 기록` |
+| `troubleshooting` | bug cause, error resolution, debugging finding | `history.md` → `결정·블로커 기록` |
+| `progress` | progress update, completed item | `notes.md` |
+| `note` | general memo, idea, reference | `notes.md` |
 
 If ambiguous, default to `note`.
 
@@ -81,11 +81,11 @@ If ambiguous, default to `note`.
 
 ## Step 4: Write
 
-### For `decision`, `blocker`, `troubleshooting`: append to `history.md` 결정·블로커 기록
+### For `decision`, `blocker`, `troubleshooting`: append to `history.md` `결정·블로커 기록`
 
 If `history.md` does not exist in the task directory, create it following `schemas/history.md` initial template.
 
-Append a 결정·블로커 기록 entry in this format:
+Append a `결정·블로커 기록` entry in this format:
 ```
 ### [<current-step from memory file>] YYYY-MM-DD — <title derived from content>
 _type: <decision|blocker|troubleshooting> · status: <open (blocker) or resolved (decision/troubleshooting)>_
@@ -93,7 +93,7 @@ _type: <decision|blocker|troubleshooting> · status: <open (blocker) or resolved
 <content>
 ```
 
-Then regenerate the `history.md` 현재 상태 block from the memory file (open blockers list will auto-update).
+Then regenerate the `history.md` `현재 상태` block from the memory file (open blockers list will auto-update).
 
 ### For `progress` and `note`: append to `notes.md`
 

@@ -141,7 +141,7 @@ is deleted (see `steps/complete.md`). Move the pointer to `## Completed Dev Task
 - Update `current-step` frontmatter BEFORE loading the next step file
 - Append `- [x] <step> — YYYY-MM-DD` to Completed Steps AFTER user confirms step completion
 - Add artifact paths to `## Artifacts` as soon as files are created
-- After every update: regenerate the `history.md` 현재 상태 block from this file (see `schemas/history.md`)
+- After every update: regenerate the `history.md` `현재 상태` block from this file (see `schemas/history.md`)
 - Update `updated:` frontmatter on every write
 
 ## Session Restoration
@@ -161,7 +161,7 @@ is deleted (see `steps/complete.md`). Move the pointer to `## Completed Dev Task
 - Feature rows added/removed freely throughout build step (flexible, not locked at design time)
 - `testing` column filled from the mini-design at build step
 - Dependency notation in architecture.md: `<!-- depends: F-01 -->`
-- Stagnation events logged in `history.md` 결정·블로커 기록, not here
+- Stagnation events logged in `history.md` `결정·블로커 기록`, not here
 
 ## Plan File Storage
 
@@ -176,8 +176,8 @@ These are never stored in the memory file — detect them when needed:
 |---|---|
 | `artifacts.testConfig` | Detected at build step: check `vitest.config.*`, `jest.config.*`, `package.json` scripts |
 | `artifacts.lintConfig` | Detected at verification: check `eslint.config.*`, `package.json` scripts, nx.json |
-| review approvals | Logged in `history.md` 결정·블로커 기록 as `type: decision` entries |
-| stagnation resolutions | Logged in `history.md` 결정·블로커 기록 as `type: troubleshooting` entries |
+| review approvals | Logged in `history.md` `결정·블로커 기록` as `type: decision` entries |
+| stagnation resolutions | Logged in `history.md` `결정·블로커 기록` as `type: troubleshooting` entries |
 
 > Task indexing is handled solely by `MEMORY.md` (`## Active Dev Tasks` / `## Completed Dev Tasks`).
 > There is no separate `_index.md`.
