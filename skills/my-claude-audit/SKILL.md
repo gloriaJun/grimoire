@@ -2,10 +2,9 @@
 name: g-my-claude-audit
 description: >
   /g-my-claude-audit command only.
-  Comprehensive audit of Claude Code configuration with multi-model delegation:
+  Comprehensive audit of Claude Code configuration:
   token budget, config health, skills ecosystem, session log anomaly detection,
-  and AI usage pattern analysis. Supports Gemini/OpenAI/Codex CLI delegation.
-  Generates interactive HTML dashboard.
+  and AI usage pattern analysis. Generates interactive HTML dashboard.
 ---
 
 # /g-my-claude-audit
@@ -19,8 +18,7 @@ flowchart TD
     A(["/g-my-claude-audit"]) --> S0{"Step 0: /insights ran?"}
     S0 -- "No" --> S0B["Instruct user to run /insights\nthen re-invoke skill"]
     S0 -- "Yes" --> B["Phase 0: Scope Selection"]
-    B --> C["Phase 0.5: Model Selection"]
-    C --> D["Phase 1: Discovery\nsettings.json + session logs"]
+    B --> D["Phase 1: Discovery\nsettings.json + session logs"]
     D --> D2["Phase 1.5: Agent Usage\nPython script (no tokens)"]
     D2 --> D3["Phase 1.6: Extract insightsJson\nfrom context"]
     D3 --> E["Phase 2: Parallel Dispatch\n(Wave 1)"]
@@ -32,12 +30,7 @@ flowchart TD
     F1 & F2 & F3 --> G["Wait for Wave 1"]
     G --> G2["Phase 2.5: Insights Gap Analyzer\n(/insights output vs config)"]
 
-    G2 --> H{"Selected model?"}
-    H -- "external CLI" --> I["scripts/delegate.sh"]
-    H -- "claude-code" --> J["Insights Aggregator\n(all inputs)"]
-    I -- "success" --> J
-    I -- "fail" --> K["Fallback: Claude internal"]
-    K --> J
+    G2 --> J["Phase 3: Insights Aggregator\n(all inputs)"]
 
     J --> L["Phase 4: Generate HTML\ntemplates/report-template.html"]
     L --> M["Phase 5: Open in browser"]
@@ -69,22 +62,6 @@ Ask the user with AskUserQuestion:
 - **Both** (Recommended): Analyze global config + current project config
 - **Global only**: Analyze only ~/.claude/ settings, skills, and framework
 - **Project only**: Analyze only the current project's CLAUDE.md and .claude/ directory
-
-## Phase 0.5: Model Selection
-
-Scan for available external CLI tools:
-
-1. Run `which gemini`, `which openai`, `which codex` to detect installed tools
-2. Check env vars: `GEMINI_API_KEY`, `OPENAI_API_KEY` (existence only)
-
-Ask the user with AskUserQuestion:
-
-Build options dynamically — only show installed tools. Always include:
-- Each installed tool as an option, annotated with "(API key detected)" if env var exists
-- **Claude Code (built-in)** — always available, no external dependency
-- **Custom input** — user types a custom CLI command
-
-Store the selection for Phase 3 delegation and `meta.analyzer` report attribution.
 
 ## Phase 1: Discovery
 
@@ -124,7 +101,7 @@ This runs as a Python process, consuming no LLM tokens.
 
 Pass `agentUsageData` to:
 - **Agent 3** (Session Anomaly Tagger) as additional input
-- **Agent 4** (Insights Aggregator) as additional input
+- **Agent 5** (Insights Aggregator) as additional input
 
 ## Phase 1.6: Extract insightsJson from Context
 
@@ -170,31 +147,15 @@ After Wave 1 completes, dispatch a single agent to find gaps between behavior an
 3. Dispatch: `Agent 4 (insights-gap-analyzer)` with `subagent_type: Explore`, `model: sonnet`
 4. Wait for completion. If it returns invalid JSON or fails, set `insightsGapData = null` and continue.
 
-## Phase 3: Insights Aggregation (delegatable)
+## Phase 3: Insights Aggregation
 
 After all parallel agents complete:
-
-**If selected model is Claude Code (internal):**
 
 ```
 Agent 5: insights-aggregator.md prompt + combined JSON from Agents 1, 2, 3 + insightsGapData + insightsData + scope
 ```
 
-**If selected model is an external CLI tool:**
-
-1. Read `analyzer-prompts/insights-aggregator.md` using the Read tool
-2. Combine: insights-aggregator prompt + all 3 agent JSONs + scope info
-3. Write combined prompt to `/tmp/claude-audit-prompt-<timestamp>.txt`
-4. Print status: "Analyzing with external model... ({tool})"
-5. Discover delegate.sh path from this skill's directory: `scripts/delegate.sh`
-6. Run: `Bash(<skill-dir>/scripts/delegate.sh <tool> /tmp/claude-audit-prompt-<timestamp>.txt)`
-7. Parse result:
-   - Exit 0 + non-empty stdout → attempt JSON parse. If valid JSON, use as insights. If parse fails (invalid JSON), log warning and fallback.
-   - Exit 0 + empty stdout → fallback
-   - Exit 1 → fallback
-8. **Fallback**: Print "External tool ({tool}) failed. Falling back to Claude Code internal analysis." then run Agent 4 internally
-
-Set `meta.fallbackUsed = true` if fallback was triggered.
+If Agent 5 returns invalid JSON, retry once; if it fails again, abort with an error summary.
 
 ## Phase 4: Assemble & Generate HTML Report
 
@@ -206,8 +167,7 @@ Combine all 3 outputs into a single object:
     "timestamp": "<ISO 8601>",
     "scope": "both|global|project",
     "version": "2.1.0",
-    "analyzer": "gemini|openai|codex|claude-code|custom",
-    "analyzerCommand": "<actual command used>",
+    "analyzer": "claude-code",
     "fallbackUsed": false,
     "projectPath": "<$PWD if scope includes project, null otherwise>",
     "insightsDataSource": "context_json"
@@ -223,14 +183,25 @@ Combine all 3 outputs into a single object:
 
 **Note:** `agentUsage` is the raw JSON output from Phase 1.5 Python script (not from a subagent). `insightsGap` is the output from Phase 2.5 insights-gap-analyzer (null if unavailable).
 
-Then:
+Then inject the data WITHOUT reading the template into context (the template is ~34K tokens — never Read it):
 
-1. Read the template: `templates/report-template.html` (relative to this skill's directory)
-2. JSON-stringify the combined results
-3. Replace `{{AUDIT_DATA}}` in the template with `const AUDIT_DATA_RAW = <stringified JSON>;`
-4. Write to: `/tmp/claude-audit-<timestamp>-<suffix>.html`
-   - timestamp format: YYYYMMDD-HHmmss
-   - suffix: 8-char random hex — `python3 -c "import uuid; print(uuid.uuid4().hex[:8])"`
+1. Write the combined JSON to `/tmp/claude-audit-data-<timestamp>.json` (Write tool)
+2. Substitute the placeholder via Python (zero context cost):
+
+```bash
+python3 -c "
+import json, uuid
+tpl = open('<skill-dir>/templates/report-template.html').read()
+data = open('/tmp/claude-audit-data-<timestamp>.json').read()
+json.loads(data)  # validate before injecting
+out = '/tmp/claude-audit-<timestamp>-' + uuid.uuid4().hex[:8] + '.html'
+open(out, 'w').write(tpl.replace('{{AUDIT_DATA}}', 'const AUDIT_DATA_RAW = ' + data + ';'))
+print(out)
+"
+```
+
+- timestamp format: YYYYMMDD-HHmmss
+- The script prints the final HTML path — capture it for Phase 5
 
 ## Phase 5: Open in Browser
 
@@ -254,6 +225,7 @@ Then:
 - Feature Utilization: XX/100
 - Automation Level: XX/100
 - Cross-Layer Harmony: XX/100
+- Agent Delegation: XX/100 (omit if agentUsageData was null)
 
 ### Top Findings:
 1. [Most impactful finding]

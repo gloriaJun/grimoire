@@ -14,7 +14,7 @@ Comprehensive audit of your Claude Code configuration with an interactive HTML d
 - **Automation Opportunities** — Finds manual workflows that could be automated with hooks, agents, or custom commands.
 - **Cross-Layer Analysis** — Detects overlaps and gaps between global (`~/.claude/`) and project-level (`.claude/`) configurations.
 - **7-Dimension Scoring** — Rates your setup across Token Efficiency, Config Health, Ecosystem Health, Feature Utilization, Automation Level, Cross-Layer Harmony, and Agent Delegation.
-- **Multilingual** — Full Korean and English support with auto-detection and toggle.
+- **Korean Dashboard** — report UI is rendered in Korean.
 
 ## Usage
 
@@ -56,7 +56,7 @@ The skill will:
 ## Report Sections
 
 ### Dashboard
-Score gauge (0-100) with color-coded label, 6-axis radar chart for dimension breakdown, and summary statistics.
+Score gauge (0-100) with color-coded label, 6-axis radar chart for dimension breakdown (the 7th dimension, Agent Delegation, is detailed in the Agent Usage section), and summary statistics.
 
 ### Token Budget
 Horizontal bar chart grouped by layer (Global/Project), context distribution pie chart, and sortable file details table with `@` reference tracking.
@@ -84,14 +84,16 @@ All findings sorted by severity (critical → warning → info) with filter chip
 ### Personal skill (simplest)
 
 ```bash
-cp -r skills/g-my-claude-audit ~/.claude/skills/g-my-claude-audit
+cp -r skills/my-claude-audit ~/.claude/skills/my-claude-audit
 ```
 
 ### Via symlink
 
 ```bash
-ln -s /path/to/grimoire/skills/g-my-claude-audit ~/.claude/skills/g-my-claude-audit
+ln -s /path/to/grimoire/skills/my-claude-audit ~/.claude/skills/my-claude-audit
 ```
+
+Or run `setup.sh` from the grimoire repo root.
 
 ### As part of a plugin marketplace
 

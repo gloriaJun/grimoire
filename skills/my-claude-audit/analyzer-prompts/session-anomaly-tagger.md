@@ -31,7 +31,7 @@ For each session, compute:
 - **Turn count**: Number of `user` type messages
 - **Average user prompt length**: Mean character count of `message.content` across all `user` messages (flatten arrays to text)
 - **Short prompt count**: User messages with content length < 30 characters
-- **Short prompt without constraints count**: Short prompts that do NOT contain any of these constraint keywords (English + Korean): because, should, must, when, if, error, bug, test, 왜, 이유, 조건, 테스트, 에러, 해야, 반드시, 언제, 때, 만약, 경우
+- **Short prompt without constraints count**: Short prompts that do NOT contain any of these constraint keywords (English + Korean): `because, should, must, when, if, error, bug, test, 왜, 이유, 조건, 테스트, 에러, 해야, 반드시, 언제, 때, 만약, 경우`
 - **Machine-generated text ratio per user message**: For each user message, count lines matching these patterns:
   - Stack trace prefixes: lines starting with `at `, `Error:`, `Traceback`, `File "`, `  at `, `Caused by:`
   - Log patterns: lines with timestamp prefixes (`[2026-`, `2026-04-`) or log levels (`[ERROR]`, `[WARN]`, `DEBUG`)

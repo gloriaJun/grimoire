@@ -237,14 +237,8 @@ Return ONLY valid JSON. No prose, no markdown, no explanation outside the JSON.
       "crossLayerHarmony": 80,
       "agentDelegation": 70
     },
-    "bonuses": [
-      { "reason": "Token budget under 10%", "points": 8 },
-      { "reason": "Uses PostToolUse hooks", "points": 3 }
-    ],
-    "deductions": [
-      { "reason": "No custom commands", "points": -3 },
-      { "reason": "2 oversized files", "points": -6 }
-    ]
+    "bonuses": ["Token budget under 10% (+8)", "Uses PostToolUse hooks (+3)"],
+    "deductions": ["No custom commands (-3)", "2 oversized files (-6)"]
   },
   "missedCommands": [
     {
