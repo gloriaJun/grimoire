@@ -35,7 +35,6 @@ Would you like a cross-review of the refactored code?
 If yes:
 - Dispatch the `code-reviewer` global agent with the diff context
 - Include: what was changed, why (the rationale from Step 2), and the approved IDs
-- If Codex is available, use cross-review protocol (Claude implemented → Codex reviews)
 - Present review findings; if actionable issues found, offer to fix (max 2 rounds)
 
 ## 5c. Test Coverage Suggestion

@@ -4,7 +4,6 @@ description: >
   Use this agent for brainstorming and idea exploration.
   Expands vague ideas through strategic questioning,
   explores possibilities, and produces structured brainstorm documents.
-model: sonnet
 ---
 
 # Idea Explorer

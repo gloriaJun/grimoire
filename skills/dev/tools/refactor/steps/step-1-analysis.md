@@ -23,7 +23,7 @@ Analyze the codebase around these files for refactoring context:
 - Report: file paths, dependency relationships, reusable existing code, conventions observed
 ```
 
-Use `subagent_type: Explore` with `model: sonnet`.
+Use `subagent_type: Explore`.
 
 ## 1b. Read Target Code
 

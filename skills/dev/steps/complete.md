@@ -1,17 +1,25 @@
-# Complete: 작업 마무리
+# Complete: Task Wrap-up
 
-모든 기능이 끝났을 때 실행한다. 흩어진 작업 기록을 **하나의 `<task>-log.md`로 압축**하고,
-과정 파일(state·history·brainstorm)을 정리한다. PRD·architecture는 참고 문서로 남긴다.
+Run when all features are done. Consolidates scattered work records into a single
+`<task>-log.md` and cleans up process files (state / history / brainstorm).
+PRD and architecture are kept as reference documents.
 
 ## Process
 
-### 1. 참고 문서 최신화
+### 1. Refresh reference docs
 
-PRD와 architecture.md를 빌드 중 바뀐 내용에 맞춰 마지막으로 손본다 (이 둘은 보존 대상이므로 최신 상태로 둔다).
+Give PRD and architecture.md a final pass so they reflect what actually changed
+during build (both are preserved, so leave them current).
 
-### 2. `<task>-log.md` 생성
+### 2. Create `<task>-log.md`
 
-작업 폴더에 `<task-name>-log.md`를 만든다. 아래 고정 포맷을 따른다:
+Create `<task-name>-log.md` in the task folder using the fixed format below.
+
+**Writing rules (personal knowledge records):**
+- Write in plain, everyday language that still reads clearly six months from now.
+  Spell out jargon and feature IDs (F-01 etc.).
+- Prefer sentences over tables — what was done and **why** must survive.
+- Link at least one related vault note with `[[wikilink]]` (omit if none exists).
 
 ```markdown
 ---
@@ -33,7 +41,7 @@ tags:
 <무엇을 만들었고 결과가 어땠는지 한 문장>
 
 ## 결과
-- 구현한 것: <## Features 표의 기능 목록 + 상태>
+- 구현한 것: <만든 기능을 쉬운 말로 풀어서>
 - 변경된 주요 파일: <핵심 파일 몇 개>
 - 커밋 / PR: <해시·링크 (있으면)>
 
@@ -56,12 +64,19 @@ tags:
 - wireframe.html  (있으면)
 ```
 
-> `## 과정에서 고민한 것`은 기존 history.md의 결정·블로커 기록을, `## 배운 것`은 기존
-> "Wonder & Reflect" 회고를 흡수한 자리다. 따로 단계를 두지 않고 여기서 한 번에 정리한다.
+> `## 과정에서 고민한 것` absorbs the old history.md decision/blocker log;
+> `## 배운 것` absorbs the old "Wonder & Reflect" retro. One pass here, no extra steps.
 
-### 3. 과정 파일 정리
+### 3. Process file cleanup (go-ahead gate)
 
-`<task>-log.md`를 다 쓴 뒤, 더 이상 필요 없는 과정 파일을 정리한다. **삭제 전 1회 확인**:
+**Never ask to delete right after writing the log.** The user needs time to review
+the output first.
+
+Start the deletion confirmation only on an explicit go-ahead signal from the user —
+"다음 작업 진행해줘", "검토 끝났어", "정리해줘" and similar. Until then, leave process
+files in place and move on to step 4 (summary report).
+
+On the go-ahead signal, confirm once before deleting:
 
 ```
 작업 기록을 <task>-log.md 하나로 합쳤습니다.
@@ -74,44 +89,46 @@ tags:
 > Y 삭제 / n 보존
 ```
 
-- Y: 위 3개 삭제. PRD·architecture·wireframe·`<task>-log.md`는 남긴다.
-- n: 그대로 두고 다음 단계 진행.
+- Y: delete the 3 files. Keep PRD, architecture, wireframe, and `<task>-log.md`.
+- n: keep everything and continue.
 
-작업 폴더에 위 외의 임시 파일이 더 있으면 같은 확인 절차로 삭제 여부를 묻는다.
+Ask the same one-time confirmation for any other temp files in the task folder.
+If the session ends without a go-ahead signal, the next session's `/dev status`
+surfaces the un-cleaned files.
 
-### 4. 요약 보고
+### 4. Summary report
 
-화면에 간단히 보고한다:
-- 만든 것 (기능 목록)
-- 바뀐 파일
-- 후속으로 할 일 (있으면)
+Report briefly on screen: what was built (features), files changed,
+follow-ups (if any).
 
-### 5. insight (선택)
+### 5. insight (optional)
 
-grimoire 설정 개선 제안을 받고 싶을 때만 실행한다. 회고와 목적이 다르다(작업 회고가 아니라
-도구·지침 개선 제안). 건너뛰어도 된다.
+Run only when the user wants grimoire config improvement suggestions. Its purpose
+differs from a retro (tool/instruction improvements, not a work retrospective).
+Fine to skip.
 
-- 실행 시: `~/.claude/skills/insight/SKILL.md`를 Read로 로드
-- `Agent(subagent_type: "Explore")`로 디스패치 — 프롬프트에 insight 지침 + 작업 컨텍스트
-  (`task-name`, 만든 것 요약, 핵심 결정, 산출물 경로) 전달. 에이전트는 grimoire 파일을 직접 읽는다.
+- To run: Read `~/.claude/skills/insight/SKILL.md`
+- Dispatch via `Agent(subagent_type: "Explore")` — pass the insight instructions plus
+  task context (task-name, what was built, key decisions, artifact paths).
+  The agent reads grimoire files directly.
 
 ---
 
 ## Session Handoff
 
-### 상태 갱신
+### State update
 
 MEMORY.md:
-- 포인터를 `## Active Dev Tasks` → `## Completed Dev Tasks`로 이동
-- 포인터 대상을 `state.md`가 아닌 `<task>-log.md`로 변경:
+- Move the pointer from `## Active Dev Tasks` to `## Completed Dev Tasks`
+- Point it at `<task>-log.md` instead of `state.md`:
   ```
   - [<task-name>](YYYY-MM-DD-<task-name>/<task-name>-log.md) — <repo> / 완료 YYYY-MM-DD
   ```
 
-state.md를 삭제했으므로 더 이상 갱신할 메모리 파일이 없다. 이후 현황 조회(`/dev status`)는
-`<task>-log.md` frontmatter에서 완료 정보를 읽는다.
+state.md is deleted, so no memory file remains to update. Later status checks
+(`/dev status`) read completion info from the `<task>-log.md` frontmatter.
 
-### 완료 메시지
+### Completion message
 
 ```
 ✅ 작업 완료 — <task-name>

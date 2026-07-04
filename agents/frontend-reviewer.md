@@ -4,7 +4,6 @@ description: >
   Use this agent for frontend-specific code review.
   Checks accessibility (WCAG), responsive design,
   component patterns, and performance best practices.
-model: sonnet
 ---
 
 # Frontend Reviewer

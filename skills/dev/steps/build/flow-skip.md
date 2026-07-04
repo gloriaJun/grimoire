@@ -4,12 +4,10 @@
 
 1. State which feature is being worked on.
 2. Use the mini-design context for this feature (from `build.md` Step 1.5).
-3. Invoke the `feature-executor` agent (model: sonnet) with:
+3. Invoke the `feature-executor` agent with:
    - The mini-design content (scope, AC, technical approach)
    - PRD and architecture.md paths for context
-4. The feature-executor asks the user to choose implementation agent (default: Codex).
-5. Update Executor column in memory file `## Features` table.
-6. (Claude path only) If the Agent result contains a worktree path and branch:
+4. If the Agent result contains a worktree path and branch:
    store as `worktree_path` and `worktree_branch` in conversation context for handoff cleanup.
    Subsequent steps (simplify, cross-review, verification) reference files under `worktree_path`.
 

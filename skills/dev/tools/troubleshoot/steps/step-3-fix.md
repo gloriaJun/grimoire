@@ -47,19 +47,18 @@ Which fix would you like to apply?
 2. Verify the fix resolves the original error (re-run, check logs, etc.)
 3. Check for regressions in related functionality
 
-## 3d. Optional Cross-Review
+## 3d. Optional Review
 
-After implementation, offer cross-review:
+After implementation, offer a review:
 
 ```
-Do you want a cross-review of this fix?
-1. Yes — run code-reviewer / Codex review
+Do you want a review of this fix?
+1. Yes — run code-reviewer review
 2. No — proceed to prevention tests
 ```
 
 If yes:
 - Dispatch the `code-reviewer` global agent with the diff and root cause context
-- If Codex is available, use the cross-review protocol (Claude impl → Codex review)
 - Present review findings; if changes needed, iterate (max 2 rounds)
 
 If no or if code-reviewer is unavailable: proceed to Step 4.

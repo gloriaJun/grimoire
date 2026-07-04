@@ -4,7 +4,6 @@ description: >
   Use this agent for architecture design and technical decisions.
   Reviews PRD, selects tech stack with rationale, designs system structure,
   and produces TRD and architecture documents.
-model: sonnet
 ---
 
 # System Architect
@@ -153,9 +152,8 @@ Opus는 direction만 제공하고, TRD 작성은 반드시 이 에이전트(Sonn
 
 After TRD creation:
 1. Present to the user for review
-2. The orchestrator (g-task-process) will open Plannotator for visual review
-3. The orchestrator will request Codex review for cross-validation
-4. Incorporate feedback and finalize
+2. The `/dev` orchestrator runs the review protocol (Plannotator or inline)
+3. Incorporate feedback and finalize
 
 ## Principles
 

@@ -4,7 +4,7 @@ Goal: Structure requirements into a formal PRD.
 
 ## Agent
 
-`requirements-analyst` (model: sonnet)
+`requirements-analyst`
 
 ## Input
 
@@ -33,7 +33,6 @@ Pass vault findings to the `requirements-analyst` agent prompt as background con
 
 Load `references/review-protocol.md` and execute the full review workflow.
 - **Artifact**: PRD at `## Artifacts` prd path
-- **Codex focus**: "Review this PRD for missing requirements, ambiguity, and feasibility"
 
 ## State Update
 

@@ -7,7 +7,7 @@ Unified development workflow skill — single entry point for the full lifecycle
 - **Planning lifecycle** — idea → plan → design → build → complete (devlog-tracked, cross-session)
 - **Utility tools** — test, refactor, troubleshoot, review, retro, devlog-note, setup (devlog optional)
 - **State persistence** — memory files in `~/.claude/projects/` enable seamless session resumption
-- **Cross-agent review** — Plannotator + Codex + frontend-reviewer across all planning artifacts
+- **Review** — Plannotator for planning artifacts; `code-review` skill + frontend-reviewer for build diffs
 - **Natural language routing** — refactoring and debugging requests auto-routed without `/dev` prefix
 - **insight integration** — post-completion grimoire improvement suggestions via isolated agent
 
@@ -52,7 +52,7 @@ Unified development workflow skill — single entry point for the full lifecycle
 | 5 | `complete` | wrap-up + insight |
 
 Each `build` session implements one feature via mini-design → TDD/Test-After/Skip → cross-review.
-Steps 2–3 use Plannotator + Codex review protocol (`references/review-protocol.md`).
+Steps 2–3 use the Plannotator review protocol (`references/review-protocol.md`).
 
 ### Devlog
 
@@ -71,7 +71,7 @@ kept as reference.
 | Tool | Purpose |
 |------|---------|
 | Plannotator | Visual review of PRD / architecture |
-| codex-plugin-cc / Codex CLI | Cross-review of artifacts and code |
+| `code-review` skill | Build-time diff review |
 
 ## Installation
 

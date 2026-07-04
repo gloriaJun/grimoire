@@ -2,41 +2,56 @@
 
 Run after cross-review, for every feature regardless of testingApproach.
 
+## Requirement Delta Check
+
+Run FIRST, before local verification.
+
+1. Scan this session's conversation (and `history.md` 결정·블로커 기록) for user
+   corrections that reversed or amended an earlier decision after the feature
+   started — e.g. "A가 아니라 B", "그게 아니라", a re-stated instruction.
+2. For each delta found:
+   - Record in `history.md` as `type: decision` with title `요구사항 변경: <before> → <after>`
+     (skip if an entry for this delta already exists)
+   - Verify the change is actually applied in the current diff — cite evidence (file:line)
+3. If a delta is NOT applied: fix it now, before proceeding. Never defer a
+   user-stated correction to review or a later feature.
+
 ## Local Verification Checkpoint
 
-### Step 1: testingApproach별 확인
+### Step 1: Check by testingApproach
 
-| testingApproach | 확인 항목 |
-|-----------------|-----------|
-| `skip` | 대상 파일 존재 확인 + 가능하면 lint |
-| `test-after` | Flow B-2에서 테스트 통과 재확인 |
-| `tdd` | Flow A-2에서 테스트 통과 재확인 |
+| testingApproach | What to verify |
+|-----------------|----------------|
+| `skip` | Target files exist + lint if possible |
+| `test-after` | Re-confirm tests pass from Flow B-2 |
+| `tdd` | Re-confirm tests pass from Flow A-2 |
 
-`skip` 피처의 lint 확인 — 다음 우선순위로 명령을 결정한다 (detect-on-demand):
+Lint check for `skip` features — resolve the command in this priority (detect-on-demand):
 
-1. `package.json` scripts에 `lint` 있으면 → `pnpm lint` (또는 해당 패키지 매니저 명령)
-2. nx monorepo 감지 시 (`nx.json` 존재) → `pnpm nx lint <project-name>`
-3. `eslint.config.*` 또는 `.eslintrc.*` 존재 시 → `pnpm eslint .`
-4. 없으면 → lint 확인 skip, 이유 명시 (`/dev setup`으로 lint 설정 권장)
+1. `package.json` scripts has `lint` → `pnpm lint` (or the project's package manager)
+2. nx monorepo detected (`nx.json` exists) → `pnpm nx lint <project-name>`
+3. `eslint.config.*` or `.eslintrc.*` exists → `pnpm eslint .`
+4. None → skip lint, state the reason (recommend `/dev setup` for lint config)
 
-node_modules 미설치로 실행 불가 시: 사유를 명시하고 F-09(build/deploy) 단계로 검증 defer.
+If node_modules is missing and commands cannot run: state the reason and defer
+verification to the build/deploy stage.
 
-### Step 2: 로컬 UI 미리보기 가능 여부 안내
+### Step 2: Announce local UI preview availability
 
-아래 중 하나를 명시적으로 출력한다:
+Output exactly one of the following:
 
-- **미리보기 가능**: 이 feature로 navigable page 또는 visible UI가 생긴 경우
+- **Preview available**: the feature adds a navigable page or visible UI
   ```
   🖥️  로컬에서 확인 가능합니다:
   pnpm nx dev <project-name>  →  http://localhost:<port>
   확인 항목: <spec의 acceptance criteria 중 UI 관련 항목>
   ```
-- **미리보기 불가**: 타입, 유틸, API client, 상수 등 직접 UI 없는 경우
+- **Preview not available**: types, utils, API clients, constants — no direct UI
   ```
   ⏭️  로컬 UI 확인: F-XX (<feature-name>) 완료 후 가능합니다.
   ```
 
-사용자 확인을 기다리지 않고 다음 단계로 진행한다 (미리보기 가능 케이스만 대기).
+Proceed to the next step without waiting (wait only in the preview-available case).
 
 ---
 

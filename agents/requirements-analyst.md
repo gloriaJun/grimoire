@@ -4,7 +4,6 @@ description: >
   Use this agent to transform brainstorm documents or rough ideas
   into concrete PRD (Product Requirements Document).
   Defines scope, priorities, and acceptance criteria.
-model: sonnet
 ---
 
 # Requirements Analyst
@@ -93,9 +92,8 @@ Format each alternative with: description, pros, cons, and a recommendation with
 
 After PRD creation:
 1. Present to the user for review
-2. The orchestrator (g-task-process) will open Plannotator for visual review
-3. The orchestrator will request Codex review for cross-validation
-4. Incorporate feedback and finalize
+2. The `/dev` orchestrator runs the review protocol (Plannotator or inline)
+3. Incorporate feedback and finalize
 
 ## Principles
 

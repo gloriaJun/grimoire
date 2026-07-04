@@ -7,12 +7,9 @@ Execute one feature per session. Routes to sub-files for each execution phase.
 ```mermaid
 flowchart TD
     A(["build"]) --> B["Step 1: Feature Selection"]
-    B --> M["Step 1.5: Mini-Design\n(scope · AC · wireframe · approach · testing)"]
+    B --> M["Step 1.5: Mini-Design\n(scope · AC · wireframe check · approach · testing)"]
     M --> C["Step 2: Confirm Testing Approach"]
-    C --> W{"wireframe exists\n+ UI feature?"}
-    W -- Yes --> WR["Step 2.5: UI/UX Wireframe Pre-check\n(review → update → approve)"]
-    WR --> D
-    W -- No/Skip --> D
+    C --> D
     D{"testingApproach"}
     D -- TDD --> E["Read(flow-tdd.md)"]
     D -- Test-After --> F["Read(flow-test-after.md)"]
@@ -82,11 +79,20 @@ Performed inline by the orchestrator — no agent delegation.
 - Test scope: unit only | unit + e2e | e2e only
 ```
 
-After generating the mini-design:
-> "Mini-design 확인. 계속할까요? (Y / 수정사항 입력)"
+After generating the mini-design, confirm once — wireframe check included:
+
+- If `artifacts.wireframe` exists (not `"skipped"`) AND the `### Wireframe` section
+  is non-empty, show the reference above the confirmation:
+  ```
+  🖥️  와이어프레임: file://<devlogs-task-dir>/wireframe.html
+  관련 화면: <screen name from mini-design ### Wireframe>
+  ```
+> "Mini-design 확인. 와이어프레임에 반영할 UI/UX 변경이 있으면 함께 알려주세요. 계속할까요? (Y / 수정사항 입력)"
 
 - Y → proceed to Step 2
-- User provides changes → update mini-design, re-confirm
+- User provides changes → update the mini-design; if wireframe changes were given,
+  edit `wireframe.html` directly, increment the version badge (v1 → v2), re-provide
+  the same `file://` URL. Re-confirm.
 
 The mini-design lives in the conversation context only.
 If the user asks to persist it, append to `<devlogs-task-dir>/notes.md`.
@@ -104,33 +110,6 @@ If the user asks to persist it, append to `<devlogs-task-dir>/notes.md`.
    - Check `cypress.config.*` → cypress e2e
    - None found and testingApproach is not Skip → ask user for framework details
 3. Proceed to the matching execution flow.
-
----
-
-## Step 2.5: UI/UX Wireframe Pre-check
-
-Skip this step entirely if **either** is true:
-- `artifacts.wireframe` in memory file is `"skipped"` or absent
-- Mini-design `### Wireframe` section is empty (pure logic, API clients, config, infra)
-
-If both conditions are met (wireframe exists AND feature has UI changes):
-
-1. Display the wireframe reference:
-   ```
-   🖥️  와이어프레임: file://<devlogs-task-dir>/wireframe.html
-   관련 화면: <screen name from mini-design ### Wireframe>
-   ```
-2. Ask the user:
-   ```
-   이 기능 구현 전 와이어프레임에서 UI/UX 업데이트할 내용이 있나요?
-   (있으면 변경사항 설명 / 없으면 skip)
-   ```
-3. **If update is needed:**
-   - Modify `wireframe.html` in the devlogs task directory directly
-   - Increment the version badge (v1 → v2 → ...)
-   - Re-provide the same `file://` URL
-   - Wait for user approval — repeat until approved
-4. **If skip or approved** → proceed to Step 3
 
 ---
 
