@@ -4,7 +4,8 @@ Common rules for all agent dispatches - skills and general conversations alike.
 
 ## Model Hierarchy
 
-4-tier로 역할 분리. 기본 모델은 Sonnet (CLAUDE.md 참조).
+4-tier로 역할 분리. 메인 세션 모델·추론 강도는 settings.json 설정을 따르며 세션·작업에 따라
+동적으로 바뀔 수 있다(미설정 시 기본값 Sonnet, CLAUDE.md 참조).
 Fallback: Codex→Sonnet, Haiku→Sonnet, Opus declined→Sonnet.
 
 | Tier | Model | Role | 원칙 |

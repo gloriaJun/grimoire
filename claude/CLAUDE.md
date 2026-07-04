@@ -30,8 +30,8 @@ The following hooks are intentional exceptions to the "no autonomous modificatio
 - PostToolUse: `definition-file-check.sh` — advisory token-budget + English-only check on definition-file writes (skills/agents/instructions)
 
 ## Recommended Model
-- Default CLI model: **Sonnet** (cost-efficient orchestrator)
-- Opus: invoked as advisor only via Agent tool (direction/judgment, never as main session)
+- Model / effort level: follow `settings.json`'s `model` / `effortLevel` fields — these change per session or task, not fixed
+- Sonnet is the cost-efficient baseline when no override is set; Opus may run as the main session when explicitly configured
 
 ## References
 @instructions/tech-stack.md
