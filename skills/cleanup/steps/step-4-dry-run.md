@@ -9,7 +9,7 @@ For each selected category, list:
 
 ## Size Calculation
 
-파일 목록을 먼저 수집한 뒤 `du -ch`로 합산한다. `xargs du -ch`는 파일 수가 많을 때 중복 계산이 발생하므로 아래 패턴을 사용한다:
+Collect the file list first, then sum with `du -ch`. Piping a large file count through `xargs du -ch` double-counts (xargs splits into multiple du invocations, each printing its own total) — use this pattern instead:
 
 ```bash
 FILES=$(find <path> -type f -mtime +<days> 2>/dev/null)

@@ -3,7 +3,7 @@ name: g-insight
 description: >
   /g-insight command only. Reviews completed work and suggests improvements
   to instructions (CLAUDE.md), new skill candidates, config sharing opportunities,
-  and agent prompt enhancements. Also invoked inline from g-task-process step 6.
+  and agent prompt enhancements. Also invoked from /dev complete (optional step).
   Manual invocation only — do NOT auto-trigger.
 ---
 
@@ -18,7 +18,7 @@ tools used) and suggests actionable improvements to instructions, skills, agents
 ```mermaid
 flowchart TD
     A1(["/g-insight"]) --> C
-    A2(["g-task-process Step 6"]) --> C
+    A2(["/dev complete (optional step)"]) --> C
     C["1. Collect Context"] --> D["2. Analyze Patterns"]
     D --> E["3. Generate Insights"]
     E --> F{"Insights found?"}
@@ -93,7 +93,7 @@ For each item choose: Apply / Defer / Skip
 | Choice | Action |
 |--------|--------|
 | **Apply** | Execute the change immediately (edit file, create skill, etc.). If the modified file belongs to a repository (resolve symlinks to find the source), follow that repository's CLAUDE.md Post-Task Workflow if one exists. |
-| **Defer** | Append to the current project's auto memory (`~/.claude/projects/<project>/memory/MEMORY.md`) under a `## Deferred Insights` section. Create the section if it does not exist. |
+| **Defer** | Write one `memory/project` file per deferred insight in the project's auto-memory directory (standard memory frontmatter), then add a one-line pointer in MEMORY.md. Never append insight content to MEMORY.md itself — it is an index only. |
 | **Skip** | Do nothing |
 
 ---
@@ -101,6 +101,6 @@ For each item choose: Apply / Defer / Skip
 ## Principles
 
 - **Minimize noise**: Only suggest meaningful insights. If none, end with "No suggestions."
-- **Run in main context**: Do NOT delegate to a subagent. Full conversation context is required.
+- **Context source by entry point**: standalone `/g-insight` runs in the main context — do NOT delegate; the full conversation history is the input. When invoked from `/dev complete`, it MAY run as a subagent fed with task context (task-name, what was built, key decisions, artifact paths) per `dev/steps/complete.md`.
 - **Works in any project**: This skill runs wherever a task was performed. It focuses on improving Claude Code workflows (instructions, skills, config, agents, memory), not on project code quality — that belongs to code-reviewer and other review tools.
 - **Inline steps**: Steps are tightly coupled and short — kept inline rather than extracted to `steps/`.

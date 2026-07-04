@@ -1,14 +1,14 @@
 # g-insight
 
-Reviews completed work and suggests improvements to instructions, new skill candidates, config sharing opportunities, and agent prompt enhancements. Also invoked automatically from `g-task-process` Step 6.
+Reviews completed work and suggests improvements to instructions, new skill candidates, config sharing opportunities, and agent prompt enhancements. Also invoked from `/dev complete` (optional insight step).
 
 ## Features
 
 - **7 Analysis Categories** — Instruction candidates, skill candidates, config sharing, agent improvements, agent candidates, token efficiency, and memory updates
 - **Quality Gate** — Only surfaces meaningful insights; outputs "No suggestions" when nothing actionable is found
-- **3-Way User Decision** — Each suggestion can be Applied (immediate), Deferred (saved to MEMORY.md), or Skipped
-- **Context-Aware** — When called from `g-task-process`, also analyzes `_state.json`, PRD, TRD, and feature breakdown artifacts
-- **No Subagents** — Runs entirely in the main context window to access the full conversation history
+- **3-Way User Decision** — Each suggestion can be Applied (immediate), Deferred (saved as a memory file + MEMORY.md pointer), or Skipped
+- **Context-Aware** — When called from `/dev complete`, also analyzes the memory file, PRD, architecture.md, and history.md artifacts
+- **Main-Context First** — Standalone runs stay in the main context for full conversation history; `/dev complete` may dispatch it as a subagent with task context
 
 ## Usage
 
@@ -16,19 +16,19 @@ Reviews completed work and suggests improvements to instructions, new skill cand
 /g-insight
 ```
 
-Also invoked automatically after `g-task-process` completion (Step 6).
+Also invoked from `/dev complete` when the user opts into config improvement suggestions.
 
 ## How It Works
 
 ```
-/g-insight (or auto-invoked from g-task-process)
+/g-insight (or invoked from /dev complete)
   → 1. Collect context (conversation history, artifacts)
   → 2. Pattern analysis across 7 categories
   → 3. Generate insights (skip if nothing meaningful)
   → 4. Present recommendations
   → 5. User decision per insight:
        ├── Apply — execute immediately
-       ├── Defer — save to MEMORY.md for later
+       ├── Defer — save as memory file + MEMORY.md pointer
        └── Skip — discard
 ```
 
