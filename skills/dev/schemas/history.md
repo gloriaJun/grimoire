@@ -33,7 +33,7 @@ At `/dev complete`, this file is consolidated into `<task>-log.md` and deleted (
 
 ---
 
-## 현재 상태 Format
+## `현재 상태` Format
 
 Regenerate this section in full from the memory file on every step transition and feature completion.
 Replace the entire block between the two comment markers.
@@ -66,7 +66,7 @@ _Updated: YYYY-MM-DD_
 **Open blockers**: <titles of open 결정·블로커 기록 entries, comma-separated>
 ```
 
-### 현재 상태 Rules
+### `현재 상태` Rules
 
 - The comment markers (`<!-- AUTO-GENERATED ... -->` and `<!-- END AUTO-GENERATED ... -->`) must be preserved exactly — they are parsing anchors.
 - Replace the entire block between markers on each update; never do partial updates.
@@ -77,7 +77,7 @@ _Updated: YYYY-MM-DD_
 
 ---
 
-## 결정·블로커 기록 Format
+## `결정·블로커 기록` Format
 
 Append-only. Each entry follows this format:
 
@@ -98,7 +98,7 @@ _type: <decision|blocker|troubleshooting> · status: <open|resolved>_
 
 ### Review Approval Entries
 
-When a PRD, TRD, or feature breakdown is reviewed and approved, append a 결정·블로커 기록 entry:
+When a PRD, TRD, or feature breakdown is reviewed and approved, append a `결정·블로커 기록` entry:
 
 ```markdown
 ### [plan] YYYY-MM-DD — PRD approved
@@ -111,7 +111,7 @@ Replace `plan` with the current step (`design` for architecture review).
 
 ### Stagnation Entries
 
-When a "테스트 막힘 탈출" is triggered (tests fail ×2), append a 결정·블로커 기록 entry:
+When a "테스트 막힘 탈출" is triggered (tests fail ×2), append a `결정·블로커 기록` entry:
 
 ```markdown
 ### [build] YYYY-MM-DD — F-XX stagnation: <feature name>
@@ -127,10 +127,10 @@ Update `status: resolved` when the stagnation is resolved.
 
 | status | Meaning |
 |--------|---------|
-| `open` | Not yet resolved — surfaces in the 현재 상태 block's "Open blockers" |
+| `open` | Not yet resolved — surfaces in the `현재 상태` block's "Open blockers" |
 | `resolved` | Resolved within this task |
 
-### 결정·블로커 기록 Rules
+### `결정·블로커 기록` Rules
 
 - Append-only while the task is active: never edit or delete entries.
 - If a blocker is resolved: add a follow-up entry `### [<step>] YYYY-MM-DD — <title> (resolved)` with `status: resolved` and a brief note. Do not edit the original entry.
@@ -174,5 +174,5 @@ _Updated: YYYY-MM-DD_
 ## Lifecycle End
 
 - While the task is active, this file is never pruned — every decision and blocker stays.
-- At `/dev complete`, the 결정·블로커 기록 is summarized into `<task>-log.md` (`## 과정에서 고민한 것`)
+- At `/dev complete`, the `결정·블로커 기록` is summarized into `<task>-log.md` (`## 과정에서 고민한 것`)
   and this file is deleted as part of consolidation. There is no separate archive step.

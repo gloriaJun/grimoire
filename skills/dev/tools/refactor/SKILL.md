@@ -7,7 +7,7 @@ description: >
   "refactor this", "clean up this code".
 ---
 
-# g-refactor Orchestrator
+# Refactor — Code Restructuring
 
 Proactive code restructuring skill that analyzes existing code, proposes
 principled improvements with before/after diffs, and implements only
@@ -20,7 +20,7 @@ while sharing the same proposal-and-approval workflow.
 
 ```mermaid
 flowchart TD
-    A(["Trigger: /g-refactor or natural language"]) --> B["Step 0: Scope"]
+    A(["Trigger: /dev refactor or natural language"]) --> B["Step 0: Scope"]
     B --> C{"Mode detection"}
     C -- "architecture" --> D["modes/architecture.md"]
     C -- "types" --> E["modes/types.md"]
@@ -37,7 +37,7 @@ flowchart TD
     M -- "Reject / Revise" --> K
     N --> O["Step 5: Review"]
     O -.-> |"Optional"| P["code-reviewer"]
-    O -.-> |"If needed"| Q["/g-test-writer"]
+    O -.-> |"If needed"| Q["/dev test"]
     O --> R(["Complete"])
 ```
 
@@ -72,11 +72,11 @@ At Step 0, also load the appropriate mode file(s) from `modes/` to inform Step 1
 
 | Signal | Mode file | Focus |
 |--------|-----------|-------|
-| 클린 아키텍처, 레이어, 의존성, 구조 | modes/architecture.md | Layer separation, dependency direction |
-| 타입, any, TypeScript, 인터페이스 | modes/types.md | Type coverage, safety |
-| 중복, 공통화, 재사용, DRY | modes/deduplication.md | Code deduplication, extraction |
-| 이름, 네이밍, 관심사, 가독성 | modes/naming.md | Naming, SRP |
-| 성능, 렌더링, 메모리, 번들 | modes/performance.md | Static performance patterns |
+| `클린 아키텍처, 레이어, 의존성, 구조` | modes/architecture.md | Layer separation, dependency direction |
+| `타입, any, TypeScript, 인터페이스` | modes/types.md | Type coverage, safety |
+| `중복, 공통화, 재사용, DRY` | modes/deduplication.md | Code deduplication, extraction |
+| `이름, 네이밍, 관심사, 가독성` | modes/naming.md | Naming, SRP |
+| `성능, 렌더링, 메모리, 번들` | modes/performance.md | Static performance patterns |
 | No specific signal | auto (all modes) | Full checklist scan |
 
 Multiple modes can be active simultaneously.
@@ -89,7 +89,7 @@ Multiple modes can be active simultaneously.
 |------|---------|---------|----------|
 | Explore agent | Step 1 | Parallel codebase scan for dependencies, patterns, existing utils | Sequential Grep/Glob |
 | code-reviewer agent | Step 5 | Optional cross-review of refactored code | User reviews directly |
-| /g-test-writer | Step 5 | Behavioral regression test generation | Manual verification |
+| /dev test | Step 5 | Behavioral regression test generation | Manual verification |
 
 ---
 

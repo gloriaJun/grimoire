@@ -1,7 +1,7 @@
 # Step 4: Prevention Tests
 
 Goal: Write focused regression tests that prevent this specific error from
-recurring, and escalate to `/g-test-writer` if broader coverage is needed.
+recurring, and escalate to `/dev test` if broader coverage is needed.
 
 ## Input
 
@@ -54,19 +54,19 @@ If regression tests cannot be written, explain why with specific rationale:
 
 Always suggest a concrete alternative when tests are impractical.
 
-## 4e. Escalation to /g-test-writer
+## 4e. Escalation to /dev test
 
 If the fix touches multiple modules or the root cause suggests systemic issues:
 
 ```
-This fix affects a wide area. Consider running /g-test-writer for
+This fix affects a wide area. Consider running /dev test for
 comprehensive test coverage of the affected module(s).
 
 Affected areas:
 - <module/file 1>
 - <module/file 2>
 
-Run /g-test-writer now?
+Run /dev test now?
 1. Yes — launch comprehensive test generation
 2. No — regression tests are sufficient
 ```
@@ -85,7 +85,7 @@ Run /g-test-writer now?
 
 ## Completion
 
-After presenting the Prevention Summary (and handling /g-test-writer escalation if chosen):
+After presenting the Prevention Summary (and handling /dev test escalation if chosen):
 
 **Vault 저장 제안** — error-analysis / debug mode only (skip for performance mode):
 

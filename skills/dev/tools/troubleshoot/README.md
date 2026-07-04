@@ -1,4 +1,4 @@
-# g-troubleshoot
+# dev troubleshoot
 
 Unified troubleshooting skill for error analysis, debugging, and performance diagnosis. Handles error logs, stack traces, Sentry alerts, OpenSearch logs, and local development errors. Replaces the former `g-debug-process` skill.
 
@@ -9,13 +9,13 @@ Unified troubleshooting skill for error analysis, debugging, and performance dia
 - **Root Cause Analysis** — Traces errors to their origin with structured cause chain
 - **User-Friendly Explanation** — Translates technical findings into clear, actionable descriptions
 - **Fix Implementation** — Proposes and applies fixes with user confirmation
-- **Defensive Test Writing** — Generates tests to prevent regression, with escalation to `/g-test-writer` for broader coverage
+- **Defensive Test Writing** — Generates tests to prevent regression, with escalation to `/dev test` for broader coverage
 - **Optional Review** — Offers code-reviewer agent validation of fixes
 
 ## Usage
 
 ```
-/g-troubleshoot
+/dev troubleshoot
 ```
 
 Also triggers on natural language inputs:
@@ -25,7 +25,7 @@ Also triggers on natural language inputs:
 ## How It Works
 
 ```
-/g-troubleshoot (or natural language trigger)
+/dev troubleshoot (or natural language trigger)
   → Step 0: Triage + auto-detect mode
     ├── Dispatch Explore agents (parallel codebase search)
     └── Classify: error-analysis / debug / performance
@@ -33,7 +33,7 @@ Also triggers on natural language inputs:
   → Step 2: User-friendly explanation
   → Step 3: Fix implementation (with user confirmation)
   → Step 4: Defensive test writing
-    └── Escalate to /g-test-writer if broader coverage needed
+    └── Escalate to /dev test if broader coverage needed
 ```
 
 ### Mode Detection

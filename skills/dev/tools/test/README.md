@@ -1,4 +1,4 @@
-# g-test-writer
+# dev test
 
 Generates comprehensive test suites following TDD methodology. Analyzes target code, determines the optimal testing approach, and produces well-structured tests covering normal, edge, error, and boundary cases.
 
@@ -13,13 +13,13 @@ Generates comprehensive test suites following TDD methodology. Analyzes target c
 ## Usage
 
 ```
-/g-test-writer
+/dev test
 ```
 
 ## How It Works
 
 ```
-/g-test-writer
+/dev test
   → Step 1: Code analysis + approach selection
     ├── TDD: new code, write tests first
     ├── Storybook TDD: UI components, stories first

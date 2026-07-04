@@ -1,4 +1,4 @@
-# g-refactor
+# dev refactor
 
 Code restructuring and quality improvement skill with before/after diffs and rationale-driven proposals.
 
@@ -15,7 +15,7 @@ Code restructuring and quality improvement skill with before/after diffs and rat
 ## Usage
 
 ```
-/g-refactor
+/dev refactor
 ```
 
 Also triggers on natural language:
@@ -54,15 +54,7 @@ Step 0: Scope → Step 1: Analysis → Step 2: Proposal → Step 3: Confirm → 
 |------|---------|
 | Explore agent | Parallel codebase analysis |
 | code-reviewer agent | Optional cross-review (Step 5) |
-| /g-test-writer | Behavioral regression tests (Step 5) |
-
-## Installation
-
-```bash
-ln -s /path/to/grimoire/skills/refactor ~/.claude/skills/refactor
-```
-
-Or run `setup.sh` from the grimoire repo root.
+| /dev test | Behavioral regression tests (Step 5) |
 
 ## License
 

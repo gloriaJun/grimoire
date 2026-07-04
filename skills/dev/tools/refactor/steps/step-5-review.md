@@ -47,7 +47,7 @@ This refactoring restructured code that may affect behavior.
 Running tests is recommended to verify nothing broke.
 
 1. Run existing tests now
-2. Generate new tests with /g-test-writer
+2. Generate new tests with /dev test
 3. Skip — I'll verify manually
 ```
 
@@ -66,5 +66,5 @@ Refactoring complete:
 - Applied: A1, T1, D1 (3 changes)
 - Skipped: P1 (user deferred)
 
-Deferred items can be revisited anytime with /g-refactor.
+Deferred items can be revisited anytime with /dev refactor.
 ```

@@ -34,11 +34,11 @@ Match user input against mode signals:
 
 | Signal keywords | Mode | Load file |
 |----------------|------|-----------|
-| 클린 아키텍처, 레이어, 의존성, 분리, 구조 | **architecture** | modes/architecture.md |
-| 타입, any, TypeScript, 인터페이스, 제네릭 | **types** | modes/types.md |
-| 중복, 공통화, 재사용, DRY, 반복 | **deduplication** | modes/deduplication.md |
-| 이름, 네이밍, 관심사, 가독성, 함수 분리 | **naming** | modes/naming.md |
-| 성능, 렌더링, 메모리, 번들, 느려, 최적화 | **performance** | modes/performance.md |
+| `클린 아키텍처, 레이어, 의존성, 분리, 구조` | **architecture** | modes/architecture.md |
+| `타입, any, TypeScript, 인터페이스, 제네릭` | **types** | modes/types.md |
+| `중복, 공통화, 재사용, DRY, 반복` | **deduplication** | modes/deduplication.md |
+| `이름, 네이밍, 관심사, 가독성, 함수 분리` | **naming** | modes/naming.md |
+| `성능, 렌더링, 메모리, 번들, 느려, 최적화` | **performance** | modes/performance.md |
 | No specific signal or general refactor request | **auto** | All modes (Step 1 runs full checklist) |
 
 Multiple modes can be active simultaneously if the user's request spans categories.

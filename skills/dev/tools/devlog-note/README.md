@@ -8,9 +8,9 @@ Appends a structured entry to the active task's devlog directory based on conten
 
 | Category | Target file | When to use |
 |----------|------------|-------------|
-| `decision` | `history.md` → 결정·블로커 기록 | Architecture choice, trade-off, design reason |
-| `blocker` | `history.md` → 결정·블로커 기록 | Unresolved dependency, blocked on information |
-| `troubleshooting` | `history.md` → 결정·블로커 기록 | Bug root cause, error resolution |
+| `decision` | `history.md` → `결정·블로커 기록` | Architecture choice, trade-off, design reason |
+| `blocker` | `history.md` → `결정·블로커 기록` | Unresolved dependency, blocked on information |
+| `troubleshooting` | `history.md` → `결정·블로커 기록` | Bug root cause, error resolution |
 | `progress` | `notes.md` | Progress update, completed item |
 | `note` | `notes.md` | General memo, idea, reference |
 

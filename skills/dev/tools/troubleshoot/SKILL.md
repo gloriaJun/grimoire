@@ -6,7 +6,7 @@ description: >
   GitHub Actions failure output, "에러 고쳐줘", "에러 원인 분석해줘", etc.
 ---
 
-# g-troubleshoot Orchestrator
+# Troubleshoot — Error Analysis & Debugging
 
 Unified troubleshooting skill that routes error analysis, debugging, and performance
 diagnosis through a shared workflow. Each mode adapts the analysis approach while
@@ -18,7 +18,7 @@ sharing the same output structure.
 
 ```mermaid
 flowchart TD
-    A(["Trigger: /g-troubleshoot or natural language"]) --> B["Step 0: Triage"]
+    A(["Trigger: /dev troubleshoot or natural language"]) --> B["Step 0: Triage"]
     B --> |"Dispatch Explore agent"| B2["Codebase search (parallel)"]
     B --> C{"Mode detection"}
     C -- "Error log/message provided" --> D["error-analysis mode"]
@@ -41,7 +41,7 @@ flowchart TD
     N --> O
     O --> P{"Need broader coverage?"}
     P -- "No" --> Q{"Save to vault?\n(error/debug mode)"}
-    P -- "Yes" --> R["Suggest /g-test-writer"]
+    P -- "Yes" --> R["Suggest /dev test"]
     R --> Q
     Q -- "y" --> S["Load retro/SKILL.md standalone"] --> T(["Complete"])
     Q -- "n" --> T
@@ -92,6 +92,6 @@ The mode is auto-detected at Step 0 and can be overridden by the user.
 |------|---------|---------|----------|
 | Explore agent | Step 0 | Parallel codebase search based on error context | Sequential Grep/Glob in main flow |
 | code-reviewer agent | Step 3 | Optional review of fix implementation | User reviews directly |
-| /g-test-writer | Step 4 | Escalation for comprehensive test coverage | Inline regression tests only |
+| /dev test | Step 4 | Escalation for comprehensive test coverage | Inline regression tests only |
 
 Never block the workflow because a tool is unavailable. Fall back gracefully.

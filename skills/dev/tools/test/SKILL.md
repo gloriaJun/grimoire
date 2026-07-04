@@ -6,7 +6,7 @@ description: >
   Test-After (behavior-based) approaches. Detects test framework automatically.
 ---
 
-# g-test-writer Orchestrator
+# Test — Test Code Generation
 
 Lightweight orchestrator for test code generation. Routes to step-specific
 instructions via lazy loading. Each step's details live in `steps/step-N-*.md`.
@@ -17,7 +17,7 @@ instructions via lazy loading. Each step's details live in `steps/step-N-*.md`.
 
 ```mermaid
 flowchart TD
-    A["/g-test-writer"] --> B["Step 1: Analyze target code"]
+    A(["Trigger: /dev test or natural language"]) --> B["Step 1: Analyze target code"]
     B --> C{"Determine approach"}
     C -- "New feature / complex logic" --> D["TDD: Red-Green-Refactor"]
     C -- "UI component" --> E["Storybook TDD: Story-first"]
