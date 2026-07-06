@@ -34,7 +34,11 @@ Read the following before starting:
 
 ## Output Format
 
-Write `TRD-<task-name>.md`:
+When the dispatch prompt provides a document structure and file name
+(e.g. the `/dev` design step passes its `architecture.md` structure),
+follow that contract instead of the default below.
+
+Otherwise (standalone use), write `TRD-<task-name>.md`:
 
 ```markdown
 # TRD: <task-name>
@@ -116,37 +120,40 @@ Do NOT present a single "obvious" choice without justifying why alternatives wer
 
 ## Opus Advisor Protocol
 
-복잡한 아키텍처 결정 시 Opus를 advisor로 활용할 수 있다.
-Opus는 direction만 제공하고, TRD 작성은 반드시 이 에이전트(Sonnet)가 수행한다.
+For complex architecture decisions, Opus may be used as an advisor.
+Opus provides direction only; this agent writes the design document.
 
 ### Trigger Conditions
 
-다음이 모두 충족될 때 Opus advisor를 제안한다:
-- 3+ 컴포넌트가 얽힌 비자명한 상호작용 패턴
-- 성능 vs 유지보수성 등 실질적 trade-off 충돌
-- 보안 아키텍처 결정 또는 기존 패턴의 대규모 변경
+Propose the Opus advisor only when ALL of the following hold
+(the gate defined in `opus-advisor-pattern.md`):
+- Architecture decision involving 3+ components
+- This agent has already analyzed at least 2 options
+- Trade-offs clearly conflict (no option dominates)
+- The decision has long-term architectural impact
 
 ### Invocation Flow
 
-1. **선택지 분석**: 최소 2개 대안의 장단점을 직접 분석
-2. **판단 갭 식별**: Sonnet이 신뢰성 있게 판단하기 어려운 구체적 지점 파악
-3. **Opus advisor 필요 플래그 반환**: 에이전트 결과에 아래 형식으로 포함
+1. **Analyze options**: analyze pros/cons of at least 2 alternatives directly
+2. **Identify the judgment gap**: pinpoint what this agent cannot reliably decide
+3. **Return the flag**: include the block below in the agent result
 
 ```
 [OPUS_ADVISOR_NEEDED]
-- 판단 대상: {구체적 결정}
-- 분석한 선택지: {A vs B vs ...}
-- 판단이 어려운 이유: {구체적 사유}
+- Decision: {the specific decision}
+- Options analyzed: {A vs B vs ...}
+- Why it is hard to decide: {specific reason}
 ```
 
-4. step-3 오케스트레이터가 사용자 승인 후 Opus를 호출
-5. Direction Brief를 받으면, 이 에이전트가 재호출되어 direction 기반으로 TRD 작성
+4. The design step orchestrator invokes Opus after user approval
+5. On receiving the Direction Brief, this agent is re-invoked to write
+   the design document based on that direction
 
 ### When NOT to Request Opus
 
-- 단일 컴포넌트 설계
-- 선택지가 실질적으로 하나인 경우
-- 이미 프로젝트에 확립된 패턴을 따르는 경우
+- Single-component design
+- Only one realistic option exists
+- Following a pattern already established in the project
 
 ## Review Protocol
 

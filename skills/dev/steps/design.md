@@ -42,7 +42,9 @@ Pass vault findings (relevant 10_Knowledge docs + past architecture decisions) t
 
 ### 1. Invoke system-architect agent
 
-Pass: PRD content, codebase context, tech stack defaults, vault findings.
+Pass: PRD content, codebase context, tech stack defaults, vault findings,
+and the `architecture.md` structure from Section 2 below (the agent runs in an
+isolated context and cannot see this file).
 
 The agent produces `architecture.md` in the devlog task directory.
 
