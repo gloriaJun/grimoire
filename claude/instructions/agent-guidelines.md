@@ -50,7 +50,7 @@ generation, mechanical refactoring, doc generation) to Codex first to save Claud
 tokens (Codex bills separately via the OpenAI API). Keep architecture design, initial
 PRD/TRD, complex debugging, and skill authoring on Claude.
 
-Task sizing, subtask splitting, prompt quality, incomplete results → `@instructions/codex-delegation.md`.
+Task sizing, subtask splitting, prompt quality, incomplete results → `references/codex-delegation.md`.
 
 ## Parallel Execution Limit
 
