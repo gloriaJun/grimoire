@@ -139,8 +139,8 @@ Parse the first word after `/dev`. Load ONLY the matching file.
 | `retro` | `Read("tools/retro/SKILL.md")` |
 | `setup` | `Read("tools/setup/SKILL.md")` |
 | `devlog-note`, "devlogs에 기록/정리해줘", "오늘 작업 기록해줘", "작업 노트 써줘", etc. | `Read("tools/devlog-note/SKILL.md")` |
-| `status` | `steps/status.md` | scan memory root → print task status summary |
-| `help` | inline | print available sub-commands |
+| `status` | `Read("steps/status.md")` (scan memory root → task status summary) |
+| `help` | inline — print available sub-commands (see below) |
 
 ### help Output Format
 

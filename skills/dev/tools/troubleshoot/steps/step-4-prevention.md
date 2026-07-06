@@ -87,7 +87,7 @@ Run /dev test now?
 
 After presenting the Prevention Summary (and handling /dev test escalation if chosen):
 
-**Vault 저장 제안** — error-analysis / debug mode only (skip for performance mode):
+**Vault save suggestion** — error-analysis / debug mode only (skip for performance mode):
 
 ```
 이 트러블슈팅 내용을 회고 노트로 정리할까요? (y/n)
@@ -96,6 +96,6 @@ After presenting the Prevention Summary (and handling /dev test escalation if ch
 - **y**: Load `tools/retro/SKILL.md` and run in standalone mode with pre-filled context:
   - `task-name`: derived from error/issue title (from Step 0 triage)
   - `keywords`: error messages, package names, symptom descriptors from triage
-  - `## 트러블슈팅` section: pre-fill 증상 (triage summary), 원인 (Step 1), 해결 (Step 3)
+  - `## 트러블슈팅` section: pre-fill `증상` (triage summary), `원인` (Step 1), `해결` (Step 3)
   - Audience selection prompt still shown — user chooses personal/team
 - **n**: End. No further action.
