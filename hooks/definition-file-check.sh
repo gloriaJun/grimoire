@@ -20,6 +20,7 @@ case "$file" in
 esac
 case "$file" in
   */skills/*|*/agents/*|*/instructions/*) ;;
+  */claude/CLAUDE.md|*/.claude/CLAUDE.md) ;;  # global entry-point CLAUDE.md only
   *) exit 0 ;;
 esac
 
@@ -32,6 +33,7 @@ case "$file" in
   */instructions/*)            budget=500 ;;
   */SKILL.md)                  budget=750 ;;
   */agents/*)                  budget=500 ;;
+  *CLAUDE.md)                  budget=500 ;;
   *)                           budget=1500 ;;  # steps/, tools/, shared/ files
 esac
 
@@ -44,7 +46,8 @@ fi
 # fenced code blocks (user-facing output templates stay Korean) and quoted
 # spans ("...", `...`) — Korean trigger phrases must stay Korean to match
 # Korean user input and are allowed anywhere.
-body=$(awk 'BEGIN{fm=0} /^---[ \t]*$/{fm++; next} fm!=1' "$file" \
+# Frontmatter is recognized only when line 1 is `---`; body `---` rules are not delimiters.
+body=$(awk 'NR==1 && /^---[ \t]*$/{fm=1; next} fm==1 && /^---[ \t]*$/{fm=2; next} fm!=1' "$file" \
   | awk 'BEGIN{cb=0} /^[ \t]*```/{cb=!cb; next} !cb')
 hangul=$(printf '%s' "$body" | perl -CSD -pe 's/"[^"]*"//g; s/`[^`]*`//g' \
   | perl -CSD -ne '$c += () = /[\x{AC00}-\x{D7A3}]/g; END{print $c+0}')
