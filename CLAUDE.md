@@ -18,9 +18,9 @@ hooks/           # Hook scripts, symlinked to ~/.claude/hooks/
 agents/          # Custom agent definitions, symlinked to ~/.claude/agents/
   idea-explorer.md          # Idea exploration via strategic questioning
   requirements-analyst.md   # Requirements analysis -> PRD
-  system-architect.md       # Architecture design -> TRD
-  feature-executor.md       # Feature implementation (Claude/Codex selection)
-  code-reviewer.md          # Cross-agent code review (Claude<->Codex)
+  system-architect.md       # Architecture design -> architecture.md / TRD
+  feature-executor.md       # Single-feature implementation (worktree isolation)
+  code-reviewer.md          # Adversarial code review (bugs, security, design compliance)
   frontend-reviewer.md      # Frontend-specific review (a11y, responsive)
 codex/           # Codex CLI settings
   rules/         # Shell command approval rules, symlinked to ~/.codex/rules/

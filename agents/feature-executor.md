@@ -50,6 +50,7 @@ If `testingApproach` is `"TDD"`:
 - Summary of what was changed and why
 - List of files modified/created/deleted
 - Verification status against acceptance criteria, with evidence (test output, file paths)
+- Worktree path and branch when one was used — the orchestrator needs both for merge and cleanup
 
 ## Principles
 
