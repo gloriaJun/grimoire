@@ -4,66 +4,66 @@ Common rules for all agent dispatches - skills and general conversations alike.
 
 ## Model Hierarchy
 
-4-tier로 역할 분리. 메인 세션 모델·추론 강도는 settings.json 설정을 따르며 세션·작업에 따라
-동적으로 바뀔 수 있다(미설정 시 기본값 Sonnet, CLAUDE.md 참조).
+Four tiers by role. The main session's model and effort follow settings.json and may change
+per session or task (default Sonnet when unset; see CLAUDE.md).
 Fallback: Codex→Sonnet, Haiku→Sonnet, Opus declined→Sonnet.
 
-| Tier | Model | Role | 원칙 |
-|------|-------|------|------|
-| 1 | Opus | Strategic Advisor | 판단/방향만, 실행 금지 |
-| 2 | Sonnet | Orchestrator + Executor | 조율, 라우팅, 실제 작업 |
-| 3 | Haiku | Lightweight Worker | 문서 편집, 요약, 포맷 변환 |
-| 3 | Codex | Code-centric Worker | 리뷰, 탐색, 테스트, 리팩토링 (위임 시 `--effort low`) |
+| Tier | Model | Role | Principle |
+|------|-------|------|-----------|
+| 1 | Opus | Strategic Advisor | judgment/direction only, no execution |
+| 2 | Sonnet | Orchestrator + Executor | coordination, routing, actual work |
+| 3 | Haiku | Lightweight Worker | doc edits, summaries, format conversion |
+| 3 | Codex | Code-centric Worker | review, exploration, tests, refactoring (delegate with `--effort low`) |
 
-**Opus Advisor**: direction만 제공, 실행 금지. 호출 조건(3+ 컴포넌트 아키텍처 결정,
-Sonnet이 2+ 선택지 분석 완료, trade-off 상충, 장기 영향)을 모두 충족할 때만 사용자 승인 후 호출.
-상세 프로세스·Direction Brief 형식·anti-pattern → `references/opus-advisor-pattern.md`.
+**Opus Advisor**: direction only, never executes. Invoke only with user approval when ALL
+hold: 3+ component architecture decision, Sonnet analyzed 2+ options, conflicting
+trade-offs, long-term impact. Process, Direction Brief format, anti-patterns →
+`references/opus-advisor-pattern.md`.
 
-작업 유형별 모델 매핑, fallback 조건, Haiku 사용 규칙 → `references/agent-task-mapping.md`.
+Per-task model mapping, fallback conditions, Haiku rules → `references/agent-task-mapping.md`.
 
 ## Specifying Model
 
 | Agent type | How to set |
 |-----------|-----------|
 | Global (`.claude/agents/`) | `model:` in YAML frontmatter |
-| Skill-local / Ad-hoc | `model` param in Agent tool call (ad-hoc는 항상 `model: sonnet`) |
+| Skill-local / Ad-hoc | omit `model` in the Agent tool call to inherit the session model; set it only when the task tier differs (see `references/agent-task-mapping.md`) |
 
 ## Agent Dispatch
 
-에이전트 위임이 유리한 작업(병렬 리서치, 코드베이스 탐색, 격리된 서브태스크)은
-사용자 지시를 기다리지 않고 능동적으로 dispatch한다. 무엇을·왜 위임하는지 알린다.
+Proactively dispatch work that benefits from delegation (parallel research, codebase
+exploration, isolated subtasks) without waiting for user instruction. Say what is
+delegated and why.
 
-**자율/확인 경계**: 격리된 탐색·분석·리서치는 자율 dispatch. 외부에 영향을 주는
-액션(GitHub·Jira·메시지 발송, 파일 수정)은 CLAUDE.md의 확인 규칙을 따른다.
+**Autonomy boundary**: isolated exploration/analysis/research → dispatch autonomously.
+Actions with external effects (GitHub/Jira/message sending, file modifications) follow
+CLAUDE.md confirmation rules.
 
-**병렬 판단**: 독립적 서브태스크가 2개 이상이고 (1) 상호 출력 비의존,
-(2) 독립 컨텍스트 실행 가능하면 단일 메시지에 묶어 병렬 dispatch.
-패턴 예: 탐색+탐색, 분석+분석, Codex(리뷰/탐색)+Claude(설계/작성).
+**Parallelism**: when 2+ subtasks are (1) independent of each other's output and
+(2) runnable in isolated contexts, batch them in a single message.
+Patterns: explore+explore, analyze+analyze, Codex (review/explore) + Claude (design/write).
 
 ## Codex Delegation
 
-병렬 실행 시 Codex-eligible 작업(코드 리뷰, 탐색, 테스트 생성, 기계적 리팩토링, 문서 생성)은
-Codex 우선 위임해 Claude seat 토큰을 아낀다(Codex는 OpenAI API 별도 과금).
-아키텍처 설계·초기 PRD/TRD·복잡한 디버깅·스킬 저작은 Claude 유지.
+For parallel work, delegate Codex-eligible tasks (code review, exploration, test
+generation, mechanical refactoring, doc generation) to Codex first to save Claude seat
+tokens (Codex bills separately via the OpenAI API). Keep architecture design, initial
+PRD/TRD, complex debugging, and skill authoring on Claude.
 
-작업 사이징, 서브태스크 분할, 프롬프트 품질, 미완료 결과 처리 → `@instructions/codex-delegation.md`.
+Task sizing, subtask splitting, prompt quality, incomplete results → `@instructions/codex-delegation.md`.
 
 ## Parallel Execution Limit
 
-한 번의 병렬 배치에 **최대 3개** 에이전트. 각 에이전트는 별도 컨텍스트·별도 과금.
-
-| 필요 수 | 전략 |
-|---------|------|
-| 1-3 | 전부 병렬 dispatch |
-| 4-6 | wave 분할: wave 1 (최대 3) → 대기 → wave 2 |
-| 7+ | 설계 재고 - 서브태스크 분할 또는 범위 축소 |
+Max **3** agents per parallel batch. Each agent is a separate context and separate billing.
+1-3 → all in parallel · 4-6 → waves of max 3, wait between · 7+ → rethink the design
+(split subtasks or narrow scope).
 
 ## Action Markers
 
-Agent tool 호출이 포함된 응답에서만 사용(위임 없는 직접 응답은 일반 텍스트).
-이모지는 장식이 아닌 액션 유형 식별 마커.
+Use only in responses containing Agent tool calls (plain text for direct responses).
+Emoji are action-type identifiers, not decoration.
 
-- Agent 블록: `## 🤖 Agent: {task name} ({model})`
-- 일반 액션: `{emoji} {Label}: {대상}` - 🔍 Search, 🧠 Analysis, ⚙️ Tool, 📄 Read,
+- Agent block: `## 🤖 Agent: {task name} ({model})`
+- General actions: `{emoji} {Label}: {target}` - 🔍 Search, 🧠 Analysis, ⚙️ Tool, 📄 Read,
   ✍️ Write, ✅ Result, ⚠️ Warning, ❌ Error, 💬 Question
-- 관련 액션은 가장 가까운 Agent 블록 아래 그룹핑
+- Group related actions under the nearest Agent block
