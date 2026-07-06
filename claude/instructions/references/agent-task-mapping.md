@@ -1,44 +1,44 @@
 # Agent Task-to-Model Mapping
 
-작업 유형별 최적 모델과 fallback 체인. agent-guidelines.md에서 on-demand 로드.
+Optimal model per task type with fallback chains. Loaded on demand from agent-guidelines.md.
 
 ## Mapping Table
 
 | Task Type | Primary | Fallback | Rationale |
 |-----------|---------|----------|-----------|
 | **Deep reasoning** | | | |
-| 아키텍처 방향 판단 | Opus (advisor) | Sonnet | 방향만 제시, 실행은 Sonnet |
-| PRD/TRD 작성 | Sonnet | - | Opus direction 반영하여 Sonnet이 작성 |
-| 다단계 디버깅 | Sonnet | - | 맥락 유지 필요 |
+| Architecture direction | Opus (advisor) | Sonnet | direction only; Sonnet executes |
+| PRD/TRD writing | Sonnet | - | Sonnet writes, reflecting Opus direction |
+| Multi-step debugging | Sonnet | - | needs sustained context |
 | **Code tasks** | | | |
-| Code cross-review | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
-| 코드베이스 탐색/패턴 검색 | Codex | Sonnet (Explore) | Codex 불가 시 Sonnet fallback |
-| 테스트 코드 생성 | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
-| 기계적 리팩토링 | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
+| Code cross-review | Codex | Sonnet | Sonnet fallback when Codex unavailable |
+| Codebase exploration / pattern search | Codex | Sonnet (Explore) | Sonnet fallback when Codex unavailable |
+| Test code generation | Codex | Sonnet | Sonnet fallback when Codex unavailable |
+| Mechanical refactoring | Codex | Sonnet | Sonnet fallback when Codex unavailable |
 | **Document tasks** | | | |
-| 문서 경미한 편집 (오타, 포맷, 절 추가) | Haiku | Sonnet | 빠르고 저렴 |
-| 템플릿 기반 문서 생성 | Haiku | Sonnet | 구조가 정해진 채우기 작업 |
-| 포맷 변환 (마크다운 구조 변경, TOC 생성) | Haiku | Sonnet | 순수 텍스트 변환 |
-| 일반 문서 생성 (README, changelog) | Codex | Haiku → Sonnet | 2단 fallback |
-| 설계 문서 cross-review | Codex | Sonnet | Codex 불가 시 Sonnet fallback |
+| Light doc edits (typos, format, small sections) | Haiku | Sonnet | fast and cheap |
+| Template-based doc generation | Haiku | Sonnet | fixed-structure fill-in work |
+| Format conversion (markdown restructure, TOC) | Haiku | Sonnet | pure text transformation |
+| General doc generation (README, changelog) | Codex | Haiku → Sonnet | two-stage fallback |
+| Design doc cross-review | Codex | Sonnet | Sonnet fallback when Codex unavailable |
 | **Utility tasks** | | | |
-| 웹 검색/정보 수집 | Haiku | Sonnet (Explore) | 단순 조회, 요약 |
-| 요약/정리 | Haiku | Sonnet | 기존 내용 압축 |
+| Web search / info gathering | Haiku | Sonnet (Explore) | simple lookup and summary |
+| Summarization | Haiku | Sonnet | compressing existing content |
 
 ## Fallback Trigger Conditions
 
 | Condition | Action |
 |-----------|--------|
-| Codex unavailable (CLI 미설치, Bash 제한, 토큰 소진) | Sonnet으로 fallback |
-| Haiku output quality insufficient | Sonnet으로 escalate |
-| Opus advisor declined by user | Sonnet이 자체 판단으로 진행 |
-| Codex 응답 품질 불충분 | 1회 재시도 후 Sonnet으로 전환 |
+| Codex unavailable (CLI missing, Bash restricted, tokens exhausted) | fall back to Sonnet |
+| Haiku output quality insufficient | escalate to Sonnet |
+| Opus advisor declined by user | Sonnet proceeds on its own judgment |
+| Codex response quality insufficient | retry once, then switch to Sonnet |
 
 ## Haiku Usage Rules
 
-Haiku는 Agent tool의 `model: haiku`로 호출한다.
-Bash 권한이 불필요하므로 Codex를 사용할 수 없는 환경에서 fallback으로 활용한다.
+Invoke Haiku via the Agent tool with `model: haiku`.
+It needs no Bash permission, so it serves as the fallback when Codex is unavailable.
 
-**적합한 작업**: 구조가 명확하고 심층 추론이 불필요한 작업
-**부적합한 작업**: cross-review, 아키텍처 설계, 복잡한 코드 분석
-**호출 방식**: `Agent tool: model: haiku, subagent_type: general-purpose`
+**Good fit**: clearly structured tasks that need no deep reasoning
+**Poor fit**: cross-review, architecture design, complex code analysis
+**Invocation**: `Agent tool: model: haiku, subagent_type: general-purpose`
