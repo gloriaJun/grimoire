@@ -1,11 +1,11 @@
 # Opus Advisor Pattern
 
-Opus는 Strategic Advisor로서 **판단과 방향 제시만** 수행한다.
-문서 작성, 코드 작성, 리뷰 등 실행 작업은 절대 Opus에게 위임하지 않는다.
+Opus acts as a Strategic Advisor: **judgment and direction only**.
+Never delegate execution work (writing documents, code, or reviews) to Opus.
 
-## Direction Brief 형식
+## Direction Brief Format
 
-Opus가 반환하는 표준 출력 형식:
+Standard output format Opus returns (user-facing, stays Korean):
 
 ```markdown
 ## Direction Brief
@@ -26,20 +26,20 @@ Opus가 반환하는 표준 출력 형식:
 - [피해야 할 접근법]
 ```
 
-## 호출 판단 체크리스트
+## Invocation Checklist
 
-다음 조건이 **모두** 충족될 때만 Opus advisor를 제안한다:
+Propose the Opus advisor only when **all** of the following hold:
 
-- [ ] 3개 이상 컴포넌트가 얽힌 아키텍처 결정
-- [ ] Sonnet이 최소 2개 선택지를 이미 분석 완료
-- [ ] 선택지 간 trade-off가 명확히 상충 (하나가 압도적이지 않음)
-- [ ] 결정이 장기적 아키텍처 영향을 미침
+- [ ] Architecture decision involving 3+ components
+- [ ] Sonnet has already analyzed at least 2 options
+- [ ] Trade-offs clearly conflict (no option dominates)
+- [ ] The decision has long-term architectural impact
 
-하나라도 미충족이면 Sonnet이 직접 판단한다.
+If any item is unmet, Sonnet decides directly.
 
-## 호출 프로세스
+## Invocation Process
 
-### 1. 사용자 동의
+### 1. User Approval
 
 ```
 이 아키텍처 결정에 Opus의 판단이 필요합니다.
@@ -48,34 +48,32 @@ Opus가 반환하는 표준 출력 형식:
 Opus 호출을 승인하시겠습니까? (Y/n)
 ```
 
-### 2. Opus 프롬프트 구성
+### 2. Composing the Opus Prompt
 
-Opus에게 전달하는 프롬프트에 포함할 내용:
+| Item | Include | Exclude |
+|------|---------|---------|
+| Requirements summary | O | full PRD text |
+| Options Sonnet analyzed | O | unanalyzed options |
+| Pros/cons per option | O | secondary details |
+| A specific decision question | O | open-ended questions ("어떻게 할까요?") |
+| Request for Direction Brief format | O | document/code writing requests |
 
-| 항목 | 포함 | 제외 |
-|------|------|------|
-| 요구사항 요약 | O | 전체 PRD 원문 |
-| Sonnet이 분석한 선택지 | O | 미분석 선택지 |
-| 각 선택지 장단점 | O | 부차적 세부사항 |
-| 구체적 판단 질문 | O | 열린 질문 ("어떻게 할까요?") |
-| Direction Brief 형식 요청 | O | 문서/코드 작성 요청 |
-
-프롬프트 말미에 반드시 명시:
+Always end the prompt with:
 > "Direction Brief 형식으로만 응답해주세요. 문서나 코드를 작성하지 마세요."
 
-### 3. Direction Brief 수신 후
+### 3. After Receiving the Direction Brief
 
-1. Direction에서 핵심 결정과 실행 지침 추출
-2. Sonnet이 direction 기반으로 실제 작업 수행 (TRD 작성, 설계 등)
-3. 산출물에 "Architecture direction by Opus advisor" 표기
+1. Extract the core decision and execution guidance from the direction
+2. Sonnet performs the actual work based on it (TRD writing, design, etc.)
+3. Mark deliverables with "Architecture direction by Opus advisor"
 
 ## Anti-patterns
 
-| Anti-pattern | 올바른 접근 |
-|-------------|------------|
-| Opus에게 TRD 전체 작성 요청 | Opus는 방향만, Sonnet이 TRD 작성 |
-| Opus에게 코드 리뷰 위임 | Codex 또는 Sonnet이 리뷰 |
-| 선택지 분석 없이 Opus 호출 | Sonnet이 먼저 2+ 선택지 분석 후 호출 |
-| 단일 컴포넌트 설계에 Opus 사용 | Sonnet이 직접 판단 |
-| "어떻게 설계할까요?" 식 열린 질문 | "A vs B 중 어떤 방향이 적합한가?" 식 구체적 질문 |
-| Opus의 direction을 무시하고 재호출 | 사용자와 상의 후 방향 조정 |
+| Anti-pattern | Correct approach |
+|-------------|------------------|
+| Asking Opus to write a full TRD | Opus gives direction only; Sonnet writes the TRD |
+| Delegating code review to Opus | Codex or Sonnet reviews |
+| Calling Opus without option analysis | Sonnet analyzes 2+ options first, then calls |
+| Using Opus for single-component design | Sonnet decides directly |
+| Open-ended questions ("어떻게 설계할까요?") | Specific questions ("A vs B 중 어떤 방향이 적합한가?") |
+| Ignoring Opus direction and re-calling | Adjust direction after consulting the user |

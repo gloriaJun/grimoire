@@ -24,7 +24,7 @@ If an existing skill already handles part of the new requirements:
    - How the new skill would invoke the existing one (e.g. inline reference from a step file)
 3. Proceed only after user confirmation
 
-Reference: `g-task-process` step-6 invoking `g-insight` is the canonical reuse pattern.
+Reference: `/dev complete` invoking the `insight` skill is the canonical reuse pattern.
 
 ## 2. Post-Completion: Review
 

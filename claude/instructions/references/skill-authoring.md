@@ -19,7 +19,7 @@ SKILL.md is a thin orchestrator — it routes to sub-files, not implements logic
 
 - Route the overall flow: what to do, in what order, under what conditions
 - Delegate detailed logic to `steps/`, `scripts/`, `references/`
-- Reference model: `skills/task-process/SKILL.md`
+- Reference model: `skills/dev/SKILL.md`
 
 ## Sub-Command Skills
 
@@ -308,7 +308,7 @@ consider how the skill behaves at runtime.
 | Cross-review | Does the skill produce code changes or fix implementations? | Offer code-reviewer / Codex cross-review (mandatory or user-optional) |
 | Global agent reuse | Can an existing global agent (`agents/*.md`) handle a sub-task? | Reuse it instead of writing inline logic |
 | External tools | Does a step benefit from MCP tools, CLI commands, or web lookups? | Document as external dependency with fallback |
-| Skill escalation | Could a step's scope grow beyond the skill's expertise? | Define escalation path to a specialized skill (e.g., `/g-test-writer`) |
+| Skill escalation | Could a step's scope grow beyond the skill's expertise? | Define escalation path to a specialized skill (e.g., `/dev test`) |
 
 ## Post-Task Workflow
 
