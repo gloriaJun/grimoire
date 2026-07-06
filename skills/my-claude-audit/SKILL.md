@@ -144,7 +144,7 @@ After Wave 1 completes, dispatch a single agent to find gaps between behavior an
    - Agent 1 output (token-and-config) — for hook/permission state
    - Agent 2 output (skills-ecosystem) — for skills list
    - CLAUDE.md content(s) discovered in Phase 1
-3. Dispatch: `Agent 4 (insights-gap-analyzer)` with `subagent_type: Explore`, `model: sonnet`
+3. Dispatch: `Agent 4 (insights-gap-analyzer)` with `subagent_type: Explore` (no `model` param — inherits the session model)
 4. Wait for completion. If it returns invalid JSON or fails, set `insightsGapData = null` and continue.
 
 ## Phase 3: Insights Aggregation

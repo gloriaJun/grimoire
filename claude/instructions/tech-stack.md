@@ -5,22 +5,21 @@
 
 ## Node.js Version Manager
 
-- mise를 기본 Node.js 버전 관리 도구로 사용한다
-- 전역 설정(`~/.config/mise/config.toml`)에 `legacy_version_file = true` 활성화
-  → mise가 `.nvmrc`를 자동 인식
+- mise is the default Node.js version manager
+- Global config (`~/.config/mise/config.toml`) sets `legacy_version_file = true`, so mise auto-detects `.nvmrc`
 
-### 프로젝트 적용 규칙
+### Per-Project Rules
 
-| 상황 | 처리 방식 |
-|------|-----------|
-| `.nvmrc` 없음 | 프로젝트 루트에 `.mise.toml` 생성 |
-| `.nvmrc` 있음 | `.mise.toml`로 전환하고 `.nvmrc` 삭제 |
+| Situation | Action |
+|-----------|--------|
+| No `.nvmrc` | Create `.mise.toml` at project root |
+| `.nvmrc` exists | Convert to `.mise.toml` and delete `.nvmrc` |
 
-### `.mise.toml` 형식
+### `.mise.toml` Format
 
 ```toml
 [tools]
-node = "22"   # 메이저 버전 고정 (mise가 최신 패치 자동 선택)
+node = "22"   # pin major version (mise picks the latest patch)
 ```
 
 ## JavaScript / TypeScript
@@ -43,9 +42,9 @@ When file-level conventions grow to 5+ rules, extract to `instructions/js-ts-con
 
 ## Terminal Environment
 
-- **Terminal**: cmux (macOS native, AI-agent-optimized, Ghostty-based, no tmux/prefix key needed)
-- **Built-in browser**: When suggesting "open in browser" (e.g., HTML reports in `/tmp/`), reference cmux's built-in browser alongside the system default
-- **Split panes**: Available natively — suggest split pane usage when recommending parallel long-running terminal processes (e.g., dev server + test watcher)
+- **Terminal**: cmux (macOS native, AI-agent-optimized, Ghostty-based; no tmux prefix key)
+- When suggesting "open in browser" (e.g., `/tmp/` HTML reports), mention cmux's built-in browser alongside the system default
+- Split panes are native — suggest them for parallel long-running processes (e.g., dev server + test watcher)
 
 ## General
 - Specific frameworks and libraries are defined per project in each repo's CLAUDE.md
