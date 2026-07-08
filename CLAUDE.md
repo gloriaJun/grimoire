@@ -13,6 +13,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
   - `claude/settings.hooks.json` → merged into the `hooks` key of `~/.claude/settings.json` via jq. The file itself is never copied; other settings keys stay untouched.
 - All definition files under `claude/` are English-only. Korean readability comes from the doc viewer (`tools/doc-viewer`), never from Korean source files. Korean is allowed inside files only as quoted examples (style pairs, trigger phrases) or template skeleton labels inside code fences.
 - v1 backup at `~/.claude_bak` is read-only reference. It contains company-specific data (e.g. Jira ticket prefixes); never copy such content into this repo.
+- Instruction change review: after editing definition files under `claude/`, do not commit right away. Regenerate translations (`pnpm build skeleton grimoire` → fill empty `ko` → `pnpm build`), start the viewer (launch.json `doc-viewer`), and ask the user to confirm the change in the viewer's diff panel. Commit only after confirmation - the post-commit sync makes it live.
 
 ## Layout
 
