@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Sync ~/.claude when the commit touched claude/ ("committed = live").
+# Enable once with: git config core.hooksPath githooks
+set -euo pipefail
+
+REPO_DIR="$(git rev-parse --show-toplevel)"
+
+if git diff-tree --no-commit-id --name-only -r HEAD | grep -q '^claude/'; then
+  "$REPO_DIR/sync.sh"
+fi
