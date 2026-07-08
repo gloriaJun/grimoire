@@ -110,6 +110,28 @@ if [[ -d "$DEST/skills" ]]; then
   done
 fi
 
+# 6. Hooks config: merge the repo-managed "hooks" key into live settings.json.
+#    Only .hooks is owned; runtime keys (enabledPlugins, marketplaces, ...) are
+#    preserved. settings.hooks.json itself is never copied to $DEST.
+HOOKS_SRC="$SRC/settings.hooks.json"
+SETTINGS="$DEST/settings.json"
+if [[ -f "$HOOKS_SRC" ]]; then
+  if ! command -v jq >/dev/null 2>&1; then
+    warn "jq not found - hooks config NOT merged into settings.json"
+  elif [[ "$DRY_RUN" -eq 1 ]]; then
+    log "[dry-run] merge $HOOKS_SRC -> $SETTINGS (.hooks key only)"
+  else
+    tmp="$(mktemp)"
+    if [[ -f "$SETTINGS" ]]; then
+      jq --slurpfile h "$HOOKS_SRC" '.hooks = $h[0]' "$SETTINGS" > "$tmp"
+    else
+      jq -n --slurpfile h "$HOOKS_SRC" '{hooks: $h[0]}' > "$tmp"
+    fi
+    mv "$tmp" "$SETTINGS"
+    log "merged hooks config into settings.json"
+  fi
+fi
+
 if [[ "$DRY_RUN" -eq 1 ]]; then
   log "sync dry-run complete: $SRC -> $DEST (nothing written)"
 else

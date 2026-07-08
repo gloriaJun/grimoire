@@ -1,0 +1,35 @@
+{
+  "SessionStart": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "[[ -n \"$OPENAI_CODEX_API_KEY\" ]] && codex login --with-api-key <<< \"$OPENAI_CODEX_API_KEY\" 2>/dev/null || true",
+          "async": true
+        }
+      ]
+    }
+  ],
+  "PreToolUse": [
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "\"$HOME/.claude/hooks/pr-guard.sh\""
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "\"$HOME/.claude/hooks/emdash-check.sh\""
+        }
+      ]
+    }
+  ]
+}

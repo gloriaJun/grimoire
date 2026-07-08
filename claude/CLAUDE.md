@@ -94,4 +94,4 @@ Source of truth: `~/Documents/GitHubPrivate/grimore2/claude/` → `sync.sh`가 `
 - 모든 지침·스킬 정의 파일은 영어로만 작성. 강제 방식(hook 형태)은 전체 작업 완료 후 결정. 이 한글판은 검토용이며 검토 후 영문 변환 예정. [stated]
 - 메모리 포맷은 "나만의 지식 저장소" 구성 단계에서 초기화 상태로 보고 재설계. v1의 글로벌 메모리(메모리 정리 제안 피드백) 승계 여부도 이 단계에서 결정. [stated]
 - 테크 스택 실행 규칙(.nvmrc→.mise.toml 변환, 상수/함수 파일 분리 등)은 다음 단계에서 reference 파일로 분리 - 이 파일에는 도구 선호만 남긴다. [stated: 감사 라운드]
-- rtk hook은 v2에 승계하지 않음(출력 필터링으로 인한 의도 왜곡 이슈). 재도입 여부는 hook 재구축 단계에서 명령별 opt-in 방식으로 재평가. [stated: 감사 라운드]
+- rtk hook은 v2 미도입 확정 - 출력 필터링 의도 왜곡 이슈, 에이전트 위임 규칙이 컨텍스트 절감을 대체. CLI(brew)는 유지. [stated: hook 설계 라운드]
