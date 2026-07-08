@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "doc-viewer",
+      "runtimeExecutable": "/Users/al03155147/.local/share/mise/installs/node/lts/bin/node",
+      "runtimeArgs": ["tools/doc-viewer/serve.mjs"],
+      "port": 4173,
+      "autoPort": true
+    }
+  ]
+}

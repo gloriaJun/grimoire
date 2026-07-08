@@ -1,0 +1,7 @@
+{
+  "roots": [
+    { "name": "grimoire", "path": "../../claude" },
+    { "name": "my-claude-skills", "path": "~/Documents/GithubWork/my-claude-skills" }
+  ],
+  "ignore": ["node_modules", ".git", "dist", ".claude-plugin"]
+}
