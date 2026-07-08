@@ -1,27 +1,27 @@
-# 제안서 템플릿
+# Proposal Template
 
-제안·검토 문서(기술 선택, 설계 검토, 의견서)에 적용한다.
+Applies to proposal/review documents (tech choices, design reviews, position papers).
 
-## 골격
+## Skeleton
 
 ```markdown
-# {제안 내용을 담은 제목}
+# {title stating the proposal}
 
-{결론: 추천안과 핵심 근거. 1-2줄}
+{conclusion: the recommendation and its key rationale. 1-2 lines}
 
 ## 배경
 
-{이 결정이 필요해진 이유와 제약. 3줄 이내}
+{why this decision became necessary and the constraints. within 3 lines}
 
 ## 대안 비교
 
-{표: | 대안 | 장점 | 단점 | 비용 |. 추천안을 첫 행에 배치}
+{table: | 대안 | 장점 | 단점 | 비용 |. place the recommendation in the first row}
 
 ## 트레이드오프
 
-{추천안이 포기하는 것과 감수 이유. 불릿 2-3개}
+{what the recommendation gives up and why that is acceptable. 2-3 bullets}
 
 ## 다음 단계
 
-{채택 시 실행 항목. 명사형 불릿. 없으면 섹션 제거}
+{action items upon adoption. noun-form bullets. remove the section if none}
 ```

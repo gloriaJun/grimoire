@@ -1,32 +1,32 @@
-# 개발 가이드 템플릿
+# Development Guide Template
 
-저장소 기여자용 개발 가이드(CONTRIBUTING, 개발 규칙 문서)에 적용한다.
-반복 참조하는 규칙·명령 모음이다. 1회 수행하는 선형 절차는 `guide.md`를 쓴다.
+Applies to development guides for repository contributors (CONTRIBUTING, development rule docs).
+This is a collection of rules and commands referenced repeatedly. For linear procedures performed once, use `guide.md`.
 
-## 골격
+## Skeleton
 
 ```markdown
-# {프로젝트명} 개발 가이드
+# {project name} 개발 가이드
 
-{이 문서의 대상 독자와 다루는 범위. 1줄}
+{target audience and scope of this document. 1 line}
 
 ## 개발 환경
 
-{요구 도구·버전 불릿 + 셋업 명령 코드 블록}
+{required tools/versions as bullets + setup commands as a code block}
 
 ## 명령어
 
-{표: | 작업 | 명령 |. 빌드·테스트·린트·실행 순}
+{table: | 작업 | 명령 |. order: build, test, lint, run}
 
 ## 코드 컨벤션
 
-{저장소 고유 규칙만. 린터·포맷터가 강제하는 것은 제외. 불릿}
+{repository-specific rules only. exclude what the linter/formatter enforces. bullets}
 
 ## 브랜치·PR 규칙
 
-{브랜치 네이밍, 커밋 형식, PR 요건. 불릿}
+{branch naming, commit format, PR requirements. bullets}
 
 ## 테스트
 
-{실행 방법 1줄 + 작성 규칙(위치, 네이밍, 커버리지 기준). 불릿}
+{how to run in 1 line + writing rules (location, naming, coverage criteria). bullets}
 ```

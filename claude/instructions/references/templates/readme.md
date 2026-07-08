@@ -1,34 +1,34 @@
-# README 템플릿
+# README Template
 
-프로젝트 소개·사용법 문서(README.md)에 적용한다.
-이 골격을 기준으로 작성하되, 해당 없는 선택 섹션은 제거한다.
+Applies to project introduction/usage documents (README.md).
+Write based on this skeleton, removing optional sections that do not apply.
 
-## 골격
+## Skeleton
 
 ```markdown
-# {프로젝트명}
+# {project name}
 
-{한 줄 정의: 무엇을 하는 도구/서비스인가. 1줄}
+{one-line definition: what the tool/service does. 1 line}
 
-{핵심 특징 또는 해결하는 문제. 최대 3불릿, 명사형 종결. 자명하면 생략}
+{key features or the problem it solves. up to 3 bullets, noun-form endings. omit if self-evident}
 
 ## 설치
 
-{사전 요구사항(런타임·도구 버전) 1줄 + 설치 명령 코드 블록}
+{prerequisites (runtime/tool versions) in 1 line + install commands as a code block}
 
 ## 사용법
 
-{가장 흔한 사용 시나리오 1개: 명령/코드 블록 + 기대 결과 1줄}
+{the single most common usage scenario: command/code block + expected result in 1 line}
 
 ## 구조
 
-{디렉토리 트리 코드 블록 또는 모듈 표. 항목당 역할 1줄}
+{directory tree code block or module table. 1 line per item on its role}
 ```
 
-## 선택 섹션
+## Optional Sections
 
-| 섹션 | 추가 조건 |
+| Section | Condition to add |
 |---|---|
-| `## 설정` | 환경 변수·설정 파일이 있을 때 |
-| `## 개발` | 로컬 개발·기여 절차가 사용법과 다를 때 |
-| `## 배포` | 배포 절차를 저장소 안에서 관리할 때 |
+| `## 설정` | When there are environment variables or config files |
+| `## 개발` | When local development/contribution steps differ from usage |
+| `## 배포` | When the deployment procedure is managed inside the repository |

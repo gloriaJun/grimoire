@@ -1,29 +1,29 @@
-# 계획 문서 템플릿
+# Plan Document Template
 
-실행 계획 문서(구현 계획, 작업 계획)에 적용한다.
-결정된 것을 어떻게 실행할지 다룬다. 대안 비교가 필요한 결정 전 단계는 `proposal.md`를 쓴다.
+Applies to execution plan documents (implementation plans, work plans).
+Covers how to execute what has been decided. For the pre-decision stage that needs alternative comparison, use `proposal.md`.
 
-## 골격
+## Skeleton
 
 ```markdown
-# {목표를 담은 제목}
+# {goal-bearing title}
 
-{목표와 완료 기준: 무엇이 되면 끝인가. 1-2줄}
+{goal and completion criteria: what makes it done. 1-2 lines}
 
 ## 범위
 
-- 포함: {이번 작업에 들어가는 것. 불릿}
-- 제외: {의도적으로 안 하는 것. 불릿. 스코프 방어를 위해 반드시 명시}
+- 포함: {what this work includes. bullets}
+- 제외: {what is intentionally not done. bullets. must be stated, to defend scope}
 
 ## 단계
 
-{표: | 단계 | 작업 | 산출물/검증 |. 단계마다 검증 방법 병기}
+{table: | 단계 | 작업 | 산출물/검증 |. include a verification method alongside each step}
 
 ## 리스크·의존성
 
-{막힐 수 있는 지점과 외부 의존. 불릿. 없으면 섹션 제거}
+{points that could block progress and external dependencies. bullets. remove the section if none}
 
 ## 미결정 사항
 
-{진행 중 결정이 필요한 항목과 결정 시점. 불릿. 없으면 섹션 제거}
+{items needing decisions during execution and when to decide them. bullets. remove the section if none}
 ```

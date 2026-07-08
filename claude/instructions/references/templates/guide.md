@@ -1,28 +1,28 @@
-# 가이드 템플릿
+# Guide Template
 
-절차 안내 문서(하우투, 온보딩, 마이그레이션 가이드)에 적용한다.
+Applies to procedural guide documents (how-to, onboarding, migration guides).
 
-## 골격
+## Skeleton
 
 ```markdown
-# {목표를 담은 제목: "X → Y 전환", "X 설정"}
+# {goal-bearing title: "X → Y 전환", "X 설정"}
 
-{이 가이드로 얻는 결과. 1줄}
-대상: {전제 독자·환경. 1줄}. 소요 시간: {N분}.
+{the outcome this guide delivers. 1 line}
+대상: {assumed reader/environment. 1 line}. 소요 시간: {N분}.
 
 ## 사전 조건
 
-{필요한 도구·권한·상태. 불릿, 항목마다 확인 명령 병기}
+{required tools/permissions/state. bullets, with a verification command alongside each item}
 
 ## 절차
 
-{단계 표: | 단계 | 명령/작업 | 결과 |. 분기가 있으면 mermaid flowchart}
+{step table: | 단계 | 명령/작업 | 결과 |. mermaid flowchart if there are branches}
 
 ## 확인
 
-{완료 판정: 실행할 명령과 기대 출력. 1-3줄}
+{completion check: the command to run and its expected output. 1-3 lines}
 
 ## 문제 발생 시
 
-{자주 걸리는 실패 1-2개: 증상 → 조치 각 1줄. 없으면 섹션 제거}
+{1-2 common failures: symptom → action, 1 line each. remove the section if none}
 ```
