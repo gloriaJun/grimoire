@@ -1,6 +1,6 @@
 # 사용자 레벨 지침
 
-Source of truth: `~/Documents/GitHubPrivate/grimore2/claude/CLAUDE.md` → `~/.claude/CLAUDE.md`로 심링크. 수정은 항상 저장소에서 하고, `~/.claude/`에서 직접 수정하지 않는다. [stated]
+Source of truth: `~/Documents/GitHubPrivate/grimore2/claude/` → `sync.sh`가 `~/.claude/`로 복사 동기화(post-commit hook 자동 실행). 수정은 항상 저장소에서 하고 커밋한다 - `~/.claude/`에서 직접 수정하면 다음 동기화 때 덮어써진다. [stated]
 프로젝트 고유 규칙(기술 스택 상세, 명령어, 아키텍처)은 각 저장소의 CLAUDE.md에 둔다 - 이 파일은 오직 '사용자'에 관한 것이다.
 
 ## 나는 누구인가 (WHO I AM)
@@ -25,7 +25,7 @@ Source of truth: `~/Documents/GitHubPrivate/grimore2/claude/CLAUDE.md` → `~/.c
   - em/en 대시(—, –) 금지. `-`, `:`, 괄호를 사용.
   - "~를 통해 / ~에 대해 / ~에 있어서" 남용, 이중피동(~되어진다), "~다" 종결 4회 이상 연속 회피.
   - 확신하는 내용은 단정형으로. 헤징 연쇄("~할 수 있을 것으로 보인다") 금지.
-- 문서 산출물(가이드, 위키, README, 초안) 작성 시 → `~/Documents/GitHubPrivate/grimore2/claude/instructions/references/doc-writing.md`를 Read로 로드해 따른다. 절대 경로 사용 - `~/.claude/`에는 이 파일이 링크되어 있지 않다. [stated: 참조 파일 분리 결정]
+- 문서 산출물(가이드, 위키, README, 초안) 작성 시 → `~/.claude/instructions/references/doc-writing.md`를 Read로 로드해 따른다. [stated: 참조 파일 분리 결정]
 
 ## 작업 프로토콜 (WORK PROTOCOL)
 
