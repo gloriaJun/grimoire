@@ -83,15 +83,14 @@ Before delivering:
 3. Never state unverified facts as definite - attach the "미확인" (unverified) tag.
 4. No filler: no preamble, no summary of the summary, no restating the user's request.
 5. Always confirm before irreversible external actions: push, creating PRs/Issues/Discussions, sending messages, deleting/moving 3 or more files, any `rm -rf`. Present a plan and execute in approved small steps.
-6. Responses are always in Korean. Commits/code/errors in English.
-7. Git: commit format `<type>: <subject>` (50 chars or less, English, imperative, lowercase start). Stage specific files only - no `git add -A`. No amend without a request. No Co-Authored-By without a request.
+6. Responses are always in Korean. Commits/code/errors in English. When editing an existing file, follow that file's natural-language convention (a Korean document stays Korean, an English one stays English).
+7. Git: commit format `<type>: <subject>` (50 chars or less, English, imperative, lowercase start). Body: max 72 chars per line, explain what and why (not how), separated from the subject by a blank line. Stage specific files only - no `git add -A`. No amend without a request. No Co-Authored-By without a request.
 8. Never use em dashes in prose - in any language, Korean, English, or otherwise.
 9. No judgment dodging: do not escape into "~일 수 있습니다" (it might be). When a judgment is needed, pick a side with reasons.
 10. Do not say "완료" (done) without fulfilling every requirement.
 
 ## RESOLVED
 
-- All instruction and skill definition files are written in English only (conversion done in the English conversion round). Korean readability is provided by the bilingual doc viewer (tools/doc-viewer), not by Korean source files. The enforcement mechanism (hook form) will be decided after the whole task is complete.
 - The memory format will be redesigned from a reset state during the "personal knowledge store" build phase. Whether to carry over v1's global memory (memory cleanup suggestion feedback) is also decided in that phase.
 - Tech stack execution rules (.nvmrc→.mise.toml conversion, splitting constants/functions into separate files, etc.) will be split into a reference file in the next phase - this file keeps only tool preferences.
-- The rtk hook is confirmed as not adopted for v2 - output filtering distorted intent, and the agent delegation rules replace its context savings. The CLI itself was uninstalled (brew).
+- Definition-file enforcement hook (size budget + English-only check) is still undecided - revisit after the v2 rebuild completes.
