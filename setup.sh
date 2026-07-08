@@ -87,43 +87,42 @@ safe_link() {
     fi
 }
 
-# --- generate_agents_md: merge claude instructions into AGENTS.md ---
-# Combines CLAUDE.md + instructions/*.md so Codex CLI follows the same rules
+# --- generate_agents_md: build Codex AGENTS.md from shared instructions ---
+# Codex CLI has no @import; setup.sh flattens instructions/shared/*.md (the
+# tool-agnostic rules) into a single AGENTS.md. Claude-specific rules (skills,
+# memory, agent orchestration) live in CLAUDE.md only and are excluded here.
 generate_agents_md() {
     local output="$CODEX_HOME/AGENTS.md"
-    local claude_md="$HARNESS_DIR/claude/CLAUDE.md"
-    local instructions_dir="$HARNESS_DIR/claude/instructions"
+    local shared_dir="$HARNESS_DIR/claude/instructions/shared"
 
     if $DRY_RUN; then
-        dry "Generate $output from CLAUDE.md + instructions/*.md"
+        dry "Generate $output from instructions/shared/*.md"
+        return
+    fi
+
+    if [ ! -d "$shared_dir" ]; then
+        skip "Shared instructions not found ($shared_dir)"
         return
     fi
 
     mkdir -p "$CODEX_HOME"
     cat > "$output" << 'HEADER'
 # Codex CLI Instructions
-# Auto-generated from grimoire/claude/ — DO NOT EDIT DIRECTLY
+# Auto-generated from grimoire/claude/instructions/shared/ — DO NOT EDIT DIRECTLY
 # Run: setup.sh --regenerate to update
+# Claude-specific rules (skills, memory, agent orchestration) are excluded by design.
 HEADER
     echo "# Generated: $(date +%Y-%m-%d)" >> "$output"
     echo "" >> "$output"
 
-    # Include CLAUDE.md (strip @import lines — they are inlined below)
-    if [ -f "$claude_md" ]; then
-        grep -v '^@instructions/' "$claude_md" >> "$output"
+    # Inline shared (tool-agnostic) instruction files only
+    for f in "$shared_dir"/*.md; do
+        [ -e "$f" ] || continue
+        cat "$f" >> "$output"
         echo "" >> "$output"
-    fi
-
-    # Inline all instruction files
-    if [ -d "$instructions_dir" ]; then
-        for f in "$instructions_dir"/*.md; do
-            [ -e "$f" ] || continue
-            echo "---" >> "$output"
-            echo "" >> "$output"
-            cat "$f" >> "$output"
-            echo "" >> "$output"
-        done
-    fi
+        echo "---" >> "$output"
+        echo "" >> "$output"
+    done
 
     log "Generated: $output ($(wc -c < "$output" | tr -d ' ') bytes)"
 }
@@ -266,19 +265,10 @@ for f in "$HARNESS_DIR"/agents/*.md; do
     safe_link "$f" "$CLAUDE_HOME/agents/$fname"
 done
 
-# --- 5. Codex CLI: skills ---
-echo ""
-echo "--- Codex CLI: skills ---"
-if [ -d "$CODEX_HOME" ]; then
-    mkdir -p "$CODEX_HOME/skills" 2>/dev/null || true
-    for d in "$HARNESS_DIR"/skills/*/; do
-        [ -d "$d" ] || continue
-        dname="$(basename "$d")"
-        safe_link "$d" "$CODEX_HOME/skills/$dname"
-    done
-else
-    skip "Codex home not found ($CODEX_HOME)"
-fi
+# --- 5. Codex CLI: skills — intentionally NOT symlinked ---
+# grimoire skills are Claude-Code-specific (Skill/Agent tools, memory format,
+# model tiers) and are not portable to Codex. Only tool-agnostic instructions
+# cross over to Codex, via the AGENTS.md generation below.
 
 # --- 6. Codex CLI: rules ---
 # default.rules is NOT managed by grimoire — Codex writes session-approved

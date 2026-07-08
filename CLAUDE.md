@@ -12,6 +12,7 @@ There is no build system, no package manager, and no test runner. The repo conta
 
 ```
 claude/          # Custom instruction files (CLAUDE.md, instructions/)
+                 # instructions/shared/ tool-agnostic rules (also fed to Codex AGENTS.md)
                  # instructions/references/ for on-demand guidelines
                  # Symlinked to ~/.claude/
 hooks/           # Hook scripts, symlinked to ~/.claude/hooks/
@@ -22,8 +23,6 @@ agents/          # Custom agent definitions, symlinked to ~/.claude/agents/
   feature-executor.md       # Single-feature implementation (worktree isolation)
   code-reviewer.md          # Adversarial code review (bugs, security, design compliance)
   frontend-reviewer.md      # Frontend-specific review (a11y, responsive)
-codex/           # Codex CLI settings
-  rules/         # Shell command approval rules, symlinked to ~/.codex/rules/
 skills/          # Claude Code skills, symlinked to ~/.claude/skills/
   dev/           # Unified development workflow (/dev idea|plan|design|build|complete|test|refactor|troubleshoot|review|retro|setup|devlog-note|status|help)
     steps/       # Planning lifecycle step files
