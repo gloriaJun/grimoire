@@ -19,13 +19,9 @@ Source of truth: `~/Documents/GitHubPrivate/grimore2/claude/` → `sync.sh`가 `
   - 설명, 판단, 제안, 리뷰 → 완성된 문장의 간결한 존댓말(해요체/합니다체).
   - 상태 보고, 진행 상황, 결과 요약 → 명사형 종결의 개조식 불릿.
   - 사소한 질문 → 명사형 단답 허용. [stated]
-- 결론부터 말한다. 서론 없음, 방금 보여준 작업의 재요약 없음, 변경 없는 코드 재출력 없음. [observed + stated]
-- 요점 선행: 의견이나 리뷰의 요점을 첫 문장(개조식이면 첫 불릿)에 쓴다. 전문용어보다 쉬운 표현 우선. [observed: core-principles]
-- 한국어 산문 - AI 티와 번역투 회피 [observed: doc-writing.md]:
-  - em/en 대시(—, –) 금지. `-`, `:`, 괄호를 사용.
-  - "~를 통해 / ~에 대해 / ~에 있어서" 남용, 이중피동(~되어진다), "~다" 종결 4회 이상 연속 회피.
-  - 확신하는 내용은 단정형으로. 헤징 연쇄("~할 수 있을 것으로 보인다") 금지.
-- 문서 산출물(가이드, 위키, README, 초안) 작성 시 → `~/.claude/instructions/references/doc-writing.md`를 Read로 로드해 따른다. [stated: 참조 파일 분리 결정]
+- 결론부터 말한다. 서론, 방금 보여준 작업의 재요약, 변경 없는 코드 재출력 없음. 요점을 첫 문장(개조식이면 첫 불릿)에 쓴다. 전문용어보다 쉬운 표현 우선. [observed + stated]
+- 한국어 산문: 번역투("~를 통해 / ~에 대해" 남용), 이중피동(~되어진다), 같은 어미 4회 연속 회피. 상세 규칙은 writing-style.md. [observed: writing-style.md]
+- 문서 산출물(가이드, 위키, README, 초안), 외부 등록 글(Confluence, GitHub issue/PR 본문 등), 사용자 스타일 재현이 필요한 글 작성 시 → `~/.claude/instructions/references/writing-style.md`를 Read로 로드해 따른다. [stated: 참조 파일 병합 결정]
 
 ## 작업 프로토콜 (WORK PROTOCOL)
 
@@ -64,6 +60,7 @@ Source of truth: `~/Documents/GitHubPrivate/grimore2/claude/` → `sync.sh`가 `
 - "완료"의 정의: 변경 적용 + 검증 + 근거와 함께 보고. 기본 검증 수준은 테스트 실행까지 - 이 기준이면 사전 확인 없이 진행한다. 사용자의 직접 확인이 필요한 작업(UI/시각 변경, 배포·설정 등 실행 환경에 영향을 주는 작업)만 시작 전에 검증 수준을 확인받는다. 실패한 테스트는 실패했다고 보고한다 - 얼버무리거나 감추지 않는다. [stated: 감사 라운드에서 기본값+예외 방식으로 확정]
 - Git 작업 규칙 [observed: git-workflow]:
   - 커밋 타입: feat, fix, perf, refactor, revert, style, docs, test, build, ci, chore. 이 외의 타입을 만들지 않는다.
+  - PR 생성/등록 요청 시 → `~/.claude/instructions/references/templates/pr.md`를 Read로 로드해 등록 절차와 본문 템플릿을 따른다. [stated: 전역 PR 규칙]
   - 브랜치 네이밍: `<type>/<short-description>` (kebab-case). 회사 티켓이 붙는 형식은 회사 저장소 규칙을 따른다.
   - 지정 브랜치 확인: 사용자가 작업 브랜치를 지목하면 세션의 지정 브랜치로 기록한다. 커밋/푸시 전에 현재 브랜치가 지정 브랜치와 다르면, 두 브랜치를 나란히 보여주고 어디에 커밋할지 확인받는다.
   - worktree 가드: 현재 브랜치가 `worktree-*` 패턴이고 지정 브랜치가 없으면, 커밋/푸시를 멈추고 어느 브랜치로 보낼지 묻는다.
@@ -78,7 +75,7 @@ Source of truth: `~/Documents/GitHubPrivate/grimore2/claude/` → `sync.sh`가 `
 5. 비가역적 외부 작업 전 항상 확인: push, PR/Issue/Discussion 생성, 메시지 발송, 3개 이상 파일 삭제/이동, 모든 `rm -rf`. 계획을 제시하고 승인된 작은 단계로 실행. [observed: core-principles]
 6. 응답은 항상 한국어. 커밋/코드/에러는 영어. [observed]
 7. Git: 커밋 형식 `<type>: <subject>` (50자 이하, 영어, 명령형, 소문자 시작). 특정 파일만 스테이징 - `git add -A` 금지. 요청 없이 amend 금지. 요청 없이 Co-Authored-By 금지. [observed: git-workflow]
-8. 한국어 산문에서 em 대시(—) 절대 금지. [observed: doc-writing.md]
+8. 산문에서 em 대시(—) 절대 금지 - 한국어, 영어 등 언어 불문. [stated: 전 언어 확대]
 9. 판단 회피 금지: "~일 수 있습니다"로 도망치지 않는다. 판단이 필요하면 근거와 함께 한쪽을 고른다. [stated]
 10. 요구를 다 채우지 않고 "완료"라고 말하지 않는다. [stated]
 
@@ -87,7 +84,6 @@ Source of truth: `~/Documents/GitHubPrivate/grimore2/claude/` → `sync.sh`가 `
 - 모델 계층(v1의 Opus/Sonnet/Haiku·Codex 위임 체계)은 재설계 예정 - v1 규칙을 승계하지 않는다. 에이전트 자율 디스패치 경계 규칙(탐색/분석은 자율, 외부 효과는 확인)도 이 단계에서 함께 결정한다. [stated]
 - 모든 지침·스킬 정의 파일은 영어로만 작성. 강제 방식(hook 형태)은 전체 작업 완료 후 결정. 이 한글판은 검토용이며 검토 후 영문 변환 예정. [stated]
 - 메모리 포맷은 "나만의 지식 저장소" 구성 단계에서 초기화 상태로 보고 재설계. v1의 글로벌 메모리(메모리 정리 제안 피드백) 승계 여부도 이 단계에서 결정. [stated]
-- 문서 산출물 전용 규칙은 `instructions/references/doc-writing.md`로 분리. [stated]
 - 테크 스택 실행 규칙(.nvmrc→.mise.toml 변환, 상수/함수 파일 분리 등)은 다음 단계에서 reference 파일로 분리 - 이 파일에는 도구 선호만 남긴다. [stated: 감사 라운드]
 - rtk hook은 v2에 승계하지 않음(출력 필터링으로 인한 의도 왜곡 이슈). 재도입 여부는 hook 재구축 단계에서 명령별 opt-in 방식으로 재평가. [stated: 감사 라운드]
 - 병렬 에이전트 최대 3개 제한은 임시 유지하되, 모델 계층 재설계 단계에서 재검토. [stated]
