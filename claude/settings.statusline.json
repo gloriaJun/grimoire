@@ -1,0 +1,6 @@
+{
+  "type": "command",
+  "command": "mise exec 'npm:ccstatusline@latest' -- ccstatusline",
+  "padding": 0,
+  "refreshInterval": 10
+}
