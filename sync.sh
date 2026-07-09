@@ -2,11 +2,16 @@
 # One-way sync: <repo>/claude/ -> ~/.claude/
 #
 # Ownership rules:
-#   - CLAUDE.md                       : single managed file at ~/.claude root
+#   - CLAUDE.md                       : assembled at ~/.claude root from
+#                                       instructions/shared/*.md + claude-only.md
 #   - instructions/, hooks/, agents/  : wholly owned -> full mirror (rsync --delete)
 #   - skills/                         : shared namespace. Only "g-*" entries are
 #                                       managed here. "l-*" belongs to the company
 #                                       repo; anything else is unmanaged (warn only).
+#   - settings.json                   : only the .hooks and .statusLine keys are
+#                                       owned (merged from claude/settings.*.json)
+#   - <repo>/ccstatusline/            : rendered to ~/.config/ccstatusline/
+#                                       ({{HOME}} placeholder substituted)
 #
 # Usage: sync.sh [--dry-run]
 
@@ -61,16 +66,40 @@ clear_symlink() {
   fi
 }
 
-# 1. CLAUDE.md (single managed root file)
+# 1. CLAUDE.md: assemble shared fragments (sorted by filename) + claude-only.md.
+#    Budget: warn above 14000 chars (~3,500 tok, token-budget.md).
+CLAUDE_BUDGET=14000
 clear_symlink "$DEST/CLAUDE.md"
-run cp "$SRC/CLAUDE.md" "$DEST/CLAUDE.md"
+assemble_claude_md() {
+  local f
+  for f in "$SRC/instructions/shared/"*.md "$SRC/claude-only.md"; do
+    [[ -f "$f" ]] || { warn "assembly source missing: $f"; continue; }
+    cat "$f"
+    printf '\n'
+  done
+}
+if [[ "$DRY_RUN" -eq 1 ]]; then
+  log "[dry-run] assemble instructions/shared/*.md + claude-only.md -> $DEST/CLAUDE.md ($(assemble_claude_md | wc -c | tr -d ' ') chars)"
+else
+  tmp_claude="$(mktemp)"
+  assemble_claude_md > "$tmp_claude"
+  mv "$tmp_claude" "$DEST/CLAUDE.md"
+fi
+claude_size="$(assemble_claude_md | wc -c | tr -d ' ')"
+if (( claude_size > CLAUDE_BUDGET )); then
+  warn "assembled CLAUDE.md is ${claude_size} chars > budget ${CLAUDE_BUDGET}"
+fi
 
 # 2. Wholly owned dirs: full mirror. A top-level dir that disappeared from
 #    the repo is NOT auto-deleted (likely a mistake) - warn instead.
 for d in "${OWNED_DIRS[@]}"; do
   if [[ -d "$SRC/$d" ]]; then
     clear_symlink "$DEST/$d"
-    run rsync "${RSYNC_OPTS[@]}" "$SRC/$d/" "$DEST/$d/"
+    extra_opts=()
+    # shared/ fragments only feed the CLAUDE.md/AGENTS.md assembly; the live
+    # tree has no consumer for standalone copies.
+    [[ "$d" == "instructions" ]] && extra_opts=(--exclude=shared/)
+    run rsync "${RSYNC_OPTS[@]}" "${extra_opts[@]}" "$SRC/$d/" "$DEST/$d/"
   elif [[ -e "$DEST/$d" ]]; then
     warn "owned dir '$d' exists in $DEST but not in repo - remove it manually if intended"
   fi
@@ -129,6 +158,47 @@ if [[ -f "$HOOKS_SRC" ]]; then
     fi
     mv "$tmp" "$SETTINGS"
     log "merged hooks config into settings.json"
+  fi
+fi
+
+# 7. Statusline config: merge the repo-managed "statusLine" key into live
+#    settings.json, same ownership model as the hooks key.
+STATUSLINE_SRC="$SRC/settings.statusline.json"
+if [[ -f "$STATUSLINE_SRC" ]]; then
+  if ! command -v jq >/dev/null 2>&1; then
+    warn "jq not found - statusLine config NOT merged into settings.json"
+  elif [[ "$DRY_RUN" -eq 1 ]]; then
+    log "[dry-run] merge $STATUSLINE_SRC -> $SETTINGS (.statusLine key only)"
+  else
+    tmp="$(mktemp)"
+    if [[ -f "$SETTINGS" ]]; then
+      jq --slurpfile s "$STATUSLINE_SRC" '.statusLine = $s[0]' "$SETTINGS" > "$tmp"
+    else
+      jq -n --slurpfile s "$STATUSLINE_SRC" '{statusLine: $s[0]}' > "$tmp"
+    fi
+    mv "$tmp" "$SETTINGS"
+    log "merged statusLine config into settings.json"
+  fi
+fi
+
+# 8. ccstatusline app config: render into ~/.config/ccstatusline. The repo
+#    copy keeps a {{HOME}} placeholder (no hardcoded username); substitute it
+#    at install time. The widget script is copied verbatim, executable.
+CCS_SRC="$REPO_DIR/ccstatusline"
+CCS_DEST="$HOME/.config/ccstatusline"
+if [[ -d "$CCS_SRC" ]]; then
+  run mkdir -p "$CCS_DEST"
+  clear_symlink "$CCS_DEST/settings.json"
+  clear_symlink "$CCS_DEST/worktree-widget.sh"
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    log "[dry-run] render $CCS_SRC/settings.json -> $CCS_DEST/settings.json ({{HOME}} substituted)"
+    log "[dry-run] install $CCS_SRC/worktree-widget.sh -> $CCS_DEST/worktree-widget.sh"
+  else
+    tmp_ccs="$(mktemp)"
+    sed "s|{{HOME}}|$HOME|g" "$CCS_SRC/settings.json" > "$tmp_ccs"
+    mv "$tmp_ccs" "$CCS_DEST/settings.json"
+    install -m 0755 "$CCS_SRC/worktree-widget.sh" "$CCS_DEST/worktree-widget.sh"
+    log "installed ccstatusline config"
   fi
 fi
 

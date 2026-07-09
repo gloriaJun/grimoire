@@ -12,6 +12,8 @@ file="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty')"
 # Order matters: templates/ must match before the generic references/ pattern.
 case "$file" in
   */claude/CLAUDE.md|"$HOME/.claude/CLAUDE.md")   budget=14000; type="CLAUDE.md" ;;
+  */instructions/shared/*.md)                     budget=5000;  type="shared-fragment" ;;
+  */claude/claude-only.md)                        budget=5000;  type="claude-only" ;;
   */instructions/references/templates/*.md)       budget=9000;  type="template" ;;
   */instructions/references/*.md)                 budget=5000;  type="reference" ;;
   */skills/*/SKILL.md)                            budget=3000;  type="SKILL.md" ;;

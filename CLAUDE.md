@@ -1,15 +1,15 @@
 # grimoire (grimore2)
 
-Source of truth for the user-level Claude Code configuration (v2). `claude/` is copy-synced one-way to `~/.claude/`. Repo rename to `grimoire` is planned at project completion.
+Source of truth for the user-level Claude Code configuration (v2). `claude/` is copy-synced one-way to `~/.claude/`, and a migration layer (`codex-sync.sh`) generates the Codex CLI config surface (`~/.codex/`) from the same Claude-side sources. Repo rename to `grimoire` is planned at project completion.
 
 ## Critical rules
 
 - Edit only in this repo. Direct edits in `~/.claude/` are overwritten on the next sync.
-- Sync runs automatically on commit: `githooks/post-commit` (wired via `git config core.hooksPath githooks`) calls `sync.sh` when the commit touched `claude/`. It syncs the working tree state, not the commit. Preview with `./sync.sh --dry-run`.
+- Sync runs automatically on commit: `githooks/post-commit` (wired via `git config core.hooksPath githooks`) calls `sync.sh` then `codex-sync.sh` when the commit touched `claude/`. It syncs the working tree state, not the commit. Preview with `./sync.sh --dry-run` and `./codex-sync.sh --dry-run`.
 - Sync ownership (see header of `sync.sh`):
-  - `claude/CLAUDE.md` → `~/.claude/CLAUDE.md` (single managed file)
+  - `claude/instructions/shared/*.md` + `claude/claude-only.md` → assembled (filename order, claude-only last) into `~/.claude/CLAUDE.md`. There is no `claude/CLAUDE.md` source file anymore.
   - `claude/instructions/`, `claude/hooks/`, `claude/agents/` → full mirror with `--delete`. Deleting a file here deletes it live.
-  - `claude/skills/`: only `g-*` entries are managed. `l-*` belongs to the company repo (`~/Documents/GithubWork/my-claude-skills`); anything else is warn-only.
+  - `claude/skills/`: only `g-*` entries are managed. `l-*` belongs to the company repo (`~/Documents/GitHubWork/my-claude-skills`); anything else is warn-only.
   - `claude/settings.hooks.json` → merged into the `hooks` key of `~/.claude/settings.json` via jq. The file itself is never copied; other settings keys stay untouched.
 - All definition files under `claude/` are English-only. Korean readability comes from the doc viewer (`tools/doc-viewer`), never from Korean source files. Korean is allowed inside files only as quoted examples (style pairs, trigger phrases) or template skeleton labels inside code fences.
 - v1 backup at `~/.claude_bak` is read-only reference. It contains company-specific data (e.g. Jira ticket prefixes); never copy such content into this repo.
@@ -17,10 +17,18 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 
 ## Layout
 
-- `claude/` - the synced payload: CLAUDE.md, instructions/references (writing-style, tech-stack, code-review, skill-authoring, token-budget, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh), settings.hooks.json
-- `sync.sh`, `githooks/post-commit` - sync mechanism
+- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, token-budget, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh), settings.hooks.json
+- `sync.sh`, `codex-sync.sh`, `githooks/post-commit` - sync mechanism
 - `tools/doc-viewer/` - bilingual static-site viewer (TypeScript)
 - `.claude/launch.json` - preview server config for the viewer (port 4173)
+
+## Codex sync (codex-sync.sh)
+
+- Generates the Codex config surface from Claude-side state; Codex has no hand-maintained sources. See the script header for full rules.
+- `~/.codex/AGENTS.md` = generated header + `claude/instructions/shared/*.md` + company workspace `~/Documents/GitHubWork/CLAUDE.md` as a scoped section (when present). Aborts above 32768 bytes (codex `project_doc_max_bytes`), warns above 24576.
+- `~/.codex/skills/` = migrated copies of `~/.claude/skills/*` (minus the exclude list in the script, currently `g-insight`) plus skills inside installed Claude plugins (`mp-<plugin>-<skill>`). SKILL.md frontmatter is reduced to `name`/`description` because Codex rejects unknown keys; bodies are copied verbatim.
+- Ownership via `~/.codex/codex-sync-manifest.json`: only manifest-listed entries are ever deleted. `~/.codex/skills/.system/` and unmanaged entries are never touched.
+- Runs from post-commit after `sync.sh`; run manually after installing/updating Claude plugins.
 
 ## Hooks (claude/hooks/)
 

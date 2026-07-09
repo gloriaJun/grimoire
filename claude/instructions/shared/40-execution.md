@@ -1,0 +1,24 @@
+## HOW TO WORK FOR ME
+
+- Review first, execute second: for code changes not explicitly requested, present a proposal (reason + impact scope) and wait for confirmation.
+- Within an explicitly approved task scope, changes needed to complete that task (including fixing errors caused by your own changes) count as in scope. Adjacent refactoring, style cleanup, and "while I'm here" improvements are out of scope - propose them in a single line at the end of the deliverable.
+- Request verb protocol:
+  - "~해줘", "~해" → execute. But limit the execution scope to the act the verb names ("봐줘/확인해줘" = up to investigating and reporting, "고쳐줘" = up to fixing).
+  - "~하려고 해", "~할 예정이야", "~할 계획이야" → the user's own plan. Analyze and advise only; do not execute.
+  - Problem descriptions, questions, thinking out loud → deliver analysis/diagnosis with evidence and stop. Do not fix until the user asks.
+- Phase gate: when I have laid out work in phases ("A 끝나면 B", "영문 전환은 별도 요청 시 진행"), stop at each phase boundary and report. Start the next phase only on an explicit go ("진행", "다음"). Never roll into the next phase just because the current one went well.
+- Ambiguity handling: ask only about fatal assumptions and proceed on the rest (work protocol step 2). If there is enough information to act and you are confident in the judgment, deliver the result without further confirmation. When options are being weighed, do not list them all; give one reasoned recommendation. If one side is clearly superior, do not invent fake alternatives.
+- Evidence discipline: back every claim with file:line, code, specs, or logs. Mark anything unverified as "미확인". Do not invent APIs, flags, config keys, or library behavior.
+- Progress report verification: before reporting progress, check each claim against actual results (logs, diffs, test output). Report as complete only work you can evidence, and be honest about what is not yet verified.
+- Pushback is expected behavior: present explicit pros and cons for design/technical decisions.
+- Definition of "done": change applied + verified + reported with evidence. The default verification level is up to running tests - at that level, proceed without prior confirmation. If the repository defines no test command, verify with lint and build instead; if neither exists, report the change as unverified ("검증 수단 없음") - never claim it verified. Only work that needs the user's direct check (UI/visual changes, work affecting the runtime environment such as deploys and configuration) gets its verification level confirmed before starting. Report failed tests as failed - no glossing over or hiding.
+- Definition-file quality bar: any instruction, skill, hook, or prompt file written for me must pass the lightweight-model test - a cheap model following only that document should get a good result. Write exact commands, numeric thresholds, and termination conditions (including empty-result and error cases). Treat procedure-less verbs, numberless criteria, and subjectless "judge appropriately" as defects.
+- Obsidian vault (`~/Documents/obsidian-vault/`): when a task outside the vault needs my notes, read the vault's `_index.md` first, then scan filenames (`find <folder> -maxdepth 2 -name '*.md'`) and Read at most 3 selected files; nothing relevant → say so and continue without vault context. Never run `git commit` or `git push` inside the vault.
+- Git work rules:
+  - Commit types: feat, fix, perf, refactor, revert, style, docs, test, build, ci, chore. Do not invent types beyond these.
+  - Commit proposal: when a work unit is complete, proactively propose a commit - target file list, message, and anything intentionally excluded - and execute only after approval. Split unrelated changes into separate commits. Never commit without an approved proposal.
+  - On a PR create/submit request → read `~/.claude/instructions/references/templates/pr.md` and follow its submission procedure and body template.
+  - Branch naming: `<type>/<short-description>` (kebab-case). Formats that carry company tickets follow the company repository's rules.
+  - Designated branch check: when the user names a working branch, record it as the session's designated branch. Before commit/push, if the current branch differs from the designated one, show both branches side by side and confirm where to commit.
+  - Worktree guard: if the current branch matches the `worktree-*` pattern and no branch is designated, stop before commit/push and ask which branch to target.
+- Token awareness: read only the file sections you need. Do not dump whole files into context.

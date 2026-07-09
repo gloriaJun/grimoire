@@ -10,7 +10,8 @@ Token estimation: `wc -c` / 4.
 
 | File type | Load timing | Max |
 |---|---|---|
-| `~/.claude/CLAUDE.md` (global) | Every session | ~3,500 tok (~14,000 chars) |
+| `~/.claude/CLAUDE.md` (global, assembled) | Every session | ~3,500 tok (~14,000 chars) |
+| `instructions/shared/*.md` + `claude-only.md` (assembly fragments) | Every session (via assembly) | ~1,250 tok (~5,000 chars) each; assembled total within the CLAUDE.md budget |
 | `instructions/references/*.md` | On-demand (Read) | ~1,250 tok (~5,000 chars) |
 | `references/templates/*.md` | On-demand (Read) | ~2,250 tok (~9,000 chars) |
 | `SKILL.md` body | On skill trigger | ~750 tok (~3,000 chars) |
