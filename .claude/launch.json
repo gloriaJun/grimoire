@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "doc-viewer",
-      "runtimeExecutable": "/Users/al03155147/.local/share/mise/installs/node/lts/bin/node",
+      "runtimeExecutable": "node",
       "runtimeArgs": ["tools/doc-viewer/serve.mjs"],
       "port": 4173,
       "autoPort": true
