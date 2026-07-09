@@ -2,11 +2,13 @@
   "$comment": "Desired external-install state. Consumed by bootstrap.sh (installs missing entries) and sync.sh (suppresses the unmanaged-skill warning for declared skill dirs). Personal entries only - company marketplaces and plugins belong to the company repo (my-claude-skills).",
   "marketplaces": [
     "backnotprop/plannotator",
-    "anthropics/skills"
+    "anthropics/skills",
+    "zarazhangrui/frontend-slides"
   ],
   "plugins": [
     "plannotator@plannotator",
-    "example-skills@anthropic-agent-skills"
+    "example-skills@anthropic-agent-skills",
+    "frontend-slides@frontend-slides"
   ],
   "skills": [
     {
