@@ -3,8 +3,7 @@
   "mcpServers": {
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@playwright/mcp"],
-      "disabled": true
+      "args": ["-y", "@playwright/mcp"]
     }
   }
 }
