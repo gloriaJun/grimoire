@@ -1,24 +1,28 @@
-# grimoire (grimore2)
+# grimoire
 
-Source of truth for the user-level Claude Code configuration (v2). `claude/` is copy-synced one-way to `~/.claude/`, and a migration layer (`codex-sync.sh`) generates the Codex CLI config surface (`~/.codex/`) from the same Claude-side sources. Repo rename to `grimoire` is planned at project completion.
+Source of truth for the user-level Claude Code configuration (v2). `claude/` is copy-synced one-way to `~/.claude/`, and a migration layer (`codex-sync.sh`) generates the Codex CLI config surface (`~/.codex/`) from the same Claude-side sources. v1 is preserved on the `v1` branch.
 
 ## Critical rules
 
 - Edit only in this repo. Direct edits in `~/.claude/` are overwritten on the next sync.
-- Sync runs automatically on commit: `githooks/post-commit` (wired via `git config core.hooksPath githooks`) calls `sync.sh` then `codex-sync.sh` when the commit touched `claude/`. It syncs the working tree state, not the commit. Preview with `./sync.sh --dry-run` and `./codex-sync.sh --dry-run`.
+- Sync runs automatically on commit: `githooks/post-commit` (wired via `git config core.hooksPath githooks`) calls `sync.sh` then `codex-sync.sh` when the commit touched `claude/` or `ccstatusline/`. It syncs the working tree state, not the commit. Preview with `./sync.sh --dry-run` and `./codex-sync.sh --dry-run`.
 - Sync ownership (see header of `sync.sh`):
   - `claude/instructions/shared/*.md` + `claude/claude-only.md` → assembled (filename order, claude-only last) into `~/.claude/CLAUDE.md`. There is no `claude/CLAUDE.md` source file anymore.
   - `claude/instructions/`, `claude/hooks/`, `claude/agents/` → full mirror with `--delete`. Deleting a file here deletes it live.
   - `claude/skills/`: only `g-*` entries are managed. `l-*` belongs to the company repo (`~/Documents/GitHubWork/my-claude-skills`); anything else is warn-only.
-  - `claude/settings.hooks.json` → merged into the `hooks` key of `~/.claude/settings.json` via jq. The file itself is never copied; other settings keys stay untouched.
+  - `claude/settings.hooks.json` → merged into the `hooks` key of `~/.claude/settings.json` via jq; `claude/settings.statusline.json` → merged into the `statusLine` key the same way. Neither file is copied; other settings keys stay untouched.
+  - `ccstatusline/` (repo root) → rendered to `~/.config/ccstatusline/` with the `{{HOME}}` placeholder substituted, so no username is committed.
 - All definition files under `claude/` are English-only. Korean readability comes from the doc viewer (`tools/doc-viewer`), never from Korean source files. Korean is allowed inside files only as quoted examples (style pairs, trigger phrases) or template skeleton labels inside code fences.
 - v1 backup at `~/.claude_bak` is read-only reference. It contains company-specific data (e.g. Jira ticket prefixes); never copy such content into this repo.
 - Instruction change review: after editing definition files under `claude/`, do not commit right away. Regenerate translations (`pnpm build skeleton grimoire` → fill empty `ko` → `pnpm build`), start the viewer (launch.json `doc-viewer`), and ask the user to confirm the change in the viewer's diff panel. Commit only after confirmation - the post-commit sync makes it live.
 
 ## Layout
 
-- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, token-budget, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh), settings.hooks.json
+- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, token-budget, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh), settings.hooks.json, settings.statusline.json
 - `sync.sh`, `codex-sync.sh`, `githooks/post-commit` - sync mechanism
+- `ccstatusline/` - statusline widget config, rendered to `~/.config/ccstatusline/`
+- `bin/cwt` - worktree + Claude launcher CLI (symlinked from `~/.local/bin/cwt`)
+- `templates/` - per-machine config skeletons (codex config.toml)
 - `tools/doc-viewer/` - bilingual static-site viewer (TypeScript)
 - `.claude/launch.json` - preview server config for the viewer (port 4173)
 

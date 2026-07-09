@@ -10,7 +10,7 @@ description: >
 # g-docs-ko Skill
 
 Viewer regeneration pipeline for the grimoire repo (currently
-`~/Documents/GitHubPrivate/grimore2`). Produces the review state the repo
+`~/Documents/GitHubPrivate/grimoire`). Produces the review state the repo
 requires before committing `claude/` definition files.
 
 ## Workflow

@@ -2,7 +2,7 @@
 
 These paths must be excluded from all cleanup operations.
 `~/.claude/` config content is copy-synced from the grimoire repo
-(`~/Documents/GitHubPrivate/grimore2/claude/`); deleting it here breaks the
+(`~/Documents/GitHubPrivate/grimoire/claude/`); deleting it here breaks the
 live setup until the next sync.
 
 ```
