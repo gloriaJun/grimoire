@@ -129,11 +129,17 @@ if [[ -d "$DEST/skills" ]]; then
     fi
   done
 
-  # 5. Report unmanaged entries (no g-/l- prefix)
+  # 5. Report unmanaged entries (no g-/l- prefix), except third-party skills
+  #    declared in external.json (installed by bootstrap.sh on purpose)
+  EXTERNAL_DIRS=""
+  if [[ -f "$REPO_DIR/external.json" ]] && command -v jq >/dev/null 2>&1; then
+    EXTERNAL_DIRS="$(jq -r '.skills[].dir' "$REPO_DIR/external.json" 2>/dev/null | tr '\n' ' ')"
+  fi
   for entry in "$DEST/skills/"*/; do
     [[ -d "$entry" ]] || continue
     name="$(basename "$entry")"
     if [[ "$name" != g-* && "$name" != l-* ]]; then
+      [[ " $EXTERNAL_DIRS " == *" $name "* ]] && continue
       warn "unmanaged skill (no g-/l- prefix): skills/$name"
     fi
   done

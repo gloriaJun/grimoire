@@ -13,6 +13,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
   - `claude/settings.hooks.json` → merged into the `hooks` key of `~/.claude/settings.json` via jq; `claude/settings.statusline.json` → merged into the `statusLine` key the same way. Neither file is copied; other settings keys stay untouched.
   - `ccstatusline/` (repo root) → rendered to `~/.config/ccstatusline/` with the `{{HOME}}` placeholder substituted, so no username is committed.
 - All definition files under `claude/` are English-only. Korean readability comes from the doc viewer (`tools/doc-viewer`), never from Korean source files. Korean is allowed inside files only as quoted examples (style pairs, trigger phrases) or template skeleton labels inside code fences.
+- External installs (plugin marketplaces, plugins, third-party skills) are declared in `external.json` and installed by `./bootstrap.sh` - never install ad hoc without adding the entry to the manifest. Company marketplaces/plugins stay out of this repo (the live environment may carry them; bootstrap reports but never touches undeclared entries).
 - v1 backup at `~/.claude_bak` is read-only reference. It contains company-specific data (e.g. Jira ticket prefixes); never copy such content into this repo.
 - Instruction change review: after editing definition files under `claude/`, do not commit right away. Regenerate translations (`pnpm build skeleton grimoire` → fill empty `ko` → `pnpm build`), start the viewer (launch.json `doc-viewer`), and ask the user to confirm the change in the viewer's diff panel. Commit only after confirmation - the post-commit sync makes it live.
 
@@ -20,6 +21,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 
 - `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, token-budget, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh), settings.hooks.json, settings.statusline.json
 - `sync.sh`, `codex-sync.sh`, `githooks/post-commit` - sync mechanism
+- `bootstrap.sh`, `external.json` - fresh-machine setup + external-install manifest
 - `ccstatusline/` - statusline widget config, rendered to `~/.config/ccstatusline/`
 - `bin/cwt` - worktree + Claude launcher CLI (symlinked from `~/.local/bin/cwt`)
 - `templates/` - per-machine config skeletons (codex config.toml)

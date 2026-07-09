@@ -1,0 +1,18 @@
+{
+  "$comment": "Desired external-install state. Consumed by bootstrap.sh (installs missing entries) and sync.sh (suppresses the unmanaged-skill warning for declared skill dirs). Personal entries only - company marketplaces and plugins belong to the company repo (my-claude-skills).",
+  "marketplaces": [
+    "backnotprop/plannotator",
+    "anthropics/skills"
+  ],
+  "plugins": [
+    "plannotator@plannotator",
+    "example-skills@anthropic-agent-skills"
+  ],
+  "skills": [
+    {
+      "dir": "design-taste-frontend",
+      "repo": "https://github.com/Leonxlnx/taste-skill",
+      "skill": "design-taste-frontend"
+    }
+  ]
+}
