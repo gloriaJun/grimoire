@@ -20,7 +20,7 @@ Do not apply to internal config files (CLAUDE.md, SKILL.md, settings.json, etc.)
 - Use the middle dot (·) for compact enumeration, and the arrow (→) for conversion and flow.
 - Wrap identifiers, commands, and file paths in backticks. Leave technical terms in English.
 - Replace difficult jargon with plain wording; for jargon you keep, add a one-line explanation on first use.
-- Do not use emoji. Limit bold to at most 2-3 uses per document.
+- Do not use emoji. Limit bold to at most 3 uses per document.
 - Sentence-initial conjunctions (또한/따라서/즉) at most 4 per document. Connect through content flow instead.
 
 ## Structure
@@ -30,7 +30,8 @@ Do not apply to internal config files (CLAUDE.md, SKILL.md, settings.json, etc.)
 - Write headings in noun form, without number prefixes ("## 배경", not "## 1. 배경").
 - Do not use horizontal rules (---) to separate sections. Divide structure with headings only.
   (Table separator rows `|---|---|` are markdown syntax and exempt.)
-- Express comparisons and enumerations as pipe tables, and procedural flows as mermaid flowcharts.
+- Express comparisons and enumerations as pipe tables. Express procedural flows as step tables;
+  use a mermaid flowchart only when the flow branches.
 - When writing rules or criteria, attach numeric thresholds ("3개 이상", "4회 연속").
 
 ## Writing Workflow
@@ -39,7 +40,11 @@ Do not apply to internal config files (CLAUDE.md, SKILL.md, settings.json, etc.)
 - Even when the final deliverable is in English, draft it in Korean first.
   Translate to English after the user gives final confirmation on the Korean version.
 - Review and revise local md drafts with plannotator:
-  run `plannotator annotate <file.md>` → apply feedback → rerun, repeating until Approve.
+  run `plannotator annotate <file.md>` → apply feedback → rerun.
+  Stop when plannotator approves or after 3 rounds; if items remain after round 3,
+  list them and hand the decision to the user.
+  If the `plannotator` command is not installed, skip this review, tell the user it
+  was skipped, and continue.
 - Procedure for externally posted content (Confluence, GitHub issue/PR bodies, etc.):
   1. Draft as an md file in the current working directory
   2. Review with plannotator, get the user's final confirmation

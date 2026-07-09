@@ -6,11 +6,16 @@ Applies to writing and submitting GitHub PRs. Use the `gh` CLI for GitHub operat
 
 On a PR creation request, follow this order.
 
-1. **Confirm the base branch**: if the user does not specify one, detect it from the fork point -
-   after `git fetch origin`, use merge-base to check where the current branch forked from,
-   among origin's default branch and `origin/release/*`. If it forked from `release/*`, use that
-   branch; otherwise the default branch. Tell the user the detection result before submitting,
-   and do not submit with the base undetermined.
+1. **Confirm the base branch**: if the user does not specify one, detect it from the fork point.
+   Run in order:
+   - `git fetch origin --prune`
+   - Candidates: the default branch (`gh repo view --json defaultBranchRef -q .defaultBranchRef.name`)
+     plus every `git branch -r --list 'origin/release/*'` entry.
+   - For each candidate: `git rev-list --count $(git merge-base HEAD origin/<candidate>)..HEAD`
+   - Pick the candidate with the smallest count (nearest fork point). On a tie, pick the
+     default branch.
+   Tell the user the detection result before submitting, and do not submit with the base
+   undetermined.
 2. **Check remote state**: if there are unpushed commits, report the count and push after
    confirmation per hard rule 5. On push failure, stop and report the cause.
 3. **Analyze changes**: identify commits and changed files with `git log` and `git diff --stat`
