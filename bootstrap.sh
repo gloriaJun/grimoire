@@ -64,25 +64,27 @@ else
   KNOWN="$HOME/.claude/plugins/known_marketplaces.json"
   registered=""
   [[ -f "$KNOWN" ]] && registered="$(jq -r '.[] | .source.repo // .source.url // empty' "$KNOWN" 2>/dev/null)"
-  while IFS= read -r src; do
+  # (loops feed through fd 3: the installers inside may read stdin and
+  #  would otherwise swallow the remaining list entries)
+  while IFS= read -r -u 3 src; do
     [[ -n "$src" ]] || continue
     if printf '%s\n' "$registered" | grep -qxF "$src"; then
       log "marketplace ok: $src"
     else
       run claude plugin marketplace add "$src"
     fi
-  done < <(jq -r '.marketplaces[]' "$MANIFEST")
+  done 3< <(jq -r '.marketplaces[]' "$MANIFEST")
 
   # 5b. Plugins: compare against installed_plugins.json.
   INSTALLED="$HOME/.claude/plugins/installed_plugins.json"
-  while IFS= read -r p; do
+  while IFS= read -r -u 3 p; do
     [[ -n "$p" ]] || continue
     if [[ -f "$INSTALLED" ]] && jq -e --arg p "$p" '.plugins[$p] // empty' "$INSTALLED" >/dev/null 2>&1; then
       log "plugin ok: $p"
     else
       run claude plugin install "$p"
     fi
-  done < <(jq -r '.plugins[]' "$MANIFEST")
+  done 3< <(jq -r '.plugins[]' "$MANIFEST")
 
   # 5c. Report live entries the manifest does not declare (company or manual
   #     installs) - never touched here, listed so drift stays visible.
@@ -102,14 +104,14 @@ else
   MCP_SRC="$REPO_DIR/claude/settings.mcpServers.json"
   CLAUDE_JSON="$HOME/.claude.json"
   if [[ -f "$MCP_SRC" ]]; then
-    while IFS=$'\t' read -r name json; do
+    while IFS=$'\t' read -r -u 3 name json; do
       [[ -n "$name" ]] || continue
       if [[ -f "$CLAUDE_JSON" ]] && jq -e --arg n "$name" '.mcpServers | has($n)' "$CLAUDE_JSON" >/dev/null 2>&1; then
         log "mcp ok: $name"
       else
         run claude mcp add-json --scope user "$name" "$json"
       fi
-    done < <(jq -r '.mcpServers // {} | to_entries[] | select(.value.disabled != true) | [.key, (.value | del(.disabled) | tojson)] | @tsv' "$MCP_SRC")
+    done 3< <(jq -r '.mcpServers // {} | to_entries[] | select(.value.disabled != true) | [.key, (.value | del(.disabled) | tojson)] | @tsv' "$MCP_SRC")
     if [[ -f "$CLAUDE_JSON" ]]; then
       while IFS= read -r extra; do
         [[ -n "$extra" ]] || continue
@@ -120,19 +122,20 @@ else
   fi
 fi
 
-# 6. Third-party skills installed straight into ~/.claude/skills.
-#    Installer target dir is verified after each run because the npx
-#    installer's destination semantics are not guaranteed.
-while IFS=$'\t' read -r dir repo skill; do
+# 6. Third-party skills, global install (-g: ~/.agents/skills/<name> plus a
+#    ~/.claude/skills/<name> symlink; -y: no prompts - without it the
+#    interactive installer also eats the loop's stdin). Verified after each
+#    run because the installer's destination semantics can change.
+while IFS=$'\t' read -r -u 3 dir repo skill; do
   [[ -n "$dir" ]] || continue
   if [[ -d "$HOME/.claude/skills/$dir" ]]; then
     log "skill ok: $dir"
     continue
   fi
-  run npx -y skills add "$repo" --skill "$skill"
+  run npx -y skills add "$repo" --skill "$skill" -g -y
   if [[ "$DRY_RUN" -eq 0 && ! -d "$HOME/.claude/skills/$dir" ]]; then
-    warn "installer did not create ~/.claude/skills/$dir - check where it installed (project-local .claude/skills?) and move it manually"
+    warn "installer did not create ~/.claude/skills/$dir - check where it installed and move it manually"
   fi
-done < <(jq -r '.skills[] | [.dir, .repo, .skill] | @tsv' "$MANIFEST")
+done 3< <(jq -r '.skills[] | [.dir, .repo, .skill] | @tsv' "$MANIFEST")
 
 log "bootstrap complete. Plugin/skill changes need a new Claude Code session."
