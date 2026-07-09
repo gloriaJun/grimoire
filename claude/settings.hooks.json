@@ -28,6 +28,10 @@
         {
           "type": "command",
           "command": "\"$HOME/.claude/hooks/emdash-check.sh\""
+        },
+        {
+          "type": "command",
+          "command": "\"$HOME/.claude/hooks/definition-check.sh\""
         }
       ]
     }
