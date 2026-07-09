@@ -10,7 +10,3 @@
 - No permission expansion: agent delegation does not bypass this session's confirmation rules. Autonomously delegate read-only work only; work that modifies files or has external effects follows the same rules as the main session (review first, hard rule 5).
 - No autonomous delegation to separately billed external CLIs such as Codex - use them only when the user explicitly requests it. The SessionStart hook that pre-authenticates codex exists solely so those explicit requests work; it is not permission to use it.
 - Parallelism cap: 3 concurrent. Fan-out beyond that only when the user explicitly requests it.
-
-## OPEN DECISIONS
-
-- Memory format: redesign from a reset state as part of the personal knowledge store build. Decide there whether to carry over v1's global memory (memory cleanup suggestion feedback).
