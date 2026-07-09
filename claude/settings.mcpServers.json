@@ -1,0 +1,10 @@
+{
+  "$comment": "Source of truth for user-scope (global) MCP servers. Claude Code reads these ONLY from ~/.claude.json (settings.json has no mcpServers key), so bootstrap.sh applies missing entries via `claude mcp add-json --scope user` and sync.sh drift-checks. `disabled: true` is a manifest-level switch: the entry is declared but bootstrap skips it and drift checks ignore it; the key is stripped before install (it is not part of the Claude MCP schema).",
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"],
+      "disabled": true
+    }
+  }
+}

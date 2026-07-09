@@ -13,6 +13,11 @@
       "dir": "design-taste-frontend",
       "repo": "https://github.com/Leonxlnx/taste-skill",
       "skill": "design-taste-frontend"
+    },
+    {
+      "dir": "animate",
+      "repo": "https://github.com/delphi-ai/animate-skill",
+      "skill": "animate"
     }
   ]
 }

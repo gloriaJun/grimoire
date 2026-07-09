@@ -93,6 +93,31 @@ else
         || log "note: marketplace outside manifest (left as is): $extra"
     done < <(jq -r '.[] | .source.repo // .source.url // empty' "$KNOWN" 2>/dev/null)
   fi
+
+  # 5d. User-scope MCP servers from claude/settings.mcpServers.json.
+  #     Claude Code reads them only from ~/.claude.json, and add-json errors
+  #     on an existing name, so check first. Entries with disabled:true are
+  #     declared-but-off: skipped here. The disabled key is stripped before
+  #     install (not part of the Claude MCP schema).
+  MCP_SRC="$REPO_DIR/claude/settings.mcpServers.json"
+  CLAUDE_JSON="$HOME/.claude.json"
+  if [[ -f "$MCP_SRC" ]]; then
+    while IFS=$'\t' read -r name json; do
+      [[ -n "$name" ]] || continue
+      if [[ -f "$CLAUDE_JSON" ]] && jq -e --arg n "$name" '.mcpServers | has($n)' "$CLAUDE_JSON" >/dev/null 2>&1; then
+        log "mcp ok: $name"
+      else
+        run claude mcp add-json --scope user "$name" "$json"
+      fi
+    done < <(jq -r '.mcpServers // {} | to_entries[] | select(.value.disabled != true) | [.key, (.value | del(.disabled) | tojson)] | @tsv' "$MCP_SRC")
+    if [[ -f "$CLAUDE_JSON" ]]; then
+      while IFS= read -r extra; do
+        [[ -n "$extra" ]] || continue
+        jq -e --arg n "$extra" '.mcpServers | has($n)' "$MCP_SRC" >/dev/null 2>&1 \
+          || log "note: mcp server outside manifest (left as is): $extra"
+      done < <(jq -r '.mcpServers // {} | keys[]' "$CLAUDE_JSON" 2>/dev/null)
+    fi
+  fi
 fi
 
 # 6. Third-party skills installed straight into ~/.claude/skills.

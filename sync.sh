@@ -10,6 +10,10 @@
 #                                       repo; anything else is unmanaged (warn only).
 #   - settings.json                   : only the .hooks and .statusLine keys are
 #                                       owned (merged from claude/settings.*.json)
+#   - settings.mcpServers.json        : source of truth for user-scope MCP
+#                                       servers; applied by bootstrap.sh via the
+#                                       claude CLI, drift-checked here (Claude
+#                                       reads them from ~/.claude.json only)
 #   - <repo>/ccstatusline/            : rendered to ~/.config/ccstatusline/
 #                                       ({{HOME}} placeholder substituted)
 #
@@ -187,7 +191,24 @@ if [[ -f "$STATUSLINE_SRC" ]]; then
   fi
 fi
 
-# 8. ccstatusline app config: render into ~/.config/ccstatusline. The repo
+# 8. MCP servers: claude/settings.mcpServers.json is the source of truth,
+#    but Claude Code reads user-scope MCP servers ONLY from ~/.claude.json
+#    (docs: code.claude.com/docs/en/mcp.md#user-scope); settings.json has no
+#    mcpServers key. ~/.claude.json also carries runtime state, so sync
+#    never writes it - bootstrap.sh applies missing entries via
+#    `claude mcp add-json --scope user`. Here: drift check only.
+MCPSERVERS_SRC="$SRC/settings.mcpServers.json"
+CLAUDE_JSON="$HOME/.claude.json"
+if [[ -f "$MCPSERVERS_SRC" ]] && command -v jq >/dev/null 2>&1; then
+  while IFS= read -r name; do
+    [[ -n "$name" ]] || continue
+    if ! jq -e --arg n "$name" '.mcpServers | has($n)' "$CLAUDE_JSON" >/dev/null 2>&1; then
+      warn "mcp server '$name' declared but not installed - run ./bootstrap.sh"
+    fi
+  done < <(jq -r '.mcpServers // {} | to_entries[] | select(.value.disabled != true) | .key' "$MCPSERVERS_SRC")
+fi
+
+# 9. ccstatusline app config: render into ~/.config/ccstatusline. The repo
 #    copy keeps a {{HOME}} placeholder (no hardcoded username); substitute it
 #    at install time. The widget script is copied verbatim, executable.
 CCS_SRC="$REPO_DIR/ccstatusline"
