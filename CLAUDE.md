@@ -17,7 +17,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 
 ## Layout
 
-- `claude/` - the synced payload: CLAUDE.md, instructions/references (writing-style, templates/), hooks (pr-guard.sh, emdash-check.sh), settings.hooks.json
+- `claude/` - the synced payload: CLAUDE.md, instructions/references (writing-style, tech-stack, code-review, skill-authoring, token-budget, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh), settings.hooks.json
 - `sync.sh`, `githooks/post-commit` - sync mechanism
 - `tools/doc-viewer/` - bilingual static-site viewer (TypeScript)
 - `.claude/launch.json` - preview server config for the viewer (port 4173)
@@ -25,6 +25,11 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 ## Hooks (claude/hooks/)
 
 - Shell scripts reading tool-call JSON from stdin; exit 2 blocks (PreToolUse) or feeds back (PostToolUse).
+- Inventory:
+  - `pr-guard.sh` (PreToolUse, Bash): `gh pr create` must carry `--draft` and `--base`.
+  - `emdash-check.sh` (PostToolUse, Write|Edit): flags em/en dashes written to md files.
+  - `definition-check.sh` (PostToolUse, Write|Edit): definition-file size budgets, English-only check, mermaid/README presence for SKILL.md.
+- `settings.hooks.json` also carries an inline SessionStart hook that logs codex in from `$OPENAI_CODEX_API_KEY`. It exists solely so explicit codex requests work; autonomous codex use stays forbidden (user CLAUDE.md).
 - Test manually before commit: `echo '<tool-call json>' | claude/hooks/<script>.sh; echo $?`.
 - Registered in `claude/settings.hooks.json`, which references them at their live path `$HOME/.claude/hooks/`.
 - Changes take effect from the next Claude Code session (settings load at session start).
