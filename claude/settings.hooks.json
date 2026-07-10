@@ -19,6 +19,15 @@
           "command": "\"$HOME/.claude/hooks/pr-guard.sh\""
         }
       ]
+    },
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "\"$HOME/.claude/hooks/def-review-gate.sh\""
+        }
+      ]
     }
   ],
   "PostToolUse": [

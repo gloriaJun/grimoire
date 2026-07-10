@@ -19,6 +19,9 @@ case "$file" in
   */skills/*/SKILL.md)                            budget=3000;  type="SKILL.md" ;;
   */skills/*/steps/*.md)                          budget=6000;  type="step" ;;
   */agents/*.md)                                  budget=2000;  type="agent" ;;
+  # Any other CLAUDE.md / AGENTS.md / SKILL.md (outside the grimoire layout):
+  # English-only check only; size budgets are grimoire policy (budget=0 skips).
+  */CLAUDE.md|*/AGENTS.md|*/SKILL.md)             budget=0;     type="generic-definition" ;;
   *) exit 0 ;;
 esac
 [[ -f "$file" ]] || exit 0
@@ -26,7 +29,7 @@ esac
 problems=""
 
 size="$(wc -c < "$file" | tr -d ' ')"
-if (( size > budget )); then
+if (( budget > 0 && size > budget )); then
   problems+="- size ${size} chars > budget ${budget} for ${type}. Split or trim per instructions/references/token-budget.md, or justify the overage in the commit body.\n"
 fi
 

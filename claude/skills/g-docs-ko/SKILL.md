@@ -4,20 +4,22 @@ description: >
   Regenerate the bilingual doc viewer for the grimoire repo after definition
   files under claude/ change: rebuild translation sidecars, fill empty Korean
   segments, build the viewer, and hand off for diff review. Invoke via
-  /g-docs-ko or right after editing definition files in that repo.
+  /g-docs-ko, or when the user answers yes to the pre-commit question
+  "run the viewer diff review?". Never start unprompted; an explicit
+  /g-docs-ko invocation counts as the user's yes.
 ---
 
 # g-docs-ko Skill
 
 Viewer regeneration pipeline for the grimoire repo (currently
-`~/Documents/GitHubPrivate/grimoire`). Produces the review state the repo
-requires before committing `claude/` definition files.
+`~/Documents/GitHubPrivate/grimoire`). Produces the opt-in review offered
+before committing `claude/` definition files.
 
 ## Workflow
 
 ```mermaid
 flowchart TD
-    A(["/g-docs-ko or definition-file edits done"]) --> B{"repo has tools/doc-viewer/doc-viewer.config.json?"}
+    A(["/g-docs-ko or user said yes to pre-commit viewer review"]) --> B{"repo has tools/doc-viewer/doc-viewer.config.json?"}
     B -- no --> Z(["Stop: not the grimoire repo"])
     B -- yes --> C["Step 1: Regenerate skeleton"]
     C -- build error --> Z2(["Stop with error"])

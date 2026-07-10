@@ -10,3 +10,7 @@
 - No permission expansion: agent delegation does not bypass this session's confirmation rules. Autonomously delegate read-only work only; work that modifies files or has external effects follows the same rules as the main session (review first, hard rule 5).
 - No autonomous delegation to separately billed external CLIs such as Codex - use them only when the user explicitly requests it. The SessionStart hook that pre-authenticates codex exists solely so those explicit requests work; it is not permission to use it.
 - Parallelism cap: 3 concurrent. Fan-out beyond that only when the user explicitly requests it.
+
+## DEFINITION-FILE GATE
+
+- The definition-file change flow (HOW TO WORK FOR ME) is mechanically enforced by the PreToolUse hook `hooks/def-review-gate.sh`: every definition-file Write/Edit raises a user approval prompt, even in acceptEdits mode.

@@ -16,7 +16,7 @@ Regenerates the bilingual doc viewer of the grimoire repo after definition-file 
 /g-docs-ko [rootName]
 ```
 
-Default root: `grimoire`. Run it after editing definition files under `claude/`.
+Default root: `grimoire`. Before the final commit of definition-file changes under `claude/`, the assistant asks whether to run this review; it runs only on an explicit yes (or via direct `/g-docs-ko`).
 
 ## How It Works
 

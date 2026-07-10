@@ -16,11 +16,11 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 - All definition files under `claude/` are English-only. Korean readability comes from the doc viewer (`tools/doc-viewer`), never from Korean source files. Korean is allowed inside files only as quoted examples (style pairs, trigger phrases) or template skeleton labels inside code fences.
 - External installs (plugin marketplaces, plugins, third-party skills) are declared in `external.json` and installed by `./bootstrap.sh` - never install ad hoc without adding the entry to the manifest. Company marketplaces/plugins stay out of this repo (the live environment may carry them; bootstrap reports but never touches undeclared entries).
 - v1 backup at `~/.claude_bak` is read-only reference. It contains company-specific data (e.g. Jira ticket prefixes); never copy such content into this repo.
-- Instruction change review: after editing definition files under `claude/`, do not commit right away. Regenerate translations (`pnpm build skeleton grimoire` → fill empty `ko` → `pnpm build`), start the viewer (launch.json `doc-viewer`), and ask the user to confirm the change in the viewer's diff panel. Commit only after confirmation - the post-commit sync makes it live.
+- Instruction change review: pre-save Korean confirmation follows the global definition-file change flow (user CLAUDE.md, HOW TO WORK FOR ME). After saving definition-file changes under `claude/` and before the final commit proposal, ask the user whether to run the doc-viewer diff review (`/g-docs-ko`). On yes: regenerate translations (`pnpm build skeleton grimoire` → fill empty `ko` → `pnpm build`), start the viewer (launch.json `doc-viewer`), and wait for diff-panel confirmation. On no: proceed straight to the commit proposal; translation sidecars then stay stale until the next `/g-docs-ko` run (accepted). The post-commit sync makes the commit live.
 
 ## Layout
 
-- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, token-budget, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh), settings.hooks.json, settings.statusline.json
+- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, token-budget, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh, def-review-gate.sh), settings.hooks.json, settings.statusline.json
 - `sync.sh`, `codex-sync.sh`, `githooks/post-commit` - sync mechanism
 - `bootstrap.sh`, `external.json` - fresh-machine setup + external-install manifest
 - `ccstatusline/` - statusline widget config, rendered to `~/.config/ccstatusline/`
@@ -44,6 +44,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
   - `pr-guard.sh` (PreToolUse, Bash): `gh pr create` must carry `--draft` and `--base`.
   - `emdash-check.sh` (PostToolUse, Write|Edit): flags em/en dashes written to md files.
   - `definition-check.sh` (PostToolUse, Write|Edit): definition-file size budgets, English-only check, mermaid/README presence for SKILL.md.
+  - `def-review-gate.sh` (PreToolUse, Write|Edit): emits permissionDecision "ask" so definition-file writes always raise a user approval prompt.
 - `settings.hooks.json` also carries an inline SessionStart hook that logs codex in from `$OPENAI_CODEX_API_KEY`. It exists solely so explicit codex requests work; autonomous codex use stays forbidden (user CLAUDE.md).
 - Test manually before commit: `echo '<tool-call json>' | claude/hooks/<script>.sh; echo $?`.
 - Registered in `claude/settings.hooks.json`, which references them at their live path `$HOME/.claude/hooks/`.
