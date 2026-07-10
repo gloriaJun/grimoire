@@ -9,14 +9,18 @@ Self-review before git commits: summarizes staged changes, auto-fixes lint, grep
 - **Mechanical Security Greps** - secret-looking literals, credential files, debug leftovers; empty output = pass
 - **Judgment Checklist** - correctness, quality, completeness on top of the mechanical layer
 - **Flag, Don't Block** - findings are reported; the user decides fix vs proceed
+- **History Restructure Proposal** - `history` sub-command proposes squash/reorder/reword of unpushed commits before push/PR; proposal only, never executes the rebase
 
 ## Usage
 
 ```
-/g-pre-commit-check
+/g-pre-commit-check            # staged-diff review (Steps 1-3)
+/g-pre-commit-check history    # unpushed-commit restructure proposal
+/g-pre-commit-check help       # print the sub-command table
 ```
 
-Also used proactively whenever a commit is about to happen in the session.
+Also used proactively whenever a commit is about to happen in the session
+(default flow only).
 
 ## How It Works
 

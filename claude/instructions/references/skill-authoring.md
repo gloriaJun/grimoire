@@ -42,7 +42,9 @@ by CLAUDE.md ("Respond in Korean"), never hardcoded inside skill files.
 - Sub-command skills always include a `help` sub-command: list it in the
   `description` field, give it an explicit routing branch, add a `help` row
   to the sub-command table, and fall back to printing that table on `help`,
-  no sub-command, or unrecognized input.
+  no sub-command, or unrecognized input. Skills with a default action route
+  bare invocation to that default; `help` and unrecognized input still print
+  the table.
 
 ## Persona
 
