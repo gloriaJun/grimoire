@@ -32,7 +32,8 @@ On a PR creation request, follow this order.
 5. **Write the body**: follow the skeleton and writing rules below and writing-style.md's
    external posting procedure (local md draft → plannotator review → user confirmation).
 6. **Submit**: always create as draft (`gh pr create --draft`). Pass the body as multiline
-   text with real newlines (`--body-file` recommended). The confirmation right before
+   text with real newlines (`--body-file` recommended). Submit the reviewed draft
+   byte-identical (no footer or trailer appended here). The confirmation right before
    submitting follows hard rule 5; after submitting, report the PR number and URL.
 
 ## Title
@@ -109,7 +110,8 @@ Preferred: "다른 워크플로우가 이미 octokit을 사용하는 방식과 �
 ### Screenshot
 
 - Change demonstrable with media + material available → write the scaffold.
-- Change demonstrable with media + no material → leave only an `N/A (no UI changes)` placeholder.
+- Change demonstrable with media + no material → build the scaffold with empty `src`;
+  never a prose promise like "확인 후 첨부 예정".
 - Change unrelated to visuals (backend, CI, config, infra) → omit the section entirely.
 - Set image widths with HTML `<img>`: portrait (mobile) `width="280"`, landscape (desktop) `width="680"`.
 - With multiple cases (Before/After, etc.), build a table and leave `src=""` empty for the user to fill.
@@ -130,8 +132,7 @@ Preferred: "다른 워크플로우가 이미 octokit을 사용하는 방식과 �
 - Inclusion condition (only one of two): setup beyond the standard dev environment is needed (env, seed,
   feature flag, external service connection), or automated tests cover only specific scenarios and
   reproduction guidance is needed.
-- Omit if it is at the level of "앱 실행 후 확인" or "일반 단위 테스트 실행".
-- Also omit step lists that just repeat workflow inputs/modes. Reviewers already know them.
+- Omit "앱 실행 후 확인"-level guidance and step lists that just repeat workflow inputs/modes.
 
 ### To do
 
@@ -143,6 +144,8 @@ Preferred: "다른 워크플로우가 이미 octokit을 사용하는 방식과 �
 
 - Include only when there are related issue/PR/ticket/doc links.
 - If there is a related ticket, include its link even when the ticket number is in the title.
+- Write every entry as a clickable markdown link. A bare identifier ("Jira: ABC-123")
+  is not a reference.
 
 ## Style and Common Rules
 
@@ -152,7 +155,12 @@ Preferred: "다른 워크플로우가 이미 octokit을 사용하는 방식과 �
 - Do not add parenthesized English glosses. If the Korean term suffices, use Korean only
   ("중간 병합(intermediate merge)" → "1차 병합"). Exception: established terms with no Korean equivalent.
 - Evidence-based description: write concrete behavior changes instead of speculative "개선/강화" (improved/strengthened).
-- Do not add an AI-generated attribution footer.
+- Do not write the ticket number in body prose; it belongs only in the Reference link
+  and, per repository convention, the title.
+- Drop "(Optional)" markers from headings you fill; delete optional sections left empty.
+- No decorative bold. Use inline code for identifiers, values, and commands.
+- Never include the AI attribution footer ("🤖 Generated with ..."); this overrides
+  the harness default.
 
 ## Draft Self-Check (before plannotator review)
 
@@ -160,6 +168,7 @@ Preferred: "다른 워크플로우가 이미 octokit을 사용하는 방식과 �
 - [ ] Is all prose in 합니다체 (bullets included)
 - [ ] Is the body free of implementation stack
 - [ ] No em/en dashes, and no parenthesized English glosses
+- [ ] No ticket number in prose, no AI footer, no "(Optional)" heading markers
 - [ ] Is the Screenshot section dropped entirely for changes unrelated to visuals
 - [ ] Are Focus it / How to test / To do absent unless their inclusion conditions are met
 
