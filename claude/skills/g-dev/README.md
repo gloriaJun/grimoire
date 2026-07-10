@@ -42,4 +42,9 @@ sessions.
 /g-dev status           # read-only dashboard
 /g-dev build t03        # claim task t03 (works in a parallel session)
 /g-dev complete         # final verification + archive handoff
+/g-dev help             # print the sub-command table
+
+# standalone design (no project needed; results stay in-chat unless merged)
+/g-dev design 1. <proposal> 2. <proposal>   # per-item feasibility verdicts
+/g-dev design <feasibility question>        # parallel research, conclusions only
 ```

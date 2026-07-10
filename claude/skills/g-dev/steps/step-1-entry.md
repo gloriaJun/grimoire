@@ -18,19 +18,14 @@ date +%F
 
 ## B. Find this repo's projects
 
-Self-contained block (define everything in the same call):
+Run the shared lookup script (also used by step 3b):
 
 ```bash
-VAULT="$HOME/Documents/obsidian-vault"
-REPO=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
-[ -n "$REPO" ] && ls "$VAULT/projects" >/dev/null 2>&1 || echo GUARD_FAIL
-find "$VAULT/projects" -maxdepth 4 -name state.md -path '*/assets/*' \
-  -exec grep -lxF "repo: $REPO" {} + 2>/dev/null
+bash "$HOME/.claude/skills/g-dev/scripts/find-repo-projects.sh"
 ```
 
 A `GUARD_FAIL` line means REPO or the vault was invalid - fix that first;
-never treat its 0 matches as "new project". (find, not a glob: the user's
-shell is zsh, where an unmatched glob aborts the whole command.)
+never treat its 0 matches as "new project".
 
 | Matches | Action |
 |---|---|

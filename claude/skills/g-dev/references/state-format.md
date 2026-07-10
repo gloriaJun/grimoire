@@ -80,10 +80,31 @@ criteria are ALL `manual:` is valid only for doc-only or user-verification
 tasks. Status meanings: `review` = implementation done, a manual criterion
 or user check pending; `blocked` = stagnation menu chose escalation.
 
-## Handoff procedure (shared by steps 2-5)
+## Review file (`$ASSETS/reviews/YYYY-MM-DD-<kebab-topic>.md`)
+
+Written only when a standalone design run (step 3b) is merged into a
+project on the user's explicit yes. Create `$ASSETS/reviews/` if missing.
+
+```markdown
+---
+topic: <one line>
+mode: proposal-review | investigation
+created: YYYY-MM-DD
+---
+
+## Result
+<mode A: final verdict + approval tables; mode B: one block per question>
+```
+
+Merge rules: never write `state.md` (a standalone run is not a step
+transition; `current-step` stays unchanged); the formal doc is updated only
+via the handoff procedure below.
+
+## Handoff procedure (shared by steps 2-5; step 3b on merge)
 
 1. Write the files this step owns: the task file (build) or `state.md`
-   (step transitions: set the next `current-step`).
+   (step transitions: set the next `current-step`). Step 3b merge: the
+   review file only, never `state.md`.
 2. Invoke g-vault-log (Skill tool, skill `g-vault-log`) with args
    `update <domain>/<slug>` plus a summary block containing: the step just
    finished, decisions made (with the why), work done (with evidence:

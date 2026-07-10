@@ -1,7 +1,12 @@
 # Step 3: Design (architecture)
 
+Payload guard: the invocation carried inline text after `design` -> that is
+the standalone mode; load `steps/step-3b-design-standalone.md` instead of
+this file.
+
 Entry condition: the formal doc's goal section (`## 목표`) has at least one
-non-blank line. Empty -> say "run /g-dev idea first" and stop.
+non-blank line. Empty -> say "run /g-dev idea first, or pass a proposal
+list or feasibility question inline for standalone mode" and stop.
 
 ## A. Inputs
 

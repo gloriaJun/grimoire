@@ -4,17 +4,16 @@ description: >
   /g-dev command only. Development lifecycle orchestrator: idea, architecture
   design, task breakdown with executable per-task completion criteria, then a
   harness-first build loop per task. State lives in the Obsidian vault so
-  independent tasks can run as parallel sessions. Manual invocation only -
-  do NOT auto-trigger.
+  independent tasks can run as parallel sessions. `help` lists sub-commands.
+  Manual invocation only - do NOT auto-trigger.
 ---
 
 # g-dev
 
-Runs one development project through idea -> design -> breakdown -> build ->
-complete. The human-readable record is the vault's formal project doc;
-machine state and task files live under `projects/<domain>/assets/<slug>/`.
-Every task fixes an executable harness (commands plus expected
-results) BEFORE implementation; build iterates against it.
+Human-readable record: the vault's formal project doc; machine state and
+task files: `projects/<domain>/assets/<slug>/`. Every task fixes an
+executable harness (commands + expected results) BEFORE implementation;
+build iterates against it.
 
 ## Flow Diagram
 
@@ -25,9 +24,9 @@ resume / init / status"]
     B --> C["Step 2: idea
 goal + success criteria"]
     C --> D["Step 3: design
-architecture, wraps frontend-design for UI"]
+arch; frontend-design for UI"]
     D --> E["Step 4: breakdown
-2-8 tasks, harness criteria each"]
+2-8 tasks + harness each"]
     E --> F["Step 5: build ONE task"]
     P(["parallel session:
 /g-dev build tNN"]) --> F
@@ -41,6 +40,14 @@ or new session"])
     J -- yes --> L["Step 6: complete
 re-run every harness"]
     L --> M(["g-vault-log complete mode"])
+    A -- "inline payload" --> S["Step 3b: standalone design
+verdicts / research"]
+    S --> T{"merge into
+project?"}
+    T -- yes --> U["reviews/ file,
+g-vault-log"]
+    T -- no --> V(["STOP, stateless"])
+    A -- "help / unknown" --> W(["print router table"])
 ```
 
 ## Step Router
@@ -54,12 +61,15 @@ state or task files read `references/state-format.md` first.
 | status | `steps/step-1-entry.md` (report-only) |
 | idea | `steps/step-2-idea.md` |
 | design | `steps/step-3-design.md` |
+| design `<inline payload>` | `steps/step-3b-design-standalone.md` |
 | breakdown | `steps/step-4-breakdown.md` |
 | build [task-id] | `steps/step-5-build.md` |
 | complete | `steps/step-6-complete.md` |
+| help or unrecognized | print this table + one usage line, stop |
 
 Entry conditions (each step checks its own; unmet -> name the missing
-artifact and stop): design needs a confirmed goal section; breakdown needs
+artifact and stop): design needs a confirmed goal section (inline payload
+-> step 3b, no project needed); breakdown needs
 `architecture.md`; build needs at least 1 task file; complete needs every
 task done, or review with only manual checks left.
 
