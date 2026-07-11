@@ -14,6 +14,10 @@ skill inventory in the system prompt / system-reminder). Accepted names:
 | frontend-design | `frontend-design`, `example-skills:frontend-design` |
 | design-taste-frontend | `design-taste-frontend` |
 
+Plugin-installed skills can carry an arbitrary namespace prefix (e.g.
+`9d2f1ae18723:frontend-design`): a listed name preceded by any `<prefix>:`
+counts as present; invoke it by the full prefixed name.
+
 Name present -> invoke via the Skill tool. Name absent -> print the matching
 install block below, use the fallback, and continue; never guess at an
 invocation. Newly installed skills appear only in NEW sessions - right after

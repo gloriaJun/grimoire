@@ -10,6 +10,18 @@ ASSETS="$VAULT/projects/$DOMAIN/assets/$SLUG"
 DOC="$VAULT/projects/$DOMAIN/$SLUG.md"
 ```
 
+Direct step entry (SLUG unknown) resolves the project via the shared
+lookup script:
+
+```bash
+bash "$HOME/.claude/skills/g-dev/scripts/find-repo-projects.sh"
+```
+
+`GUARD_FAIL` = repo or vault invalid: fix that first, never treat as
+0 matches. 1 match -> DOMAIN and SLUG come from that path. 0 matches ->
+say "no g-dev project for this repo; run /g-dev idea first" and stop.
+2+ -> print `<slug> (<current-step>)` per match and ask.
+
 The Bash tool does NOT persist variables between calls: every command block
 must define, in that same call, each variable it uses. An unset variable
 silently empties the path and turns errors into false "no results" - when a
@@ -19,7 +31,11 @@ acting on the zero.
 Ownership: g-dev writes only under `$ASSETS`, plus two exceptions on `$DOC`:
 the init skeleton (step 1) and the goal section (step 2). Everything else in
 `$DOC` (status block, decision and work-log entries, frontmatter refresh) is
-written only by g-vault-log.
+written only by g-vault-log. Goal wording made stale by a later approved
+decision is fixed via the post-handoff amendment rule in the g-dev
+SKILL.md (non-build sessions: edit per step-2 D, then
+g-vault-log update with a revision summary); g-vault-log itself never
+edits the goal.
 
 ## state.md (`$ASSETS/state.md`)
 

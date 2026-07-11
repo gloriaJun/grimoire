@@ -12,7 +12,9 @@ list or feasibility question inline for standalone mode" and stop.
 
 1. Read the goal section of `$DOC`. A trailing `**설계 검토 항목:**` list
    there seeds section 7 (Open Questions): carry every item; none may be
-   dropped silently.
+   dropped silently. Also carry every work-log `남은 것:` line whose value
+   is not `없음`, deduplicated against the goal list; stale ones get
+   pruned at the review gate.
 2. Detect the repo's harness commands:
 
 ```bash
@@ -22,7 +24,10 @@ jq -r '.scripts | to_entries[] | "\(.key): \(.value)"' "$REPO_PATH/package.json"
 
 Command fails or file missing -> record `harness: none detected` and
 continue; the Testing Strategy section must then state the concrete
-alternative.
+alternative. Commands detected but inapplicable (= every deliverable is a
+document or mockup while the command targets code) -> treat that part the
+same as none detected: Testing Strategy must name a concrete alternative,
+never cite an inapplicable command.
 
 3. UI question: does this project render user-facing UI? Not obvious from
    the goal -> ask (one question). UI project -> run the frontend-design
@@ -50,7 +55,10 @@ Write `$ASSETS/architecture.md` with exactly these sections:
 Present a summary (max 15 lines) plus every Open Question as a question to
 the user (max 3 per batch, recommended answer first). Edit answers into
 architecture.md before proceeding. Proceed only after the user approves the
-architecture explicitly; silence is not approval.
+architecture explicitly; silence is not approval. A skipped question, a
+counter-question, or a new option from the user is NOT approval: resolve
+that item first, then re-ask. A bare go signal while any item is open ->
+re-present the open items and wait; never enter section D.
 
 ## D. Handoff
 

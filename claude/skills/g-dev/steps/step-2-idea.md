@@ -43,9 +43,9 @@ After the user confirms the draft:
    g-dev writes directly (single-session stage, no parallel risk).
    Open questions and design-stage review items confirmed with the draft
    go at the END of the goal section as a `**설계 검토 항목:**` bulleted
-   list (label verbatim); step 3 reads only the goal section, so items
-   recorded anywhere else are lost. Post-handoff amendments append there
-   the same way.
+   list (label verbatim); step 3 seeds Open Questions from this list first
+   and additionally scans work-log `남은 것` lines, but this list is the
+   reliable carrier. Post-handoff amendments append there the same way.
 2. Run the handoff procedure in `references/state-format.md` with the next
    step `design`; the summary block carries the goal decisions and any open
    question.
