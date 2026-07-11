@@ -13,6 +13,9 @@ Korean; commands, code, and error text stay English verbatim.
 - 기각한 대안: <있으면 - 없으면 이 줄 생략>
 ```
 
+A handoff carrying multiple decisions stays ONE entry: repeat the
+결정/이유 (and optional 기각한 대안) line group per decision inside it.
+
 ## Work-log entry (section `## 작업 로그`, newest at top)
 
 ```markdown

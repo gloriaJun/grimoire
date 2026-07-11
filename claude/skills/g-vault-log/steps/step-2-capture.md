@@ -5,7 +5,7 @@ discussions, learnings worth keeping.
 
 ## A. Path
 
-- `$PWD` under `$HOME/Documents/GithubWork` -> `$VAULT/inbox/work/`
+- `$PWD` under `$HOME/Documents/GitHubWork` -> `$VAULT/inbox/work/`
 - anything else -> `$VAULT/inbox/`
 - Filename: `<kebab-slug>.md` derived from the note's topic (English,
   lowercase). Name taken -> try `<kebab-slug>-2.md` and increment up to

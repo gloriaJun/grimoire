@@ -10,7 +10,9 @@ list or feasibility question inline for standalone mode" and stop.
 
 ## A. Inputs
 
-1. Read the goal section of `$DOC`.
+1. Read the goal section of `$DOC`. A trailing `**설계 검토 항목:**` list
+   there seeds section 7 (Open Questions): carry every item; none may be
+   dropped silently.
 2. Detect the repo's harness commands:
 
 ```bash

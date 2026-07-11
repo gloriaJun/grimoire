@@ -5,16 +5,19 @@
 ```bash
 VAULT="$HOME/Documents/obsidian-vault"
 ls "$VAULT/projects" >/dev/null 2>&1 && echo VAULT_OK || echo VAULT_MISSING
-git rev-parse --show-toplevel 2>/dev/null   # REPO_PATH; empty = not a repo
+# main checkout, even from a linked worktree; empty = not a repo
+COMMON=$(cd "$(git rev-parse --git-common-dir 2>/dev/null)" 2>/dev/null && pwd)
+MAIN=$(dirname "$COMMON"); echo "MAIN=$MAIN"
 date +%F
 ```
 
 - `VAULT_MISSING` -> report that g-dev requires the vault at
   `~/Documents/obsidian-vault` and stop.
-- REPO_PATH empty -> ask the user for the project's repo or working
-  directory; do not guess.
-- DOMAIN: `work` when `$PWD` is under `$HOME/Documents/GithubWork`, else
-  `dev`. REPO = `basename "$REPO_PATH"`.
+- COMMON empty -> not a repo: ask the user for the project's repo or
+  working directory; do not guess.
+- DOMAIN: `work` when `$PWD` is under `$HOME/Documents/GitHubWork`, else
+  `dev`. REPO = `basename "$MAIN"`; state.md's `repo-path` = `$MAIN`
+  (never a worktree path).
 
 ## B. Find this repo's projects
 
@@ -49,6 +52,9 @@ never treat its 0 matches as "new project".
 5. Route to the step file for `current-step` per the SKILL.md router. When
    current-step is build, never auto-claim a task; show the claimable list
    and wait for the user's pick.
+6. An inline payload arriving with a resume match never re-runs step 2:
+   present the match and ask whether the payload is a goal amendment (see
+   SKILL.md hard rules) or a new project.
 
 ## Status mode (`/g-dev status`)
 

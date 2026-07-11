@@ -41,6 +41,11 @@ After the user confirms the draft:
 1. Write the confirmed text into the goal section (`## 목표`) of `$DOC` and
    set its frontmatter `updated` to today. This is the one content section
    g-dev writes directly (single-session stage, no parallel risk).
+   Open questions and design-stage review items confirmed with the draft
+   go at the END of the goal section as a `**설계 검토 항목:**` bulleted
+   list (label verbatim); step 3 reads only the goal section, so items
+   recorded anywhere else are lost. Post-handoff amendments append there
+   the same way.
 2. Run the handoff procedure in `references/state-format.md` with the next
    step `design`; the summary block carries the goal decisions and any open
    question.

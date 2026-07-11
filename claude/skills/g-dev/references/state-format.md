@@ -4,7 +4,7 @@ Canonical path variables:
 
 ```bash
 VAULT="$HOME/Documents/obsidian-vault"
-# DOMAIN: work when $PWD is under $HOME/Documents/GithubWork, else dev;
+# DOMAIN: work when $PWD is under $HOME/Documents/GitHubWork, else dev;
 # on resume, DOMAIN and SLUG come from the matched state.md path instead
 ASSETS="$VAULT/projects/$DOMAIN/assets/$SLUG"
 DOC="$VAULT/projects/$DOMAIN/$SLUG.md"
@@ -26,7 +26,7 @@ written only by g-vault-log.
 ```markdown
 ---
 slug: <slug>
-repo: <basename of git toplevel>
+repo: <main checkout basename, as find-repo-projects.sh derives it>
 repo-path: </absolute/path/to/main/checkout>
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
@@ -37,7 +37,9 @@ current-step: idea | design | breakdown | build | complete
 - architecture: assets/<slug>/architecture.md (or: none)
 ```
 
-Update rules: set `current-step` to the NEXT step during handoff, before
+Update rules: `repo` is always the main checkout's basename, never a linked
+worktree's dir name (worktree sessions still resolve to the same project).
+Set `current-step` to the NEXT step during handoff, before
 printing the completion message. Refresh `updated` (`date +%F`) on every
 write. Only the session running a step transition writes this file; a build
 session working a task never does.

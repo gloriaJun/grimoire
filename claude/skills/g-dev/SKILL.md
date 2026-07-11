@@ -40,7 +40,7 @@ or new session"])
     J -- yes --> L["Step 6: complete
 re-run every harness"]
     L --> M(["g-vault-log complete mode"])
-    A -- "inline payload" --> S["Step 3b: standalone design
+    A -- "design + payload" --> S["Step 3b: standalone design
 verdicts / research"]
     S --> T{"merge into
 project?"}
@@ -58,6 +58,7 @@ state or task files read `references/state-format.md` first.
 | Sub-command | Load file |
 |---|---|
 | (none) or resume | `steps/step-1-entry.md` |
+| no sub-command + inline payload | `steps/step-1-entry.md`; args become step 2's idea input |
 | status | `steps/step-1-entry.md` (report-only) |
 | idea | `steps/step-2-idea.md` |
 | design | `steps/step-3-design.md` |
@@ -65,13 +66,13 @@ state or task files read `references/state-format.md` first.
 | breakdown | `steps/step-4-breakdown.md` |
 | build [task-id] | `steps/step-5-build.md` |
 | complete | `steps/step-6-complete.md` |
-| help or unrecognized | print this table + one usage line, stop |
+| help or unrecognized single token | print this table + one usage line, stop |
 
-Entry conditions (each step checks its own; unmet -> name the missing
-artifact and stop): design needs a confirmed goal section (inline payload
--> step 3b, no project needed); breakdown needs
-`architecture.md`; build needs at least 1 task file; complete needs every
-task done, or review with only manual checks left.
+Route by the FIRST whitespace token, top-down. Token matches no row:
+more text follows -> the inline-payload row; single token -> help.
+
+Entry conditions live in each step file; unmet -> name the missing
+artifact and stop.
 
 ## Hard Rules
 
@@ -83,6 +84,9 @@ task done, or review with only manual checks left.
   g-vault-log; `state.md` only at step transitions.
 - Vault discipline: never git commit or push inside the vault; moves and
   deletions there only after explicit user confirmation.
+- Post-handoff amendment (non-build sessions only): goal/decision changes
+  = edit the goal section per step-2 D + re-invoke g-vault-log update with
+  a revision summary; direct log appends only via its error fallback.
 - External skills (frontend-design, design-taste-frontend) are wrapped by
   name per `references/external-skills.md`, never copied.
 - No model names: delegate with tier classes only.

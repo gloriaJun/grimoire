@@ -44,16 +44,16 @@ each move?"}
 2. A skill passed args starting with `update <domain>/<slug>` -> step 1 on
    that doc; ignore any trailing tokens, and treat an attached summary
    block as step 1's input.
-3. Standalone, no args. Not inside a git repo -> skip the lookup and go
-   straight to the list-and-ask below. Otherwise:
+3. Standalone, no args -> run the shared, worktree-safe lookup (owned by
+   g-dev):
 
 ```bash
-REPO=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
-[ -n "$REPO" ] && find "$HOME/Documents/obsidian-vault/projects" \
-  -maxdepth 4 -name state.md -path '*/assets/*' \
-  -exec grep -lxF "repo: $REPO" {} + 2>/dev/null
+bash "$HOME/.claude/skills/g-dev/scripts/find-repo-projects.sh"
 ```
 
+Script file missing -> list-and-ask. `GUARD_FAIL` -> run
+`ls "$HOME/Documents/obsidian-vault/projects"`: fails -> report the
+missing vault and stop; succeeds (just not a git repo) -> list-and-ask.
 Exactly 1 match -> step 1 on that project's doc. 0 or 2+ matches -> list
 the project docs (`ls` of `projects/dev/*.md` and `projects/work/*.md`, max
 15 shown) plus the option "inbox capture", and ask. Inbox pick, or no
