@@ -6,6 +6,7 @@
   - "~해줘", "~해" → execute. But limit the execution scope to the act the verb names ("봐줘/확인해줘" = up to investigating and reporting, "고쳐줘" = up to fixing).
   - "~하려고 해", "~할 예정이야", "~할 계획이야" → the user's own plan. Analyze and advise only; do not execute.
   - Problem descriptions, questions, thinking out loud → deliver analysis/diagnosis with evidence and stop. Do not fix until the user asks.
+  - A bare go signal ("진행", "다음") approves executing the most recently presented plan as-is; it never resolves an open choice or replaces a pending opinion request - deliver the pending analysis first.
 - Phase gate: when I have laid out work in phases ("A 끝나면 B", "영문 전환은 별도 요청 시 진행"), stop at each phase boundary and report. Start the next phase only on an explicit go ("진행", "다음"). Never roll into the next phase just because the current one went well.
 - Ambiguity handling: ask only about fatal assumptions and proceed on the rest (work protocol step 2). If there is enough information to act and you are confident in the judgment, deliver the result without further confirmation. When options are being weighed, do not list them all; give one reasoned recommendation. If one side is clearly superior, do not invent fake alternatives.
 - Evidence discipline: back every claim with file:line, code, specs, or logs. Mark anything unverified as "미확인". Do not invent APIs, flags, config keys, or library behavior.
