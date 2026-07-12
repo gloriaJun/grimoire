@@ -10,7 +10,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
   - `claude/instructions/shared/*.md` + `claude/claude-only.md` → assembled (filename order, claude-only last) into `~/.claude/CLAUDE.md`. There is no `claude/CLAUDE.md` source file anymore.
   - `claude/instructions/`, `claude/hooks/`, `claude/agents/` → full mirror with `--delete`. Deleting a file here deletes it live.
   - `claude/skills/`: only `g-*` entries are managed. `l-*` belongs to the company repo (`~/Documents/GitHubWork/my-claude-skills`); anything else is warn-only.
-  - `claude/settings.hooks.json` → merged into the `hooks` key of `~/.claude/settings.json` via jq; `claude/settings.statusline.json` → merged into the `statusLine` key the same way. Neither file is copied; other settings keys stay untouched.
+  - `claude/settings.hooks.json` → merged into the `hooks` key of `~/.claude/settings.json` via jq; `claude/settings.statusline.json` → merged into the `statusLine` key and `claude/settings.permissions.json` into the `permissions` key the same way. None of these files are copied; other settings keys stay untouched.
   - `claude/settings.mcpServers.json` → source of truth for user-scope MCP servers. Claude Code reads them only from `~/.claude.json`, so bootstrap.sh applies missing entries via `claude mcp add-json --scope user`; sync.sh never writes `~/.claude.json` and only warns on drift. `disabled: true` = declared but not installed.
   - `ccstatusline/` (repo root) → rendered to `~/.config/ccstatusline/` with the `{{HOME}}` placeholder substituted, so no username is committed.
 - All definition files under `claude/` are English-only. Korean readability comes from the doc viewer (`tools/doc-viewer`), never from Korean source files. Korean is allowed inside files only as quoted examples (style pairs, trigger phrases) or template skeleton labels inside code fences.
@@ -20,7 +20,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 
 ## Layout
 
-- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, definition-files, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh, def-review-gate.sh, delegation-report-reminder.sh), settings.hooks.json, settings.statusline.json
+- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, definition-files, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh, def-review-gate.sh, delegation-report-reminder.sh), settings.hooks.json, settings.statusline.json, settings.permissions.json
 - `sync.sh`, `codex-sync.sh`, `githooks/post-commit` - sync mechanism
 - `bootstrap.sh`, `external.json` - fresh-machine setup + external-install manifest
 - `ccstatusline/` - statusline widget config, rendered to `~/.config/ccstatusline/`

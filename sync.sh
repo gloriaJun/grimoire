@@ -191,7 +191,27 @@ if [[ -f "$STATUSLINE_SRC" ]]; then
   fi
 fi
 
-# 8. MCP servers: claude/settings.mcpServers.json is the source of truth,
+# 8. Permissions config: merge the repo-managed "permissions" key into live
+#    settings.json, same ownership model as the hooks key.
+PERMISSIONS_SRC="$SRC/settings.permissions.json"
+if [[ -f "$PERMISSIONS_SRC" ]]; then
+  if ! command -v jq >/dev/null 2>&1; then
+    warn "jq not found - permissions config NOT merged into settings.json"
+  elif [[ "$DRY_RUN" -eq 1 ]]; then
+    log "[dry-run] merge $PERMISSIONS_SRC -> $SETTINGS (.permissions key only)"
+  else
+    tmp="$(mktemp)"
+    if [[ -f "$SETTINGS" ]]; then
+      jq --slurpfile p "$PERMISSIONS_SRC" '.permissions = $p[0]' "$SETTINGS" > "$tmp"
+    else
+      jq -n --slurpfile p "$PERMISSIONS_SRC" '{permissions: $p[0]}' > "$tmp"
+    fi
+    mv "$tmp" "$SETTINGS"
+    log "merged permissions config into settings.json"
+  fi
+fi
+
+# 9. MCP servers: claude/settings.mcpServers.json is the source of truth,
 #    but Claude Code reads user-scope MCP servers ONLY from ~/.claude.json
 #    (docs: code.claude.com/docs/en/mcp.md#user-scope); settings.json has no
 #    mcpServers key. ~/.claude.json also carries runtime state, so sync
@@ -208,7 +228,7 @@ if [[ -f "$MCPSERVERS_SRC" ]] && command -v jq >/dev/null 2>&1; then
   done < <(jq -r '.mcpServers // {} | to_entries[] | select(.value.disabled != true) | .key' "$MCPSERVERS_SRC")
 fi
 
-# 9. ccstatusline app config: render into ~/.config/ccstatusline. The repo
+# 10. ccstatusline app config: render into ~/.config/ccstatusline. The repo
 #    copy keeps a {{HOME}} placeholder (no hardcoded username); substitute it
 #    at install time. The widget script is copied verbatim, executable.
 CCS_SRC="$REPO_DIR/ccstatusline"

@@ -1,0 +1,25 @@
+{
+  "allow": [
+    "WebFetch",
+    "WebSearch",
+    "Bash(git status:*)",
+    "Bash(git log:*)",
+    "Bash(git diff:*)",
+    "Bash(grep:*)",
+    "Bash(ls:*)",
+    "Bash(find:*)",
+    "Bash(cat:*)",
+    "Bash(head:*)",
+    "Bash(tail:*)",
+    "Bash(wc:*)",
+    "Bash(jq:*)",
+    "Bash(echo:*)",
+    "Bash(xargs cat:*)",
+    "Bash(xargs ls:*)",
+    "Skill(plannotator:plannotator-annotate)",
+    "Skill(plannotator-annotate)",
+    "Read(~/Documents/obsidian-vault/**)",
+    "Edit(~/Documents/obsidian-vault/**)"
+  ],
+  "additionalDirectories": ["~/Documents/obsidian-vault"]
+}
