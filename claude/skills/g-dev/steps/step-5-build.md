@@ -24,8 +24,8 @@ None -> say "run /g-dev breakdown first" and stop.
    ONLY state file this session writes.
 5. Plan gate: after the claim is verified, before section B or any code,
    state this task's Goal, Scope, the Plan steps you will run, and how you
-   will verify (its criteria) in <=6 lines, then get an explicit user go. A
-   counter-question or scope change is not a go: resolve it, then re-ask.
+   will verify (its criteria) in <=6 lines, then get an explicit user go
+   (the step-entry gate hard rule governs what counts as a go).
 
 ## B. Harness first
 
@@ -52,11 +52,15 @@ theme pick in architecture.md UI Direction (or the repo design-system doc
 it names) as context. The rendered draft is the task's own deliverable
 file in the repo: write a first draft before the loop, then iterate it
 with the user, max 3 rounds; no agreement -> the stagnation menu.
-To let the user actually see a rendered draft or sample: serve it over local
-HTTP on a fixed port and open it in the browser preview tool, then capture
-the full page (size the viewport tall enough to capture it in one shot);
-file:// is blocked, so never rely on it and never ask the user to open the
-file manually.
+To let the user actually see a rendered draft or sample: serve its directory
+with `python3 -m http.server 8731` (repo defines a preview entry in
+`.claude/launch.json` -> use that instead) and open
+`http://localhost:8731/<file>` in the session's browser preview tool.
+Capture the full page; if the capture tool has no full-page option, resize
+the viewport height to the page's `document.body.scrollHeight` and capture
+once. No browser tooling in this session -> give the user the exact URL to
+open and treat their reply as the check. file:// is blocked; never rely on
+it.
 
 Repeat:
 

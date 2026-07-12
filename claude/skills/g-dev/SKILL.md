@@ -79,9 +79,11 @@ artifact and stop.
 
 - Harness before code: a task with no completion criteria never enters build.
 - Step-entry gate: before a step's substantive work (writing files,
-  implementing, or research), state in <=5 lines what it will deliver and how
-  you will proceed, then get an explicit user go. `status` and `help` are
-  exempt; a counter-question or new option is not a go.
+  implementing, or research), state in <=6 lines what it will deliver and how
+  you will proceed, then get an explicit user go. `status`, `help`, and
+  step-1 routing are exempt, and a step's own confirmation question (slug
+  confirm, draft confirm, review gate) satisfies the gate; a
+  counter-question or new option is not a go.
 - One task per build session. After handoff, STOP; the next task starts only
   on an explicit user go or in a separate session.
 - Parallel-write safety: a build session edits only its own task file plus
