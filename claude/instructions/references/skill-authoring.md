@@ -85,7 +85,7 @@ Checklist (both scopes):
 - [ ] Steps/scripts extracted per the thresholds above
 - [ ] All files English-only, no em/en dashes
 - [ ] No duplication with existing skills/agents/instructions
-- [ ] Sizes within `token-budget.md`
+- [ ] Sizes within `definition-files.md`
 
 External CLIs (e.g. Codex) are used for review only on explicit user request
 (CLAUDE.md rule).

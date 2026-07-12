@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # PostToolUse(Write|Edit): mechanical floor for definition files.
-# Enforces the checkable rules from token-budget.md and skill-authoring.md.
+# Enforces the checkable rules from definition-files.md and skill-authoring.md.
 # Non-mechanical rules (orchestrator quality, persona fit) stay instruction-level.
 set -euo pipefail
 
@@ -30,7 +30,7 @@ problems=""
 
 size="$(wc -c < "$file" | tr -d ' ')"
 if (( budget > 0 && size > budget )); then
-  problems+="- size ${size} chars > budget ${budget} for ${type}. Split or trim per instructions/references/token-budget.md, or justify the overage in the commit body.\n"
+  problems+="- size ${size} chars > budget ${budget} for ${type}. Split or trim per instructions/references/definition-files.md, or justify the overage in the commit body.\n"
 fi
 
 # English-only policy. Hangul is allowed only as quoted examples or template

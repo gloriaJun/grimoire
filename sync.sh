@@ -71,7 +71,7 @@ clear_symlink() {
 }
 
 # 1. CLAUDE.md: assemble shared fragments (sorted by filename) + claude-only.md.
-#    Budget: warn above 14000 chars (~3,500 tok, token-budget.md).
+#    Budget: warn above 14000 chars (~3,500 tok, definition-files.md).
 CLAUDE_BUDGET=14000
 clear_symlink "$DEST/CLAUDE.md"
 assemble_claude_md() {

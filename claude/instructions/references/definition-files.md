@@ -1,8 +1,29 @@
-# Token Budget for Definition Files
+# Definition Files
 
-Sizing and placement rules for definition files.
-Load on demand when creating or modifying any definition file
-(CLAUDE.md, references, templates, skills, hooks, agent prompts).
+Rules for creating or modifying any AI definition file: CLAUDE.md, AGENTS.md,
+SKILL.md anywhere; files under agents/, commands/, instructions/, hooks/,
+skills/ in a `.claude`, `.codex`, or grimoire `claude/` tree. Load on demand
+BEFORE changing one.
+
+## Change Flow
+
+- Before writing, present the changed parts in the conversation (per section:
+  quote the English before/after with a Korean rendering directly under each;
+  for a new file, the full proposed content plus a per-section Korean summary)
+  and get user confirmation. On rejection: revise and re-present, never write.
+- After approval write the file itself in English - for definition files this
+  overrides hard rule 6's file-language convention.
+- Mechanical backstop: the PreToolUse hook `hooks/def-review-gate.sh` raises a
+  user approval prompt on every definition-file Write/Edit, even in
+  acceptEdits mode.
+
+## Quality Bar
+
+Any instruction, skill, hook, or prompt file written for me must pass the
+lightweight-model test - a cheap model following only that document should get
+a good result. Write exact commands, numeric thresholds, and termination
+conditions (including empty-result and error cases). Treat procedure-less
+verbs, numberless criteria, and subjectless "judge appropriately" as defects.
 
 ## Sizing
 
