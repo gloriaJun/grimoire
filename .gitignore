@@ -3,3 +3,6 @@
 
 # Personal editor workspace (local folder layout)
 *.code-workspace
+
+# Installer-CLI lockfile; external.json is the declared install manifest
+skills-lock.json
