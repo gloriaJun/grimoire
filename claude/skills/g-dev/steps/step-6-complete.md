@@ -16,6 +16,12 @@ stop.
    user must confirm that list before proceeding. On confirmation, set each
    review task with no other outstanding criteria to done (the review ->
    done transition), with a Log entry naming what was confirmed.
+4. architecture.md Directory Layout defines a tree (not the
+   follows-existing line) -> run `ls <root>/README.md` for the repo
+   root and each package root in that tree; a miss is handled like an
+   item-2 failure (report it, set the task whose criteria list that
+   README back to review, stop). Backstop for task files written
+   before the step-4 README gate existed.
 
 ## B. Close out
 

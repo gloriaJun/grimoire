@@ -11,7 +11,7 @@ list or feasibility question inline for standalone mode" and stop.
 ## A. Inputs
 
 1. Read the goal section of `$DOC`. A trailing `**설계 검토 항목:**` list
-   there seeds section 7 (Open Questions): carry every item; none may be
+   there seeds section 8 (Open Questions): carry every item; none may be
    dropped silently. Also carry every work-log `남은 것:` line whose value
    is not `없음`, deduplicated against the goal list; stale ones get
    pruned at the review gate.
@@ -41,10 +41,20 @@ Write `$ASSETS/architecture.md` with exactly these sections:
    conventions; for new projects follow the tech-stack reference in the
    global instructions.
 2. Module Map - components and their responsibilities.
-3. Data Flow - how data moves between modules; a mermaid diagram counts.
-4. Feature List - `F-01`..`F-NN` one-liners; a feature depending on another
+3. Directory Layout - new project or new package only: the folder tree
+   the Module Map projects onto (one fenced tree, top 2 levels plus one
+   path per Module Map component), and a conventions table: scope
+   (folder, file, identifier) | case rule | example, per language.
+   Precedence: rules the repo already defines - detect with
+   `ls eslint.config.* .eslintrc* .prettierrc* prettier.config.* .editorconfig CLAUDE.md 2>/dev/null`
+   at the repo root - win as-is; the tech-stack reference in the global
+   instructions fills only the gaps, and a deviation from it needs a
+   reason in its row. Existing repo with no new package -> write
+   `layout: follows existing repo structure` plus deviations only.
+4. Data Flow - how data moves between modules; a mermaid diagram counts.
+5. Feature List - `F-01`..`F-NN` one-liners; a feature depending on another
    ends with `(depends: F-01)`.
-5. UI Direction - UI projects only: record 2-3 candidate directions
+6. UI Direction - UI projects only: record 2-3 candidate directions
    (palette, two type roles, layout concept, signature element each) from
    the frontend-design wrap or the fallback. Render one self-contained
    HTML sample sheet per candidate at
@@ -53,9 +63,9 @@ Write `$ASSETS/architecture.md` with exactly these sections:
    write `theme pick: deferred` here; step 4 then creates the
    design-system task and the pick lands in the repo design-system doc
    it produces.
-6. Testing Strategy - which detected commands verify what; none detected ->
+7. Testing Strategy - which detected commands verify what; none detected ->
    the concrete alternative (a script to add, named manual scenarios).
-7. Open Questions - unresolved items; an empty section is allowed.
+8. Open Questions - unresolved items; an empty section is allowed.
 
 ## C. Review gate
 

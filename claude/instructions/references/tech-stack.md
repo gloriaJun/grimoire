@@ -33,6 +33,25 @@ node = "22"   # pin major version (mise picks the latest patch)
 - Linting: ESLint (configure at project init).
 - Formatting: Prettier (integrate with ESLint; `.prettierrc` or `prettier.config.ts`).
 
+## Naming Conventions (JS/TS)
+
+Gap-fillers only, per the header precedence rule: a project's own style
+definition (lint/formatter config, CLAUDE.md, a conventions doc, or the
+dominant existing convention) wins; apply these defaults only where the
+project defines nothing.
+
+| Scope | Case | Example |
+|---|---|---|
+| Folders | kebab-case | `user-profile/` |
+| Files (components included) | kebab-case | `auth-utils.ts`, `login-form.tsx` |
+| Variables / functions | camelCase | `getUserId` |
+| Types / classes / component identifiers | PascalCase | `LoginForm` |
+| Constant exports / env vars | UPPER_SNAKE_CASE | `MAX_RETRY`, `API_BASE_URL` |
+
+Enforce folder/file case at project init with eslint-plugin-check-file
+(covers folder and file names; fall back to eslint-plugin-unicorn
+`filename-case` only when check-file cannot express the rule).
+
 ## JS/TS File Conventions
 
 Single-responsibility at the file level:
