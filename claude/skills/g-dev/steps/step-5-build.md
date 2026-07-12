@@ -22,6 +22,10 @@ None -> say "run /g-dev breakdown first" and stop.
    exact value written in item 3. Different -> another session won the
    claim; report and stop. From here until handoff, the task file is the
    ONLY state file this session writes.
+5. Plan gate: after the claim is verified, before section B or any code,
+   state this task's Goal, Scope, the Plan steps you will run, and how you
+   will verify (its criteria) in <=6 lines, then get an explicit user go. A
+   counter-question or scope change is not a go: resolve it, then re-ask.
 
 ## B. Harness first
 
@@ -32,6 +36,12 @@ None -> say "run /g-dev breakdown first" and stop.
    harness is forbidden.
 3. Criteria requiring tests that do not exist yet -> write those tests now
    and confirm they FAIL before implementing.
+4. A criterion whose command is valid but whose required inputs do not exist
+   yet (it checks for data an earlier step never produced) -> produce those
+   inputs as part of this task first (delegate research beyond the global
+   context-hygiene thresholds), or, if the criterion asks for the wrong
+   thing, fix the criterion text. Never fabricate the missing inputs to
+   force a pass.
 
 ## C. Implementation loop
 
@@ -42,6 +52,11 @@ theme pick in architecture.md UI Direction (or the repo design-system doc
 it names) as context. The rendered draft is the task's own deliverable
 file in the repo: write a first draft before the loop, then iterate it
 with the user, max 3 rounds; no agreement -> the stagnation menu.
+To let the user actually see a rendered draft or sample: serve it over local
+HTTP on a fixed port and open it in the browser preview tool, then capture
+the full page (size the viewport tall enough to capture it in one shot);
+file:// is blocked, so never rely on it and never ask the user to open the
+file manually.
 
 Repeat:
 
