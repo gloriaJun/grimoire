@@ -32,6 +32,13 @@ flowchart TD
 
 ## Preconditions
 
+- Entry gate: enter only on one of two triggers - (1) a user message
+  contains `/g-docs-ko`, or (2) after the pre-commit question "run the
+  viewer diff review?" was asked, a later user message answers it
+  affirmatively ("yes", "네"; a bare "진행" counts only when that question
+  is the immediately preceding assistant turn) and no later user message
+  withdraws that answer. Neither trigger present: stop, ask that question,
+  and wait.
 - Resolve the repo root: `git rev-parse --show-toplevel`. If
   `<root>/tools/doc-viewer/doc-viewer.config.json` does not exist, print
   `g-docs-ko runs only in the grimoire repo` and stop.
