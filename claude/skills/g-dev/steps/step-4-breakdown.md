@@ -11,6 +11,14 @@ Entry condition: `$ASSETS/architecture.md` exists. Missing -> say "run
   green after just that task). An ordering requirement becomes a `depends`
   entry, never a bigger task.
 - Map features to tasks 1:1 where possible; bundle only trivial features.
+- architecture.md UI Direction containing `theme pick: deferred` -> the
+  first task is a design-system task: it re-renders the candidate sheets
+  into the repo docs, carries `manual: user picks the theme` as a
+  criterion, and records the pick in the repo design-system doc it
+  creates at `<project docs dir per architecture.md Module Map>/design-system.md`;
+  every other UI task lists it in depends. Rewrite the architecture.md
+  line to `theme pick: deferred to <that path>` now (breakdown owns
+  `$ASSETS`; build sessions do not).
 
 ## B. Write task files
 

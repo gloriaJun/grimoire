@@ -25,7 +25,8 @@ installing, the current session still counts as absent.
 
 ## frontend-design
 
-Aesthetic direction; used in step-3-design for UI projects. Source:
+Aesthetic direction; used in step-3-design (candidate directions) and
+step-5-build (per-screen co-design on UI tasks). Source:
 github.com/anthropics/skills (Apache 2.0). Install commands (the user runs
 these inside Claude Code; they are interactive commands, not shell):
 
@@ -34,13 +35,15 @@ these inside Claude Code; they are interactive commands, not shell):
 /plugin install example-skills@anthropic-agent-skills
 ```
 
-Invoke BEFORE drafting architecture.md, passing the project goal and
-constraints as context. Capture its output (design direction, palette,
-typography, signature element) into the architecture doc's UI Direction
-section.
+Step 3: invoke BEFORE drafting architecture.md with the goal and
+constraints as context; produce 2-3 candidate directions recorded as
+candidates - the theme is finalized only after the user picks from
+rendered samples. Step 5 UI task: re-invoke scoped to the task's screens;
+trigger, context source, and the 3-round cap are defined in
+`steps/step-5-build.md`.
 
-Fallback when absent - cover exactly these 4 points inline in the UI
-Direction section:
+Fallback when absent - produce 2-3 candidates inline in the UI Direction
+section, each covering exactly these 4 points:
 
 1. palette of 4-6 named values
 2. two typeface roles (display, body)
@@ -73,10 +76,11 @@ installed` in the task Log and run this 5-point manual check instead:
 
 ## Precedence
 
+- A theme the user picked from rendered samples outranks both skills.
 - Creative-direction conflicts -> frontend-design output wins.
 - Mechanical or implementation-rule conflicts -> design-taste-frontend wins,
   EXCEPT against the repo's own lint/format config: the repo config always
   wins.
 - Both skills auto-trigger on generic "build UI" phrasing; g-dev invokes
-  each only at its designated step, so do not let either fire outside those
-  steps.
+  each only at its designated steps, so do not let either fire outside
+  those steps.

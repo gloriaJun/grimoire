@@ -35,6 +35,14 @@ None -> say "run /g-dev breakdown first" and stop.
 
 ## C. Implementation loop
 
+UI task (its Goal or Scope names screens, mockups, or UI components) ->
+before the loop, run the frontend-design wrap per
+`references/external-skills.md` scoped to this task's screens, using the
+theme pick in architecture.md UI Direction (or the repo design-system doc
+it names) as context. The rendered draft is the task's own deliverable
+file in the repo: write a first draft before the loop, then iterate it
+with the user, max 3 rounds; no agreement -> the stagnation menu.
+
 Repeat:
 
 1. Implement the next Plan step. Stay inside the task's Scope; the global
@@ -64,7 +72,7 @@ stop, for option 4).
   (inherit the session model) to review those changes against the task's
   Goal and criteria. Apply must-fix items (max 2 fix rounds); note anything
   remaining in the Log.
-- UI task (the change renders user-facing UI) -> after criteria pass, run
+- UI task (same definition as section C) -> after criteria pass, run
   the taste check per `references/external-skills.md`.
 
 ## E. Commit and handoff

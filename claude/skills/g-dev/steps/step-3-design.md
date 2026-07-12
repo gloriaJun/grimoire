@@ -44,8 +44,15 @@ Write `$ASSETS/architecture.md` with exactly these sections:
 3. Data Flow - how data moves between modules; a mermaid diagram counts.
 4. Feature List - `F-01`..`F-NN` one-liners; a feature depending on another
    ends with `(depends: F-01)`.
-5. UI Direction - UI projects only: the frontend-design output or the
-   4-point fallback from `references/external-skills.md`.
+5. UI Direction - UI projects only: record 2-3 candidate directions
+   (palette, two type roles, layout concept, signature element each) from
+   the frontend-design wrap or the fallback. Render one self-contained
+   HTML sample sheet per candidate at
+   `$ASSETS/ui-samples/candidate-<N>.html`, tell the user how to open
+   them, and record the pick made at the review gate. User defers ->
+   write `theme pick: deferred` here; step 4 then creates the
+   design-system task and the pick lands in the repo design-system doc
+   it produces.
 6. Testing Strategy - which detected commands verify what; none detected ->
    the concrete alternative (a script to add, named manual scenarios).
 7. Open Questions - unresolved items; an empty section is allowed.

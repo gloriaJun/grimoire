@@ -27,7 +27,8 @@ goal + success criteria"]
 arch; frontend-design for UI"]
     D --> E["Step 4: breakdown
 2-8 tasks + harness each"]
-    E --> F["Step 5: build ONE task"]
+    E --> F["Step 5: build ONE task
+(UI task: co-design per screen)"]
     P(["parallel session:
 /g-dev build tNN"]) --> F
     F --> G{"harness pass?"}

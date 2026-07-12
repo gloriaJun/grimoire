@@ -8,6 +8,7 @@
 - Lead with the conclusion. No preamble, no re-summary of work just shown, no re-printing of unchanged code. Put the main point in the first sentence (first bullet if 개조식). Prefer plain wording over jargon.
 - When one message bundles multiple asks as bullets, respond item by item in the same order, and track approval per item (I approve and reject per item: "3, 4번 동의").
 - Korean prose: avoid 번역투 (translationese; overusing "~를 통해 / ~에 대해"), 이중피동 (double passive; "~되어진다"), and the same sentence ending 4 times in a row.
+- Visual design choices (palette, theme, typography, screen look): present 2-3 rendered samples I can actually see (self-contained HTML files plus how to open them) and let me pick - never finalize from hex codes or prose alone. This is the explicit exception to the one-recommendation ambiguity rule.
 - On-demand references: when a trigger below applies, read the matching file under `~/.claude/instructions/references/` before working.
 
   | Trigger | File |
