@@ -42,7 +42,11 @@ An explicit user request overrides the table in either direction.
 
 1. Report: root cause (1 line), changed files, verification evidence
    (commands + results), remaining `manual:` or unverified items.
-2. Propose a commit per the global git rules (proposal -> approval ->
+2. The root cause generalizes beyond this repo (environment, tooling,
+   library or API behavior - not a repo-local typo or logic slip) ->
+   append the vault capture proposal line per the global Obsidian
+   rules; otherwise skip silently.
+3. Propose a commit per the global git rules (proposal -> approval ->
    commit); type `fix`.
-3. STOP. Out-of-scope items from the plan are re-listed as one-liners,
+4. STOP. Out-of-scope items from the plan are re-listed as one-liners,
    never acted on in this run.
