@@ -23,6 +23,25 @@ case "$file" in
   *) exit 0 ;;
 esac
 
+# Marker pass: def-review-approve.sh records paths whose Korean review the
+# user approved in chat; unexpired entries skip the prompt (exact path match).
+MARKER="$HOME/.claude/.def-review-approvals"
+TTL=300
+if [[ -f "$MARKER" ]]; then
+  now="$(date +%s)"
+  if dir="$(cd "$(dirname "$file")" 2>/dev/null && pwd)"; then
+    abs="$dir/$(basename "$file")"
+    while IFS=$'\t' read -r ts path; do
+      if [[ "$ts" =~ ^[0-9]+$ && "$path" == "$abs" ]] && (( now - ts < TTL )); then
+        reason="Pre-approved: Korean review for this path was recorded by def-review-approve.sh within the TTL (5 minutes)."
+        jq -cn --arg reason "$reason" \
+          '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"allow",permissionDecisionReason:$reason}}'
+        exit 0
+      fi
+    done < "$MARKER"
+  fi
+fi
+
 reason="Definition file write. Confirm the changed parts were presented in Korean in chat and approved, and that the file content is English (change flow, instructions/references/definition-files.md)."
 jq -cn --arg reason "$reason" \
   '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"ask",permissionDecisionReason:$reason}}'

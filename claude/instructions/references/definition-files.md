@@ -13,9 +13,13 @@ BEFORE changing one.
   and get user confirmation. On rejection: revise and re-present, never write.
 - After approval write the file itself in English - for definition files this
   overrides hard rule 6's file-language convention.
+- Right after the approval, run
+  `bash ~/.claude/hooks/def-review-approve.sh <approved paths>` (one
+  permission prompt): subsequent writes to those exact paths skip the gate
+  prompt for 5 minutes. Never run it without an explicit approval in chat.
 - Mechanical backstop: the PreToolUse hook `hooks/def-review-gate.sh` raises a
   user approval prompt on every definition-file Write/Edit, even in
-  acceptEdits mode.
+  acceptEdits mode - except paths recorded by def-review-approve.sh above.
 
 ## Quality Bar
 

@@ -13,4 +13,4 @@
 
 ## DEFINITION-FILE GATE
 
-- The definition-file change flow (instructions/references/definition-files.md) is mechanically enforced by the PreToolUse hook `hooks/def-review-gate.sh`: every definition-file Write/Edit raises a user approval prompt, even in acceptEdits mode.
+- The definition-file change flow (instructions/references/definition-files.md) is mechanically enforced by the PreToolUse hook `hooks/def-review-gate.sh`: every definition-file Write/Edit raises a user approval prompt, even in acceptEdits mode. Exception: paths recorded by `hooks/def-review-approve.sh` pass promptless for 5 minutes.

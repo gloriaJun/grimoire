@@ -20,7 +20,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 
 ## Layout
 
-- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, definition-files, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh, def-review-gate.sh, delegation-report-reminder.sh), settings.hooks.json, settings.statusline.json, settings.permissions.json
+- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, definition-files, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh, def-review-gate.sh, def-review-approve.sh, delegation-report-reminder.sh), settings.hooks.json, settings.statusline.json, settings.permissions.json
 - `sync.sh`, `codex-sync.sh`, `githooks/post-commit` - sync mechanism
 - `bootstrap.sh`, `external.json` - fresh-machine setup + external-install manifest
 - `ccstatusline/` - statusline widget config, rendered to `~/.config/ccstatusline/`
@@ -44,11 +44,12 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
   - `pr-guard.sh` (PreToolUse, Bash): `gh pr create` must carry `--draft` and `--base`.
   - `emdash-check.sh` (PostToolUse, Write|Edit): flags em/en dashes written to md files.
   - `definition-check.sh` (PostToolUse, Write|Edit): definition-file size budgets, English-only check, mermaid/README presence for SKILL.md.
-  - `def-review-gate.sh` (PreToolUse, Write|Edit): emits permissionDecision "ask" so definition-file writes always raise a user approval prompt.
+  - `def-review-gate.sh` (PreToolUse, Write|Edit): emits permissionDecision "ask" so definition-file writes raise a user approval prompt, unless the path was recorded by `def-review-approve.sh` within 5 minutes.
+  - `def-review-approve.sh` (manual, not hook-registered): records in-chat Korean-review approvals to `~/.claude/.def-review-approvals` (TTL 5 min) for the gate's marker pass.
   - `delegation-report-reminder.sh` (PostToolUse, Task|Agent): feeds back a reminder to include the delegation report (task / model / reason) whenever an agent call returns.
 - `settings.hooks.json` also carries an inline SessionStart hook that logs codex in from `$OPENAI_CODEX_API_KEY`. It exists solely so explicit codex requests work; autonomous codex use stays forbidden (user CLAUDE.md).
 - Test manually before commit: `echo '<tool-call json>' | claude/hooks/<script>.sh; echo $?`.
-- Registered in `claude/settings.hooks.json`, which references them at their live path `$HOME/.claude/hooks/`.
+- All except `def-review-approve.sh` are registered in `claude/settings.hooks.json`, which references them at their live path `$HOME/.claude/hooks/`.
 - Changes take effect from the next Claude Code session (settings load at session start).
 
 ## doc-viewer (tools/doc-viewer/)
