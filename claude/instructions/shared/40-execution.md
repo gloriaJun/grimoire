@@ -22,7 +22,7 @@
 - Git work rules:
   - Commit types: feat, fix, perf, refactor, revert, style, docs, test, build, ci, chore. Do not invent types beyond these.
   - Commit proposal: when a work unit is complete, proactively propose a commit - target file list, message, and anything intentionally excluded - and execute only after approval. Split unrelated changes into separate commits. Never commit without an approved proposal.
-  - On a PR create/submit request → read `~/.claude/instructions/references/templates/pr.md` and follow its submission procedure and body template.
+  - On a PR create/submit request → run g-pr; if unavailable, follow `~/.claude/instructions/references/templates/pr.md`.
   - Branch naming: `<type>/<short-description>` (kebab-case). Formats that carry company tickets follow the company repository's rules.
   - Designated branch check: when the user names a working branch, record it as the session's designated branch. Before commit/push, if the current branch differs from the designated one, show both branches side by side and confirm where to commit.
   - Worktree guard: if the current branch matches the `worktree-*` pattern and no branch is designated, stop before commit/push and ask which branch to target.
