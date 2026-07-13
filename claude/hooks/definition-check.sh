@@ -48,6 +48,27 @@ if [[ "$type" == "SKILL.md" ]]; then
     || problems+="- no README.md next to SKILL.md (required by instructions/references/skill-authoring.md).\n"
 fi
 
+# Assembled CLAUDE.md budget: per-fragment compliance does not guarantee the
+# assembled total. Mirrors sync.sh assemble_claude_md (each file + one newline).
+if [[ "$type" == "shared-fragment" || "$type" == "claude-only" ]]; then
+  if [[ "$type" == "shared-fragment" ]]; then
+    claude_root="$(cd "$(dirname "$file")/../.." && pwd)"
+  else
+    claude_root="$(cd "$(dirname "$file")" && pwd)"
+  fi
+  # claude-only.md absent (e.g. the live ~/.claude mirror): repo-only check, skip.
+  if [[ -f "$claude_root/claude-only.md" ]]; then
+    assembled=0
+    for frag in "$claude_root/instructions/shared/"*.md "$claude_root/claude-only.md"; do
+      [[ -f "$frag" ]] || continue
+      assembled=$(( assembled + $(wc -c < "$frag") + 1 ))
+    done
+    if (( assembled > 14000 )); then
+      problems+="- assembled CLAUDE.md would be ${assembled} chars > budget 14000. Apply one-in-one-out per instructions/references/definition-files.md, or justify the overage in the commit body.\n"
+    fi
+  fi
+fi
+
 if [[ -n "$problems" ]]; then
   {
     echo "definition-check: $file"
