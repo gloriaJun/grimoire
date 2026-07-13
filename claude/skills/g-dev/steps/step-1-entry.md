@@ -2,29 +2,31 @@
 
 ## A. Locate context
 
+Run the preflight script exactly as written (the allowlist matches this
+literal form; do not rewrite the path or append commands):
+
 ```bash
-VAULT="$HOME/Documents/obsidian-vault"
-ls "$VAULT/projects" >/dev/null 2>&1 && echo VAULT_OK || echo VAULT_MISSING
-# main checkout, even from a linked worktree; empty = not a repo
-COMMON=$(cd "$(git rev-parse --git-common-dir 2>/dev/null)" 2>/dev/null && pwd)
-MAIN=$(dirname "$COMMON"); echo "MAIN=$MAIN"
-date +%F
+bash ~/.claude/skills/g-dev/scripts/entry-preflight.sh
 ```
+
+Output: `VAULT_OK|VAULT_MISSING`, `MAIN=<main checkout path>`, `DATE=<date>`.
 
 - `VAULT_MISSING` -> report that g-dev requires the vault at
   `~/Documents/obsidian-vault` and stop.
-- COMMON empty -> not a repo: ask the user for the project's repo or
+- `MAIN=` empty -> not a repo: ask the user for the project's repo or
   working directory; do not guess.
 - DOMAIN: `work` when `$PWD` is under `$HOME/Documents/GitHubWork`, else
   `dev`. REPO = `basename "$MAIN"`; state.md's `repo-path` = `$MAIN`
   (never a worktree path).
+- `$VAULT` in later snippets = `$HOME/Documents/obsidian-vault`; each shell
+  call is a fresh process, so assign it in every call that uses it.
 
 ## B. Find this repo's projects
 
 Run the shared lookup script (also used by step 3b):
 
 ```bash
-bash "$HOME/.claude/skills/g-dev/scripts/find-repo-projects.sh"
+bash ~/.claude/skills/g-dev/scripts/find-repo-projects.sh
 ```
 
 A `GUARD_FAIL` line means REPO or the vault was invalid - fix that first;

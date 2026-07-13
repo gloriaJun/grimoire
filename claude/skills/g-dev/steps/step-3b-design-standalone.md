@@ -63,7 +63,7 @@ merge path in section D is taken.
 1. Look up this repo's g-dev projects (shared script with step 1):
 
 ```bash
-bash "$HOME/.claude/skills/g-dev/scripts/find-repo-projects.sh"
+bash ~/.claude/skills/g-dev/scripts/find-repo-projects.sh
 ```
 
 2. `GUARD_FAIL` (lookup could not run: no repo or no vault, so no project

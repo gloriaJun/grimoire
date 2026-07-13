@@ -14,7 +14,7 @@ Direct step entry (SLUG unknown) resolves the project via the shared
 lookup script:
 
 ```bash
-bash "$HOME/.claude/skills/g-dev/scripts/find-repo-projects.sh"
+bash ~/.claude/skills/g-dev/scripts/find-repo-projects.sh
 ```
 
 `GUARD_FAIL` = repo or vault invalid: fix that first, never treat as

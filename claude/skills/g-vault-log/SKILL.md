@@ -48,7 +48,7 @@ each move?"}
    g-dev):
 
 ```bash
-bash "$HOME/.claude/skills/g-dev/scripts/find-repo-projects.sh"
+bash ~/.claude/skills/g-dev/scripts/find-repo-projects.sh
 ```
 
 Script file missing -> list-and-ask. `GUARD_FAIL` -> run

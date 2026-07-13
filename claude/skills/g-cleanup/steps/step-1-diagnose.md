@@ -9,7 +9,7 @@ Read `references/protected-paths.md` and `references/cleanup-targets.md` first.
 Run exactly:
 
 ```bash
-bash "$HOME/.claude/skills/g-cleanup/scripts/diagnose.sh"
+bash ~/.claude/skills/g-cleanup/scripts/diagnose.sh
 ```
 
 Output: one `ID|Category|Files|Size|Oldest|Newest` line per target.
@@ -23,7 +23,7 @@ Output: one `ID|Category|Files|Size|Oldest|Newest` line per target.
 Run exactly:
 
 ```bash
-bash "$HOME/.claude/skills/g-cleanup/scripts/audit-memory.sh"
+bash ~/.claude/skills/g-cleanup/scripts/audit-memory.sh
 ```
 
 Output lines: `TYPE|PROJECT_DIR|DETAIL` where TYPE is ORPHANED, BROKEN_LINK, DUPLICATE, or OK.

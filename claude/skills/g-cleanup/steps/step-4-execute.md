@@ -27,7 +27,7 @@ Any delete command exiting non-zero: STOP immediately. Report the failed command
 4. **C7 history**: use the script, never inline the truncation logic:
 
    ```bash
-   bash "$HOME/.claude/skills/g-cleanup/scripts/truncate-history.sh" <days>
+   bash ~/.claude/skills/g-cleanup/scripts/truncate-history.sh <days>
    ```
 
 5. **M1 memory**: re-run `scripts/audit-memory.sh`, then per issue:
