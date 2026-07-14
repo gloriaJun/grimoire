@@ -51,13 +51,13 @@ When unsure, omit.
 
 {why the change is needed. 1-3 bullets}
 
-### Implementation task
-
-{representative changes. the units of change reviewers must grasp}
-
 ### Screenshot
 
 {only when there are UI/visual changes}
+
+### Implementation task
+
+{representative changes. the units of change reviewers must grasp}
 
 ### Focus it
 
@@ -114,7 +114,9 @@ Preferred: "다른 워크플로우가 이미 octokit을 사용하는 방식과 �
   never a prose promise like "확인 후 첨부 예정".
 - Change unrelated to visuals (backend, CI, config, infra) → omit the section entirely.
 - Set image widths with HTML `<img>`: portrait (mobile) `width="280"`, landscape (desktop) `width="680"`.
-- With multiple cases (Before/After, etc.), build a table and leave `src=""` empty for the user to fill.
+- With multiple cases (Before/After, etc.), default to a single-row table with
+  one column per case (cases placed side by side); leave `src=""` empty for
+  the user to fill.
 - For changes verified via console logs, attach the actual logs inline in a code block or `<details>`.
 - When you create a scaffold, tell the user in chat which screenshots, videos, or logs would help the review.
 
