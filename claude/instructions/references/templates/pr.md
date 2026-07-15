@@ -14,8 +14,8 @@ On a PR creation request, follow this order.
    - For each candidate: `git rev-list --count $(git merge-base HEAD origin/<candidate>)..HEAD`
    - Pick the candidate with the smallest count (nearest fork point). On a tie, pick the
      default branch.
-   Tell the user the detection result before submitting, and do not submit with the base
-   undetermined.
+     Tell the user the detection result before submitting, and do not submit with the base
+     undetermined.
 2. **Check remote state**: if there are unpushed commits, report the count and push after
    confirmation per hard rule 5. On push failure, stop and report the cause.
 3. **Analyze changes**: identify commits and changed files with `git log` and `git diff --stat`
@@ -49,7 +49,7 @@ When unsure, omit.
 ```markdown
 ### Background
 
-{why the change is needed. 1-3 bullets}
+{prose, not bullets, within 300 chars (usually 1-2 sentences): the requirement/request or bug that prompted the work. Do not break it into symptoms or impact analysis.}
 
 ### Screenshot
 
@@ -80,16 +80,15 @@ When unsure, omit.
 
 ### Background
 
-- Lead with the strategic motivation: why it is needed, how it aligns with existing codebase conventions.
-- Append side benefits (risk reduction, consistency gains) in one line afterward.
-- Do not open with mechanical symptoms or defect descriptions.
+- Write as prose (not bullets), within 300 characters; usually 1-2 sentences.
+- State the driving requirement/request or bug that prompted the work, concisely. Do not expand into a symptom-by-symptom or impact breakdown.
 
-Forbidden: "기존 워크플로우는 env 설정 오류 시 예외가 발생하는 문제가 있었습니다."
-Preferred: "다른 워크플로우가 이미 octokit을 사용하는 방식과 일치시키기 위해 gh CLI 의존성을 제거합니다. 부수적으로 CLI 인증 오류에 의한 간헐적 실패도 함께 해소됩니다."
+Example: "TH OpenChat Tab 디자인 개편에 따라 메인 에디터 픽 배너의 타이틀 영역을 신규 디자인 가이드에 맞춰 수정합니다."
 
 ### Implementation task
 
 - Write representative changes only. No exhaustive file listing, no restating what is obvious from the diff.
+- Describe only what changed. Do not add scope-negation lines about unmodified parts ("다른 리전은 영향 없음", "X는 변경하지 않음").
 - Do not write the implementation stack (library names, action names, permission scopes, standard security techniques).
   The body describes the behavior and capabilities reviewers care about; the diff explains the how.
 - Compress "attempt → fail → replace" narratives into one line (`beforeSendSpan` 방식 비효과적 → `ignoreSpans`로 교체).
@@ -166,9 +165,10 @@ Preferred: "다른 워크플로우가 이미 octokit을 사용하는 방식과 �
 
 ## Draft Self-Check (before plannotator review)
 
-- [ ] Does Background open with strategic motivation (not mechanical symptoms)
+- [ ] Is Background concise prose within 300 chars, stating the driving requirement/reason (no symptom/impact breakdown)
 - [ ] Is all prose in 합니다체 (bullets included)
 - [ ] Is the body free of implementation stack
+- [ ] Does Implementation task describe only changed parts (no scope-negation of unmodified code)
 - [ ] No em/en dashes, and no parenthesized English glosses
 - [ ] No ticket number in prose, no AI footer, no "(Optional)" heading markers
 - [ ] Is the Screenshot section dropped entirely for changes unrelated to visuals
