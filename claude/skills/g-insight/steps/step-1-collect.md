@@ -3,10 +3,15 @@
 ## A. Enumerate the definition layer
 
 ```bash
-ls "$HOME/.claude/CLAUDE.md" 2>/dev/null
-find "$HOME/.claude/instructions" "$HOME/.claude/skills" "$HOME/.claude/agents" \
-  "$HOME/.claude/hooks" -type f \( -name '*.md' -o -name '*.sh' \) 2>/dev/null
-jq -c '.hooks // {} | to_entries[]' "$HOME/.claude/settings.json" 2>/dev/null
+CLAUDE_ROOT="$HOME/.claude"
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+find "$CLAUDE_ROOT/CLAUDE.md" "$CLAUDE_ROOT/instructions" \
+  "$CLAUDE_ROOT/skills" "$CLAUDE_ROOT/agents" "$CLAUDE_ROOT/hooks" \
+  "$CODEX_ROOT/AGENTS.md" "$CODEX_ROOT/skills" "$CODEX_ROOT/agents" \
+  "$CODEX_ROOT/prompts" "$CODEX_ROOT/config.toml" \
+  -type f \( -name 'CLAUDE.md' -o -name 'AGENTS.md' -o -name 'SKILL.md' \
+  -o -name '*.md' -o -name '*.sh' -o -name '*.toml' \) 2>/dev/null
+jq -c '.hooks // {} | to_entries[]' "$CLAUDE_ROOT/settings.json" 2>/dev/null
 ```
 
 A missing directory is noted and skipped, never an abort (an empty layer can
@@ -23,7 +28,9 @@ itself become a D finding).
 
 From the conversation, mark each artifact `exercised` when any holds:
 
-- CLAUDE.md: always exercised (loaded every session)
+- AGENTS.md or CLAUDE.md: mark the guidance files loaded into this session as
+  exercised; when the loaded file list is unavailable, mark them `미확인` and
+  state how to verify it.
 - an on-demand reference file Read this session
 - a skill invoked (Skill tool or slash command)
 - a hook that fired (hook feedback visible in this session)

@@ -33,9 +33,10 @@ Never ask what the evidence already answers.
 
 ## Defer format
 
-Directory: `~/.claude/projects/<project-dir>/memory/` where `<project-dir>`
-is the current project's entry under `ls ~/.claude/projects/` (the sanitized
-cwd path). File `<kebab-title>.md`:
+Directory: `~/.claude/projects/<project-dir>/memory/`, the shared personal
+definition-memory store used by this skill in Claude Code and Codex, where
+`<project-dir>` is the current project's entry under `ls ~/.claude/projects/`
+(the sanitized cwd path). File `<kebab-title>.md`:
 
 ```markdown
 ---

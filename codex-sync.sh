@@ -40,8 +40,8 @@ CLAUDE_SKILLS="$HOME/.claude/skills"
 PLUGINS_JSON="$HOME/.claude/plugins/installed_plugins.json"
 COMPANY_WS_MD="$HOME/Documents/GitHubWork/CLAUDE.md"
 
-# Claude-only skills that make no sense inside Codex: never migrated.
-EXCLUDE_SKILLS=(g-insight)
+# Every global skill with a SKILL.md is migrated to Codex.
+EXCLUDE_SKILLS=()
 
 AGENTS_MAX=32768   # codex project_doc_max_bytes default; combined cap with project docs
 AGENTS_WARN=24576  # 75% of max: keep headroom for per-repo AGENTS.md

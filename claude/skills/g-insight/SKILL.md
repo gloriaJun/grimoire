@@ -1,11 +1,12 @@
 ---
 name: g-insight
 description: >
-  /g-insight command only. Post-task mini-audit of the Claude Code setup:
-  diagnoses gaps between this session's actual work and the definitions that
-  could have governed it (CLAUDE.md, instructions, skills, hooks, agents),
-  then drives per-finding decisions. May be invoked from another skill's
-  completion step. Manual invocation only - do NOT auto-trigger.
+  Explicit invocation only: Claude Code /g-insight; Codex $g-insight.
+  Post-task mini-audit of the active agent setup: diagnoses gaps between this
+  session's actual work and the definitions that could have governed it
+  (AGENTS.md or CLAUDE.md, instructions, skills, hooks, agents), then drives
+  per-finding decisions. May be invoked from another skill's completion step.
+  Manual invocation only - do NOT auto-trigger.
 ---
 
 # g-insight
