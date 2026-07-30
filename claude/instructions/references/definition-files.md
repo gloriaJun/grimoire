@@ -41,6 +41,7 @@ Token estimation: `wc -c` / 4.
 | `references/templates/*.md` | On-demand (Read) | ~2,250 tok (~9,000 chars) |
 | `SKILL.md` body | On skill trigger | ~750 tok (~3,000 chars) |
 | `skills/*/steps/*.md` | On-demand (Read) | ~1,500 tok (~6,000 chars) |
+| `skills/*/references/*.md` | On-demand (Read) | ~1,250 tok (~5,000 chars) |
 | `agents/*.md` | On agent dispatch | ~500 tok (~2,000 chars) |
 
 - Budgets are advisory ceilings, not hard blocks. Exceeding one requires a
