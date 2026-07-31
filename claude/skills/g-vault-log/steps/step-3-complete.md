@@ -12,8 +12,16 @@ existence first.
 2. Ask for the record URL (PR or release link) once. Provided -> set
    frontmatter `url:` at move time; none -> omit the key (it is only ever
    written at archive time, per the vault's RULE.md).
-3. Present the move plan (doc -> target, plus section B) and execute ONLY
-   after the user confirms: `mkdir -p` the year directory, then `mv`.
+3. Ask the disposition once, two options: `archive` (recommended, the move
+   below) or `delete` (remove the doc and its assets from the vault
+   entirely, with no wiki distillation).
+4. Archive -> present the move plan (doc -> target, plus section B) and
+   execute ONLY after the user confirms: `mkdir -p` the year directory,
+   then `mv`.
+5. Delete -> list every path that would be removed (the doc, and the assets
+   folder contents when present), confirm one path at a time, then `rm` the
+   confirmed ones. Skip sections B and C and go to D. An unconfirmed path
+   stays in place.
 
 ## B. Assets disposition (g-dev projects)
 
