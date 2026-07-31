@@ -73,9 +73,10 @@ Read ONLY the step file for the detected mode.
 
 - Never git commit or push inside the vault; obsidian-git owns backup.
 - Vault moves and deletions run only after explicit per-item user
-  confirmation.
+  confirmation. A record declared unnecessary ends this skill: write and
+  move nothing, name any note already written, never auto-run /g-wrap.
 - Note content is Korean (vault convention); filenames English kebab-case;
   frontmatter per the vault's RULE.md. Claude-created inbox notes carry
   `source: claude`. Refresh `updated` on every doc edit.
 - Record only what this session evidences (decisions with reasons, work
-  with results); never invent progress.
+  with results); never invent.

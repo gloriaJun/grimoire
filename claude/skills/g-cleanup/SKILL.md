@@ -53,3 +53,5 @@ Read ONLY the step file for the current step. Never preload other steps.
 - No recursive wildcards on parent dirs: delete old items inside, never the directory itself.
 - `history.jsonl` is truncated (script), never deleted.
 - Runs only on explicit `/g-cleanup`. Never auto-trigger.
+- Retention-based only: never touch an artifact created in the current
+  session. A wrap-up request routes to /g-wrap instead.

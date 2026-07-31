@@ -17,7 +17,7 @@
 - Obsidian vault (`~/Documents/obsidian-vault/`):
   - Reading: when a task outside the vault needs my notes, read the vault's `_index.md` first, then scan filenames (`find <folder> -maxdepth 2 -name '*.md'`) and Read at most 3 selected files; nothing relevant → say so and continue without vault context.
   - Recording split: how Claude works for me (feedback, preferences, session context) → Claude memory; knowledge I would reopen later (root causes, research conclusions, reasoned decisions, AI-tooling know-how) → the vault, always via /g-vault-log.
-  - Capture proposal: at the session's final report (dev: right before the commit proposal), if the session produced (a) a diagnosed root cause, (b) a conclusion from 2+ sources, or (c) a reasoned technical decision, none of it landing in a repo file or commit message, append: "볼트 기록 제안: <one-line summary> → /g-vault-log"; run /g-vault-log only on an explicit go. None of (a)-(c) → no proposal.
+  - Capture proposal: a wrap-up request ("마무리") runs /g-wrap, owner of the record decision and teardown. Otherwise, at the final report, propose a record for (a) a root cause, (b) a 2+ source conclusion, or (c) a reasoned decision in no repo file or commit: append "볼트 기록 제안: <summary> → /g-vault-log" once, run only on an explicit go. Declined → write nothing and name what already exists.
   - Never run `git commit` or `git push` inside the vault.
 - Git work rules:
   - Commit types: feat, fix, perf, refactor, revert, style, docs, test, build, ci, chore. Do not invent types beyond these.
