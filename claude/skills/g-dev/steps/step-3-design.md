@@ -66,6 +66,10 @@ Write `$ASSETS/architecture.md` with exactly these sections:
 7. Testing Strategy - which detected commands verify what; none detected ->
    the concrete alternative (a script to add, named manual scenarios).
 8. Open Questions - unresolved items; an empty section is allowed.
+9. Excluded - approaches, tools, or scope the user ruled out, one line each
+   as `<what> - <reason> (YYYY-MM-DD)`. Nothing ruled out -> `none`. The
+   user ruling something out at any later point is appended here in the
+   same turn, before answering.
 
 ## C. Review gate
 

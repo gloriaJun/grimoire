@@ -26,6 +26,10 @@ None -> say "run /g-dev breakdown first" and stop.
    state this task's Goal, Scope, the Plan steps you will run, and how you
    will verify (its criteria) in <=6 lines, then get an explicit user go
    (the step-entry gate hard rule governs what counts as a go).
+6. Exclusion check: read the Excluded section of `$ASSETS/architecture.md`.
+   Drop any plan item or proposal conflicting with a listed entry before
+   presenting. The user rules something out during the build -> append it
+   to Excluded in the same turn, before continuing.
 
 ## B. Harness first
 
