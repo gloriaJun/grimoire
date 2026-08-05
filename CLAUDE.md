@@ -20,7 +20,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 
 ## Layout
 
-- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, definition-files, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh, def-review-gate.sh, def-review-approve.sh, delegation-report-reminder.sh), settings.hooks.json, settings.statusline.json, settings.permissions.json
+- `claude/` - the synced payload: instructions/shared (tool-neutral CLAUDE.md/AGENTS.md fragments), claude-only.md (Claude-specific sections), codex-only.md (Codex-specific sections), instructions/references (writing-style, tech-stack, code-review, skill-authoring, definition-files, templates/), hooks (pr-guard.sh, emdash-check.sh, definition-check.sh, def-review-gate.sh, def-review-approve.sh, delegation-report-reminder.sh), settings.hooks.json, settings.statusline.json, settings.permissions.json
 - `sync.sh`, `codex-sync.sh`, `githooks/post-commit` - sync mechanism
 - `bootstrap.sh`, `external.json` - fresh-machine setup + external-install manifest
 - `ccstatusline/` - statusline widget config, rendered to `~/.config/ccstatusline/`
@@ -32,7 +32,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 ## Codex sync (codex-sync.sh)
 
 - Generates the Codex config surface from Claude-side state; Codex has no hand-maintained sources. See the script header for full rules.
-- `~/.codex/AGENTS.md` = generated header + `claude/instructions/shared/*.md` + company workspace `~/Documents/GitHubWork/CLAUDE.md` as a scoped section (when present). Aborts above 32768 bytes (codex `project_doc_max_bytes`), warns above 24576.
+- `~/.codex/AGENTS.md` = generated header + `claude/instructions/shared/*.md` + `claude/codex-only.md` + company workspace `~/Documents/GitHubWork/CLAUDE.md` as a scoped section (when present). Aborts above 32768 bytes (codex `project_doc_max_bytes`), warns above 24576.
 - `~/.codex/skills/` = migrated copies of `~/.claude/skills/*` (minus the exclude list in the script, currently `g-insight`) plus skills inside installed Claude plugins (`mp-<plugin>-<skill>`). SKILL.md frontmatter is reduced to `name`/`description` because Codex rejects unknown keys; bodies are copied verbatim.
 - Ownership via `~/.codex/codex-sync-manifest.json`: only manifest-listed entries are ever deleted. `~/.codex/skills/.system/` and unmanaged entries are never touched.
 - Runs from post-commit after `sync.sh`; run manually after installing/updating Claude plugins.
