@@ -51,6 +51,11 @@ Default column:
   hand-written `vault`, untracked directories). These are report-only and
   can never be picked.
 
+Vault rows carry a time window, not a session id: a `deletable = yes` vault
+row whose path this conversation never wrote or named belongs to another
+session. Downgrade it to report-only with the detail
+`other session, report only`; it can never be picked.
+
 More than 30 deletable rows: show the first 30, state the remaining count in
 one line, and note that the rest is `/g-cleanup` territory.
 

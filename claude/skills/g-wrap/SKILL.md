@@ -28,6 +28,7 @@ scripts/collect-artifacts.sh"]
     D -- some --> E["Step 2: record gate"]
     E -- record needed --> V["invoke g-vault-log
 (Skill tool), lock its notes to keep"] --> P
+    E -- already written this session --> P
     E -- declined --> P["per-item keep/delete pick
 vault rows row by row"]
     P -- nothing picked --> Z2(["report: nothing removed"])

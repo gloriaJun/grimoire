@@ -8,6 +8,9 @@ Evaluate this session against three conditions:
 - (b) a conclusion drawn from 2 or more sources
 - (c) a reasoned technical decision
 
+This session already ran g-vault-log and wrote at least one note:
+`record = written`. Ask nothing, and carry every written path into B.
+
 None of (a) to (c), or all of them already landed in a repo file or a commit
 message: treat the record as unnecessary, ask nothing, go to B with
 `record = declined`.
@@ -21,6 +24,12 @@ this order:
 Never ask twice, and never re-raise the question after a decline.
 
 ## B. Apply the decision
+
+`record = written`:
+
+- Every path this session wrote is locked to `keep` and stays out of C.
+- No vault row switches to `delete`; the decline branch below never applies.
+- Other surfaces keep their Step 1 defaults.
 
 `record = declined`:
 
