@@ -78,6 +78,10 @@ re-derive them from these conventions.
 | Large | 3+ files changed; 20+ net lines in SKILL.md; orchestration flow changed | Cross-review by a separate agent (session model), prompted to refute convention compliance, token efficiency, and redundancy |
 | Small | Text-only edits | Self-review with the checklist below |
 
+A cross-review returning FAIL: fix the findings, then re-dispatch the same
+agent type once with the fix list, requiring VERIFIED or NOT FIXED per item.
+Ship only when no item is NOT FIXED.
+
 Checklist (both scopes):
 
 - [ ] SKILL.md orchestrator-only, no inline logic

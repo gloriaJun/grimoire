@@ -67,4 +67,9 @@ an on-demand Read costs only when relevant.
   skill's `steps/`.
 - Adding a rule to CLAUDE.md → compress or remove an equivalent line
   (one in, one out).
+- Headroom check before adding a rule: `wc -c` the target file, and for a
+  CLAUDE.md fragment also the assembled result
+  (`cat instructions/shared/*.md claude-only.md | wc -c`). Headroom under 2%
+  of the budget -> propose a split, or a move to `references/` with a trigger
+  row, before writing. Never buy room by shaving neighbouring lines.
 - One-off incidents belong in memory; only recurring patterns earn instruction lines.
