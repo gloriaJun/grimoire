@@ -63,9 +63,11 @@ Read ONLY the step file for the current step.
   verify it - never presented as a finding.
 - Read-only through Steps 1-3. Files change only after the user picks Apply
   for that specific finding.
-- Standalone runs stay in the main context (the conversation IS the input; do
-  not delegate evidence extraction). Invoked from another skill, it may run
-  as a subagent fed that skill's task summary.
+- Standalone runs stay in the main context: the conversation IS the input, so
+  never delegate its evidence extraction. Past sessions requested as an
+  evidence source are the one exception - dispatch transcript-miner and take
+  back conclusions and quotes only, never raw transcript. Invoked from
+  another skill, it may run as a subagent fed that skill's task summary.
 - Every Apply that touches a definition file must itself pass the
   lightweight-model test: exact commands, numeric thresholds, termination
   conditions.
