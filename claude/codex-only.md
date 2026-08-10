@@ -7,6 +7,7 @@ included in `~/.claude/CLAUDE.md`.
 
 You may:
 - Run read-only Git inspection commands: `git status`, `git diff`, `git log`, and `git branch`.
+- Before running shell commands that include literal user text, code, or search patterns, quote them so backticks, `$()`, pipes, redirects, and globs cannot execute accidentally.
 - Modify files inside the workspace only within the current requested or explicitly approved task scope.
 - Run repository-local verification commands such as tests, lint, typecheck, and build.
 - Use `gh` for read-only operations such as viewing/listing PRs, issues, diffs, checks, runs, and repository metadata.
