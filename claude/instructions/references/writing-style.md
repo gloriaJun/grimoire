@@ -65,6 +65,8 @@ Do not apply to internal config files (CLAUDE.md, SKILL.md, settings.json, etc.)
 
 ## Document Format (document deliverables only)
 
+- Callouts: follow `callouts.md` in this directory for the allowed set and limits.
+
 ### TOC
 
 - Include only when there are 3 or more `##` sections. Omit with 2 or fewer.
