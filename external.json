@@ -1,5 +1,5 @@
 {
-  "$comment": "Desired external-install state. Consumed by bootstrap.sh (installs missing entries) and sync.sh (suppresses the unmanaged-skill warning for declared skill dirs). Personal entries only - company marketplaces and plugins belong to the company repo (my-claude-skills).",
+  "$comment": "Desired external-install state. Consumed by bootstrap.sh (installs missing entries) and sync.sh (suppresses the unmanaged-skill warning for declared skill dirs). Personal entries only - company marketplaces and plugins belong to the company repo (toolbox/ai-configuration).",
   "marketplaces": [
     "backnotprop/plannotator",
     "anthropics/skills",

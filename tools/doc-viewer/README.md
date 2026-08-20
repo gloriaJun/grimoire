@@ -57,7 +57,7 @@ sidecar가 아예 없는 파일은 트리에 `EN` 배지가 붙고 원문만 렌
 {
   "roots": [
     { "name": "grimoire", "path": "../../claude" },
-    { "name": "my-claude-skills", "path": "~/Documents/GithubWork/my-claude-skills" }
+    { "name": "ai-configuration", "path": "~/Documents/GitHubWork/toolbox/ai-configuration" }
   ],
   "ignore": ["node_modules", ".git", "dist", ".claude-plugin"]
 }

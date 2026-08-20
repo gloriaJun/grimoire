@@ -24,7 +24,7 @@
 # Ownership: only entries recorded in the manifest are ever deleted.
 # Codex-owned content (skills/.system/, unmanaged entries) is never touched.
 # MCP servers and ~/.codex/config.toml are out of scope here: the company
-# repo (my-claude-skills/codex/) merges those managed keys via its sync.sh,
+# repo (toolbox/ai-configuration/codex/) merges those managed keys via its sync.sh,
 # which also chains this script to keep AGENTS.md fresh.
 #
 # Usage: codex-sync.sh [--dry-run]

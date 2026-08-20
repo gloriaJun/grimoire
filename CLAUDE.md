@@ -9,7 +9,7 @@ Source of truth for the user-level Claude Code configuration (v2). `claude/` is 
 - Sync ownership (see header of `sync.sh`):
   - `claude/instructions/shared/*.md` + `claude/claude-only.md` → assembled (filename order, claude-only last) into `~/.claude/CLAUDE.md`. There is no `claude/CLAUDE.md` source file anymore.
   - `claude/instructions/`, `claude/hooks/`, `claude/agents/` → full mirror with `--delete`. Deleting a file here deletes it live.
-  - `claude/skills/`: only `g-*` entries are managed. `l-*` belongs to the company repo (`~/Documents/GitHubWork/my-claude-skills`); anything else is warn-only.
+  - `claude/skills/`: only `g-*` entries are managed. `l-*` belongs to the company repo (`~/Documents/GitHubWork/toolbox/ai-configuration`); anything else is warn-only.
   - `claude/settings.hooks.json` → merged into the `hooks` key of `~/.claude/settings.json` via jq; `claude/settings.statusline.json` → merged into the `statusLine` key and `claude/settings.permissions.json` into the `permissions` key the same way. None of these files are copied; other settings keys stay untouched.
   - `claude/settings.mcpServers.json` → source of truth for user-scope MCP servers. Claude Code reads them only from `~/.claude.json`, so bootstrap.sh applies missing entries via `claude mcp add-json --scope user`; sync.sh never writes `~/.claude.json` and only warns on drift. `disabled: true` = declared but not installed.
   - `ccstatusline/` (repo root) → rendered to `~/.config/ccstatusline/` with the `{{HOME}}` placeholder substituted, so no username is committed.
