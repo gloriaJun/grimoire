@@ -14,7 +14,7 @@
   | Trigger | File |
   |---|---|
   | Document deliverables, externally posted content, text reproducing my style | `writing-style.md` |
-  | Project init, tooling setup, JS/TS file structure decisions | `tech-stack.md` |
+  | Writing code, project init, tooling setup, JS/TS structure | `tech-stack.md` |
   | I ask for a review of my own code | `code-review.md` |
   | Creating or modifying a skill | `skill-authoring.md` |
   | Creating or modifying any definition file | `definition-files.md` |

@@ -1,7 +1,7 @@
 # Tech Stack Preferences
 
-Cross-project tool preferences. Load on demand when initializing a project,
-setting up tooling, or deciding JS/TS file structure.
+Cross-project tool preferences. Load on demand when writing code comments,
+initializing a project, setting up tooling, or deciding JS/TS file structure.
 Frameworks and libraries are defined per project in each repo's CLAUDE.md,
 and each repository's own configuration always takes precedence over this file.
 
@@ -64,3 +64,24 @@ Single-responsibility at the file level:
 
 When file-level conventions grow to 5 or more rules, extract them to a dedicated
 conventions reference and add a trigger row for it in CLAUDE.md.
+
+## Comments
+
+Budget per comment block, not per file: 1 line minimum, 3 lines maximum.
+Comment only what the code cannot say - intent, a non-obvious constraint, why
+this branch exists. Self-evident code gets no comment: omission beats
+restatement.
+
+Delete on sight:
+
+- prose restating the code (`// increment the counter`)
+- background or history narration running 4+ lines
+- section banner comments (`// ===== helpers =====`)
+- commented-out code (git history already holds it)
+
+Exception: JSDoc/TSDoc on exported functions and types. Tag lines (`@param`,
+`@returns`, `@example`) are uncapped; the prose description stays within 2 lines.
+
+Precedence: a project's own lint rule or conventions doc wins. A file's
+existing verbose comments do NOT license exceeding the cap - match the
+surrounding style in everything but volume.
