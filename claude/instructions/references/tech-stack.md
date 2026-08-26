@@ -9,6 +9,33 @@ and each repository's own configuration always takes precedence over this file.
 
 - pnpm for all projects.
 
+## Dependency Versions
+
+Adding a package the repo does not already have: resolve the version from the
+registry, never from a sibling `package.json` or from memory.
+
+```bash
+npm view <pkg> version           # current major
+npm view <pkg> peerDependencies  # what it constrains
+```
+
+Pin `^<current-major>`. A range copied from a sibling app imports that app's
+upgrade debt into the new one. After install, check what actually resolved -
+a peer range or a release-age policy can hold the tree on an older version.
+
+Conflict with something already installed (a peer range, or a major another
+package pins): stop and ask. Present both options with the blast radius named:
+
+| Option | What it means |
+|---|---|
+| Upgrade together | Bump the existing holders too - list every package affected |
+| Match the existing | Pin the new package to the major the repo already runs |
+
+Never choose silently. In a hoisted workspace (`node-linker=hoisted` in
+`.npmrc`) a split major is worse than an old version: duplicate copies
+fragment module instances and break behaviour that looks unrelated to the
+dependency.
+
 ## Node.js Version Manager
 
 - mise is the default. Global config (`~/.config/mise/config.toml`) sets
