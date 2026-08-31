@@ -44,6 +44,12 @@ COMPANY_WS_MD="$HOME/Documents/GitHubWork/CLAUDE.md"
 # Every global skill with a SKILL.md is migrated to Codex.
 EXCLUDE_SKILLS=()
 
+# Claude plugins whose bundled skills stay out of Codex. Their descriptions all
+# load into the Codex skills context budget, and Codex truncates descriptions
+# once the budget is exceeded. Listed plugins remain fully available in Claude
+# Code; only the Codex mirror is skipped.
+EXCLUDE_PLUGINS=(example-skills figma)
+
 AGENTS_MAX=32768   # codex project_doc_max_bytes default; combined cap with project docs
 AGENTS_WARN=24576  # 75% of max: keep headroom for per-repo AGENTS.md
 
@@ -155,9 +161,20 @@ is_excluded() {
   return 1
 }
 
+is_excluded_plugin() {
+  local plugin="$1" e
+  for e in "${EXCLUDE_PLUGINS[@]}"; do
+    [[ "$plugin" == "$e" ]] && return 0
+  done
+  return 1
+}
+
 MIGRATED=()
 migrate_skill() { # $1 = source dir, $2 = destination name
-  local src="${1%/}" name="$2" dest="$SKILLS_DEST/$name"
+  local src="${1%/}" name="$2"
+  # separate declaration: a same-command `local x=$name` would expand the
+  # stale global `name`, not this call's argument
+  local dest="$SKILLS_DEST/$name"
   if [[ ! -f "$src/SKILL.md" ]]; then
     warn "skip $name: no SKILL.md in $src"
     return
@@ -193,6 +210,10 @@ fi
 if [[ -f "$PLUGINS_JSON" ]]; then
   while IFS=$'\t' read -r plugin install_path; do
     [[ -n "$install_path" && -d "$install_path/skills" ]] || continue
+    if is_excluded_plugin "$plugin"; then
+      log "skip (excluded plugin): $plugin"
+      continue
+    fi
     for d in "$install_path/skills"/*/; do
       [[ -d "$d" ]] || continue
       migrate_skill "$d" "mp-${plugin}-$(basename "$d")"
