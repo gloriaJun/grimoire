@@ -1,6 +1,6 @@
 # Step 3: Review and Report
 
-## Mechanical checks (run all three; empty output = pass)
+## Mechanical checks (run all four; empty output = pass)
 
 Debug leftovers and unfinished markers in added lines:
 
@@ -19,6 +19,20 @@ Credential files staged:
 ```bash
 git diff --cached --name-only | grep -E '(^|/)\.env(\..+)?$|\.(pem|p12|key)$'
 ```
+
+Added comment blocks over 3 lines (the per-block cap in `tech-stack.md`):
+
+```bash
+git diff --cached | awk '
+  /^\+\+\+ /{ file=substr($0,7); n=0; next }
+  /^\+/{ if ($0 ~ /^\+[[:space:]]*(\/\/|\*|\/\*|#)/) { n++; next }
+         if (n>3) print file"\t"n" line comment block"; n=0; next }
+  { if (n>3) print file"\t"n" line comment block"; n=0 }
+  END { if (n>3) print file"\t"n" line comment block" }'
+```
+
+A hit here is always a finding: cut the block to 3 lines or delete it. The
+only exception is a file whose subject IS comment rules.
 
 Every hit is a finding with file:line. A hit that is clearly a test fixture or documented placeholder may be downgraded to `note`, but must still appear in the report.
 

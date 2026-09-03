@@ -60,6 +60,10 @@
         {
           "type": "command",
           "command": "\"$HOME/.claude/hooks/definition-check.sh\""
+        },
+        {
+          "type": "command",
+          "command": "\"$HOME/.claude/hooks/comment-cap-check.sh\""
         }
       ]
     }
